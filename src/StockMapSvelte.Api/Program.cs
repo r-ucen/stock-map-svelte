@@ -1,6 +1,13 @@
 using Scalar.AspNetCore;
+using StockMapSvelte.Api;
+using StockMapSvelte.Application;
+using StockMapSvelte.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddInfrastructure();
+builder.Services.AddApplication();
+builder.Services.AddPresentation();
 
 // Add services to the container.
 
