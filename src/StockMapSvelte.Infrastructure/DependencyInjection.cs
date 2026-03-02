@@ -1,10 +1,27 @@
-namespace StockMapSvelte.Infrastructure;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using StockMapSvelte.Infrastructure.Database;
 using Microsoft.Extensions.DependencyInjection;
+using StockMapSvelte.Infrastructure.Identity;
+
+namespace StockMapSvelte.Infrastructure;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services)
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
+        var connectionString = configuration.GetConnectionString("DefaultConnection");
+        
+        services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseNpgsql(connectionString));
+        
+        services.AddAuthorizationBuilder();
+        
+        services.AddIdentityApiEndpoints<ApplicationUser>()
+            .AddRoles<Role>()
+            .AddEntityFrameworkStores<ApplicationDbContext>();
+        
         return services;
     }
 }
