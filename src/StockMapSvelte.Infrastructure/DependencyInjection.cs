@@ -4,8 +4,14 @@ using Microsoft.Extensions.Configuration;
 using StockMapSvelte.Infrastructure.Database;
 using Microsoft.Extensions.DependencyInjection;
 using Resend;
+using StockMapSvelte.Application.Abstractions;
+using StockMapSvelte.Application.Abstractions.Repositories;
+using StockMapSvelte.Application.Services;
+using StockMapSvelte.Infrastructure.BackgroundServices;
 using StockMapSvelte.Infrastructure.Identity;
+using StockMapSvelte.Infrastructure.Repositories;
 using StockMapSvelte.Infrastructure.Services;
+using YahooQuotesApi;
 
 namespace StockMapSvelte.Infrastructure;
 
@@ -29,10 +35,24 @@ public static class DependencyInjection
             .AddRoles<Role>()
             .AddEntityFrameworkStores<ApplicationDbContext>();
         
+        // Resend
         services.AddOptions<ResendClientOptions>()
             .Bind(configuration.GetSection("Resend"));
         services.AddHttpClient<IResend, ResendClient>();
         services.AddTransient<IEmailSender<ApplicationUser>, ResendEmailSender>();
+        
+        // DI
+        services.AddScoped<IStockUpdateService, StockUpdateService>();
+        services.AddScoped<IStockRepository, StockRepository>();
+        services.AddScoped<IStockClient, YahooStockClient>();
+        services.AddScoped<IPortfolioRepository, PortfolioRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<ITreeMapRepository, TreeMapRepository>();
+        services.AddScoped<IStockProfileRepository, StockProfileRepository>();
+        services.AddScoped<IUserSettingRepository, UserSettingRepository>();
+        
+        services.AddHostedService<StockDataUpdateTimedService>();
+        services.AddSingleton<YahooQuotes>(new YahooQuotesBuilder().Build());
         
         return services;
     }
