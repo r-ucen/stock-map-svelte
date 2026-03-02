@@ -1,0 +1,38 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace StockMapSvelte.Domain.Entities;
+
+[Table(nameof(StockProfile))]
+public class StockProfile : Entity<Guid>
+{
+    // Foreign key to Stock
+    public Guid StockId { get; set; }
+
+    // Date of the details snapshot
+    public DateTimeOffset Date { get; set; }
+    public string? FullName { get; set; }
+    public double? MarketCap { get; set; }
+    public string? Sector { get; set; }
+    public string? Currency { get; set; }
+    public string? MarketState { get; set; }
+    public double? RegularMarketChangePercent { get; set; }
+    public decimal? RegularMarketPrice { get; set; }
+    public double? PreMarketChangePercent { get; set; }
+    public decimal? PreMarketPrice { get; set; }
+    public double? PostMarketChangePercent { get; set; }
+    public decimal? PostMarketPrice { get; set; }
+    public DateTimeOffset? EarningsDate { get; set; }
+    public DateTimeOffset? DividendDate { get; set; }
+    public DateTimeOffset? ExDividendDate { get; set; }
+    public double? DividendYield { get; set; }
+    public double? Beta { get; set; }
+    public double? Pe { get; set; }
+    public double? ForwardPe { get; set; }
+    public double? ShortRatio { get; set; }
+    public double? AnalystRecommendationMean { get; set; }
+    public string? AnalystRecommendationKey { get; set; }
+    public long? Volume { get; set; }
+
+    // Navigation properties
+    public Stock Stock { get; set; } = null!;
+}
