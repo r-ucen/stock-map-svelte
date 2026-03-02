@@ -1,0 +1,46 @@
+using StockMapSvelte.Application.Abstractions.Facades;
+using StockMapSvelte.Application.DTOs;
+using StockMapSvelte.Application.UseCases.UserUseCases.Commands;
+using StockMapSvelte.Application.UseCases.UserUseCases.Handlers;
+using StockMapSvelte.Application.UseCases.UserUseCases.Queries;
+
+namespace StockMapSvelte.Application.Facade;
+
+public class UserFacade : IUserFacade
+{
+    private readonly DeleteUserHandler _deleteUserHandler;
+    private readonly GetAllUsersHandler _getAllUsersHandler;
+    private readonly GetUserHandler _getUserHandler;
+    
+    public UserFacade(
+        DeleteUserHandler deleteUserHandler,
+        GetAllUsersHandler handler,
+        GetUserHandler getUserHandler)
+    {
+        _deleteUserHandler = deleteUserHandler;
+        _getAllUsersHandler = handler;
+        _getUserHandler = getUserHandler;
+    }
+    
+    public async Task DeleteUserAsync(string userId)
+    {
+        var cmd = new DeleteUserCommand { UserId = userId };
+        
+        await _deleteUserHandler.Handle(cmd);
+    }
+    
+    public async Task<List<UserDto>> GetAllUsersAsync()
+    {
+        return await _getAllUsersHandler.HandleAsync();
+    }
+    
+    public async Task<UserDto> GetUserAsync(string id)
+    {
+        var query = new GetUserQuery
+        {
+            UserId = id
+        };
+        
+        return await _getUserHandler.HandleAsync(query);
+    }
+}
