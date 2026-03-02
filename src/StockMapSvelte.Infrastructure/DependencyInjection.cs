@@ -3,7 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using StockMapSvelte.Infrastructure.Database;
 using Microsoft.Extensions.DependencyInjection;
+using Resend;
 using StockMapSvelte.Infrastructure.Identity;
+using StockMapSvelte.Infrastructure.Services;
 
 namespace StockMapSvelte.Infrastructure;
 
@@ -23,6 +25,11 @@ public static class DependencyInjection
             })
             .AddRoles<Role>()
             .AddEntityFrameworkStores<ApplicationDbContext>();
+        
+        services.AddOptions<ResendClientOptions>()
+            .Bind(configuration.GetSection("Resend"));
+        services.AddHttpClient<IResend, ResendClient>();
+        services.AddTransient<IEmailSender<ApplicationUser>, ResendEmailSender>();
         
         return services;
     }
