@@ -18,7 +18,9 @@ public static class DependencyInjection
         
         services.AddAuthorizationBuilder();
         
-        services.AddIdentityApiEndpoints<ApplicationUser>()
+        services.AddIdentityApiEndpoints<ApplicationUser>(options => {
+                options.SignIn.RequireConfirmedAccount = true;
+            })
             .AddRoles<Role>()
             .AddEntityFrameworkStores<ApplicationDbContext>();
         
