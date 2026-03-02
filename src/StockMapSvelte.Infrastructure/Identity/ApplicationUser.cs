@@ -4,7 +4,9 @@ using StockMapSvelte.Domain.Entities.Interfaces;
 
 namespace StockMapSvelte.Infrastructure.Identity;
 
-public class ApplicationUser : IdentityUser<string>, IUser<string>
+public sealed class ApplicationUser : IdentityUser<string>, IUser<string>
 {
+    public ApplicationUser() { Id = Guid.NewGuid().ToString(); }
+    
     public UserSetting? UserSetting { get; set; }
 }
