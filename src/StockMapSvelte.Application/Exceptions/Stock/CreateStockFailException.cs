@@ -1,9 +1,6 @@
 namespace StockMapSvelte.Application.Exceptions.Stock;
 
-public class CreateStockFailException : Exception
+public class CreateStockFailException : AppException
 {
-    public CreateStockFailException(string message)
-        : base(message)
-    {
-    }
+    public CreateStockFailException(string message) : base(message, 500) { }
 }

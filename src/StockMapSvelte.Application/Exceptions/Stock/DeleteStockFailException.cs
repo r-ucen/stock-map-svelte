@@ -1,9 +1,6 @@
 namespace StockMapSvelte.Application.Exceptions.Stock;
 
-public class DeleteStockFailException : Exception
+public class DeleteStockFailException : AppException
 {
-    public DeleteStockFailException(string message)
-        : base(message)
-    {
-    }
+    public DeleteStockFailException(string message) : base(message, 500) { }
 }

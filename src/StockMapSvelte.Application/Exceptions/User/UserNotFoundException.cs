@@ -1,9 +1,6 @@
 namespace StockMapSvelte.Application.Exceptions.User;
 
-public class UserNotFoundException : Exception
+public class UserNotFoundException : AppException
 {
-    public UserNotFoundException(string message)
-        : base(message)
-    {
-    }
+    public UserNotFoundException(string message) : base(message, 404) { }
 }
