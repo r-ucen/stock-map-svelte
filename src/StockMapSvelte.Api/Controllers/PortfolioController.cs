@@ -24,4 +24,12 @@ public class PortfolioController : Controller
         var portfolios = await _portfolioFacade.GetAllPortfolioStockViewModelsAsync();
         return Ok(portfolios);
     }
+    
+    [HttpGet]
+    [Route("currentUser")]
+    public async Task<IActionResult> GetCurrentUserPortfolios()
+    {
+        var portfolios = await _portfolioFacade.GetPortfoliosByUserIdAsync();
+        return Ok(portfolios);
+    }
 }
