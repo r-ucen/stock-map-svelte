@@ -1,5 +1,6 @@
 using StockMapSvelte.Application.DTOs;
 using StockMapSvelte.Application.UseCases.PortfolioUseCases.Commands;
+using StockMapSvelte.Application.UseCases.PortfolioUseCases.Queries;
 
 namespace StockMapSvelte.Application.Abstractions.Facades;
 
@@ -10,4 +11,5 @@ public interface IPortfolioFacade
     Task<IReadOnlyList<PortfolioStockDto>> GetPortfoliosByUserIdAsync();
     Task EditPortfolioAsync(EditPortfolioCommand cmd);
     Task DeletePortfolioAsync(Guid portfolioId);
+    Task<PortfolioStockDto> GetPortfolioStockByIdAsync(GetPortfolioByIdQuery query);
 }
