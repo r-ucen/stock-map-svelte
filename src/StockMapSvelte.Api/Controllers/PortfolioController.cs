@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using StockMapSvelte.Api.Requests;
 using StockMapSvelte.Application.Abstractions.Facades;
 using StockMapSvelte.Application.UseCases.PortfolioUseCases.Commands;
 
@@ -39,6 +40,21 @@ public class PortfolioController : Controller
     public async Task<IActionResult> DeletePortfolio(Guid portfolioId)
     {
         await _portfolioFacade.DeletePortfolioAsync(portfolioId);
+        return NoContent();
+    }
+
+    [HttpPut]
+    [Route("{portfolioId}")]
+    public async Task<IActionResult> EditPortfolio(Guid portfolioId, EditPortfolioRequest request)
+    {
+        var cmd = new EditPortfolioCommand
+        {
+            PortfolioId = portfolioId,
+            PortfolioName = request.PortfolioName,
+            TickerSymbols = request.TickerSymbols
+        };
+        
+        await _portfolioFacade.EditPortfolioAsync(cmd);
         return NoContent();
     }
 }
