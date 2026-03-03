@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using StockMapSvelte.Api.Requests;
 using StockMapSvelte.Application.Abstractions.Facades;
 using StockMapSvelte.Application.UseCases.PortfolioUseCases.Commands;
+using StockMapSvelte.Application.UseCases.PortfolioUseCases.Queries;
 
 namespace StockMapSvelte.Api.Controllers;
 
@@ -56,5 +57,37 @@ public class PortfolioController : Controller
         
         await _portfolioFacade.EditPortfolioAsync(cmd);
         return NoContent();
+    }
+    
+    [HttpGet]
+    [Route("{portfolioId}")]
+    public async Task<IActionResult> GetPortfolioById(Guid portfolioId)
+    {
+        var query = new GetPortfolioByIdQuery
+        {
+            PortfolioId = portfolioId
+        };
+        
+        var portfolio = await _portfolioFacade.GetPortfolioStockByIdAsync(query);
+        
+        return Ok(portfolio);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreatePortfolio(CreatePortfolioRequest request)
+    {
+        var cmd = new CreatePortfolioCommand
+        {
+            PortfolioName = request.PortfolioName,
+            TickerSymbols = request.TickerSymbols
+        };
+
+        var portfolio = await _portfolioFacade.CreatePortfolioAsync(cmd);
+        
+        return CreatedAtAction(
+            nameof(GetPortfolioById),
+            new { portfolioId = portfolio.PortfolioId },
+            portfolio
+        );
     }
 }

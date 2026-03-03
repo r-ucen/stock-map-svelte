@@ -16,6 +16,7 @@ public class PortfolioFacade : IPortfolioFacade
     private readonly EditPortfolioHandler _editPortfolioHandler;
     private readonly GetPortfoliosByUserIdHandler _getPortfoliosByUserIdHandler;
     private readonly GetAllPortfoliosHandler _getAllPortfoliosHandler;
+    private readonly GetPortfolioByIdHandler _getPortfolioByIdHandler;
     
 
     public PortfolioFacade(
@@ -24,7 +25,8 @@ public class PortfolioFacade : IPortfolioFacade
         DeletePortfolioHandler deletePortfolioHandler,
         EditPortfolioHandler editPortfolioHandler,
         GetPortfoliosByUserIdHandler getPortfoliosByUserIdHandler,
-        GetAllPortfoliosHandler getAllPortfoliosHandler
+        GetAllPortfoliosHandler getAllPortfoliosHandler,
+        GetPortfolioByIdHandler getPortfolioByIdHandler
         )
     {
         _userContext = userContext;
@@ -33,6 +35,7 @@ public class PortfolioFacade : IPortfolioFacade
         _editPortfolioHandler = editPortfolioHandler;
         _getPortfoliosByUserIdHandler = getPortfoliosByUserIdHandler;
         _getAllPortfoliosHandler = getAllPortfoliosHandler;
+        _getPortfolioByIdHandler = getPortfolioByIdHandler;
     }
     
     public async Task<PortfolioStockDto> CreatePortfolioAsync(CreatePortfolioCommand cmd)
@@ -70,5 +73,10 @@ public class PortfolioFacade : IPortfolioFacade
         };
 
         await _deletePortfolioHandler.Handle(cmd);
+    }
+
+    public async Task<PortfolioStockDto> GetPortfolioStockByIdAsync(GetPortfolioByIdQuery query)
+    {
+        return await _getPortfolioByIdHandler.Handle(query);
     }
 }
