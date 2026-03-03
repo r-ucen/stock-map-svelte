@@ -28,7 +28,7 @@ public class EditPortfolioHandler
         var existing = await _portfolioRepository.GetPortfolioByIdAsync(cmd.PortfolioId);
         if (existing == null)
         {
-            throw new Exception("Portfolio not found.");
+            throw new PortfolioNotFoundException("Portfolio not found.");
         }
             
         if (existing.UserId != currentUserId)
