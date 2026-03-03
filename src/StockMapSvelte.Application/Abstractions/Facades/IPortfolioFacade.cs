@@ -6,7 +6,7 @@ namespace StockMapSvelte.Application.Abstractions.Facades;
 public interface IPortfolioFacade
 {
     Task<IReadOnlyList<PortfolioStockDto>> GetAllPortfolioStockViewModelsAsync();
-    Task CreatePortfolioAsync(string portfolioName, IList<string> tickers);
+    Task<PortfolioStockDto> CreatePortfolioAsync(CreatePortfolioCommand cmd);
     Task<IReadOnlyList<PortfolioStockDto>> GetPortfoliosByUserIdAsync();
     Task EditPortfolioAsync(EditPortfolioCommand cmd);
     Task DeletePortfolioAsync(Guid portfolioId);
