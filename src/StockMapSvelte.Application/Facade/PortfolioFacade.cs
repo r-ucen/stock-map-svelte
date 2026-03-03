@@ -35,15 +35,9 @@ public class PortfolioFacade : IPortfolioFacade
         _getAllPortfoliosHandler = getAllPortfoliosHandler;
     }
     
-    public async Task CreatePortfolioAsync(string portfolioName, IList<string> tickers)
+    public async Task<PortfolioStockDto> CreatePortfolioAsync(CreatePortfolioCommand cmd)
     {
-        var cmd = new CreatePortfolioCommand
-        {
-            PortfolioName = portfolioName,
-            TickerSymbols = tickers
-        };
-
-        await _createPortfolioHandler.Handle(cmd);
+        return await _createPortfolioHandler.Handle(cmd);
     }
 
     public async Task<IReadOnlyList<PortfolioStockDto>> GetAllPortfolioStockViewModelsAsync()
