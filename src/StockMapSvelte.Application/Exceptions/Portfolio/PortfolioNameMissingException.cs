@@ -1,9 +1,6 @@
 namespace StockMapSvelte.Application.Exceptions.Portfolio;
 
-public class PortfolioNameMissingException : Exception
+public class PortfolioNameMissingException : AppException
 {
-    public PortfolioNameMissingException()
-        : base("Portfolio name is missing.")
-    {
-    }
+    public PortfolioNameMissingException() : base("Portfolio name is missing.", 400) { }
 }
