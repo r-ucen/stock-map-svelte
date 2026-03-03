@@ -41,7 +41,7 @@ public class PortfolioController : Controller
         try
         {
             await _portfolioFacade.DeletePortfolioAsync(portfolioId);
-            return Ok();
+            return NoContent();
         }
         catch (PortfolioNotFoundException)
         {
