@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StockMapSvelte.Application.Abstractions.Facades;
-using StockMapSvelte.Application.Exceptions.Portfolio;
+using StockMapSvelte.Application.UseCases.PortfolioUseCases.Commands;
 
 namespace StockMapSvelte.Api.Controllers;
 
@@ -38,22 +38,7 @@ public class PortfolioController : Controller
     [Route("{portfolioId}")]
     public async Task<IActionResult> DeletePortfolio(Guid portfolioId)
     {
-        try
-        {
-            await _portfolioFacade.DeletePortfolioAsync(portfolioId);
-            return NoContent();
-        }
-        catch (PortfolioNotFoundException)
-        {
-            return NotFound();
-        }
-        catch (UnauthorizedAccessException)
-        {
-            return Forbid();
-        }
-        catch (PortfolioDeletionFailedException)
-        {
-            return BadRequest();
-        }
+        await _portfolioFacade.DeletePortfolioAsync(portfolioId);
+        return NoContent();
     }
 }
