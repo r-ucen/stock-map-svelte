@@ -37,7 +37,7 @@ public class PortfolioController : Controller
     }
 
     [HttpDelete]
-    [Route("{portfolioId}")]
+    [Route("{portfolioId:guid}")]
     public async Task<IActionResult> DeletePortfolio(Guid portfolioId)
     {
         await _portfolioFacade.DeletePortfolioAsync(portfolioId);
@@ -45,7 +45,7 @@ public class PortfolioController : Controller
     }
 
     [HttpPut]
-    [Route("{portfolioId}")]
+    [Route("{portfolioId:guid}")]
     public async Task<IActionResult> EditPortfolio(Guid portfolioId, EditPortfolioRequest request)
     {
         var cmd = new EditPortfolioCommand
@@ -60,7 +60,7 @@ public class PortfolioController : Controller
     }
     
     [HttpGet]
-    [Route("{portfolioId}")]
+    [Route("{portfolioId:guid}")]
     public async Task<IActionResult> GetPortfolioById(Guid portfolioId)
     {
         var query = new GetPortfolioByIdQuery
