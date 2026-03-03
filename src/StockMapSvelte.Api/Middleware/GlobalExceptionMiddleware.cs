@@ -16,7 +16,14 @@ public class GlobalExceptionMiddleware(RequestDelegate next)
             context.Response.StatusCode = ex.StatusCode;
             await context.Response.WriteAsJsonAsync(new { message = ex.Message });
         }
-        catch (Exception)
+        catch (UnauthorizedAccessException ex)
+        {
+            _logger.LogWarning(ex, "Unauthorized access attempt.");
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = StatusCodes.Status403Forbidden;
+            await context.Response.WriteAsJsonAsync(new { message = ex.Message });
+        }
+        catch (Exception ex)
         {
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = StatusCodes.Status500InternalServerError;
