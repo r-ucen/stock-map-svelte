@@ -26,11 +26,6 @@ public class EditStockHandler
     
     public async Task Handle(EditStockCommand cmd)
     {
-        if (!await _userContext.IsInRoleAsync("Admin") && !await _userContext.IsInRoleAsync("Manager"))
-        {
-            throw new UnauthorizedAccessException($"User {await _userContext.GetCurrentUserIdAsync()} does not have permission to edit stocks.");
-        }
-        
         if (await _stockRepository.StockExistsAsync(cmd.TickerSymbol))
         {
             throw new TickerSymbolAlreadyExists($"Stock with ticker symbol '{cmd.TickerSymbol}' already exists.");

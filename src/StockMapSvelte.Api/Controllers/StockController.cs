@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StockMapSvelte.Application.Abstractions.Facades;
+using StockMapSvelte.Application.UseCases.StockUseCases.Commands;
 using StockMapSvelte.Application.UseCases.StockUseCases.Queries;
 
 namespace StockMapSvelte.Api.Controllers;
@@ -48,5 +49,20 @@ public class StockController : Controller
     {
         var stocks = await _stockFacade.GetAllStocksAsync();
         return Ok(stocks);
+    }
+
+    [HttpPut]
+    [Authorize(Roles = "Admin,Manager")]
+    [Route("{stockId:guid}")]
+    public async Task<IActionResult> EditStock(Guid stockId, string ticker)
+    {
+        var cmd = new EditStockCommand()
+        {
+            Id = stockId,
+            TickerSymbol = ticker
+        };
+        
+        await _stockFacade.EditStockAsync(cmd);
+        return NoContent();
     }
 }

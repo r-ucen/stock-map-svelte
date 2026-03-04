@@ -56,14 +56,8 @@ public class StockFacade : IStockFacade
         await _deleteStockHandler.Handle(cmd);
     }
 
-    public async Task EditStockAsync(Guid stockId, string ticker)
+    public async Task EditStockAsync(EditStockCommand cmd)
     {
-        var cmd = new EditStockCommand
-        {
-            Id = stockId,
-            TickerSymbol = ticker
-        };
-        
         await _editStockHandler.Handle(cmd);
     }
 
