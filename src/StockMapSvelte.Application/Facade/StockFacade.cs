@@ -77,15 +77,8 @@ public class StockFacade : IStockFacade
         return await _getStockHandler.Handle(query);
     }
     
-    public async Task<IReadOnlyList<StockDto>> GetPossibleToAddStocksAsync(string filter, IList<string> stocksInPortfolio, CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<StockDto>> GetPossibleToAddStocksAsync(GetPossibleToAddStocksQuery query)
     {
-        var query = new GetPossibleToAddStocksQuery
-        {
-            Filter = filter,
-            StocksInPortfolio = stocksInPortfolio,
-            CancellationToken = cancellationToken
-        };
-        
         return await _getPossibleToAddStocksHandler.Handle(query);
     }
 }

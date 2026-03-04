@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StockMapSvelte.Application.Abstractions.Facades;
+using StockMapSvelte.Application.UseCases.StockUseCases.Queries;
 
 namespace StockMapSvelte.Api.Controllers;
 
@@ -25,7 +26,20 @@ public class StockController : Controller
         return Ok(stock);
     }
     
-    
+    [HttpGet]
+    [Route("possible-to-add")]
+    public async Task<IActionResult> GetPossibleToAddStocks([FromQuery] string filter, [FromQuery] IList<string> stocksInPortfolio, CancellationToken cancellationToken)
+    {
+        var query = new GetPossibleToAddStocksQuery
+        {
+            Filter = filter,
+            StocksInPortfolio = stocksInPortfolio,
+            CancellationToken = cancellationToken
+        };
+        
+        var stocks = await _stockFacade.GetPossibleToAddStocksAsync(query);
+        return Ok(stocks);
+    }
 
 
 }
