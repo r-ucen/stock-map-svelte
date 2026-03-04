@@ -1,6 +1,6 @@
 namespace StockMapSvelte.Application.Exceptions.Stock;
 
-public class StockDeletionFailedException : Exception
+public class StockDeletionFailedException : AppException
 {
-    public StockDeletionFailedException(string message) : base(message){}
+    public StockDeletionFailedException(string message) : base(message, 500) {}
 }

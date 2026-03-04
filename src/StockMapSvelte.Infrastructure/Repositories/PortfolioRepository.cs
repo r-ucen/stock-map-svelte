@@ -182,6 +182,31 @@ public class PortfolioRepository : IPortfolioRepository
         return await context.Portfolios
             .FirstOrDefaultAsync(p => p.Id == portfolioId);
     }
+    
+    public async Task<PortfolioStockDto?> GetPortfolioByIdForUserAsync(string userId, Guid portfolioId)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync();
+
+        var userSetting = await context.UserSettings
+            .FirstOrDefaultAsync(us => us.UserId == userId);
+
+        var defaultPortfolioId = userSetting?.DefaultPortfolioId;
+
+        var portfolio = await context.Portfolios
+            .Where(p => p.Id == portfolioId && p.UserId == userId)
+            .Include(p => p.Stocks)
+            .Select(p => new PortfolioStockDto
+            {
+                PortfolioId = p.Id,
+                UserId = p.UserId,
+                PortfolioName = p.Name ?? "",
+                IsDefault = p.Id == defaultPortfolioId,
+                TickerSymbols = p.Stocks.Select(s => s.TickerSymbol).ToList()
+            })
+            .FirstOrDefaultAsync();
+
+        return portfolio;
+    }
 
     public async Task<int> GetPortfolioCountByUserIdAsync(string userId)
     {

@@ -1,8 +1,6 @@
 namespace StockMapSvelte.Application.Exceptions.User;
 
-public class DeleteUserFailException : Exception
+public class DeleteUserFailException : AppException
 {
-    public DeleteUserFailException(string message) : base(message)
-    {
-    }
+    public DeleteUserFailException(string message) : base(message, 500) { }
 }
