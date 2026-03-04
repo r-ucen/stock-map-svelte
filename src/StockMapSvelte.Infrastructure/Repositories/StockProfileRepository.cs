@@ -17,32 +17,32 @@ public class StockProfileRepository : IStockProfileRepository
     
     public async Task<IReadOnlyList<StockStockProfileDto>> GetAllStockProfilesAsync()
         {
-            await using var _dbContext = await _contextFactory.CreateDbContextAsync();
+            await using var dbContext = await _contextFactory.CreateDbContextAsync();
             
-            return await _dbContext.Stocks
+            return await dbContext.Stocks
                 .AsNoTracking()
                 .Include(s => s.StockProfile)
                 .OrderBy(s => s.TickerSymbol)
                 .Select(s => new StockStockProfileDto
                 {
                     TickerSymbol = s.TickerSymbol,
-                    Date = s.StockProfile != null ? s.StockProfile.Date : (DateTimeOffset?)null,
-                    FullName = s.StockProfile != null ? s.StockProfile.FullName : null,
-                    Sector = s.StockProfile != null ? s.StockProfile.Sector : null,
-                    Currency = s.StockProfile != null ? s.StockProfile.Currency : null,
-                    RegularMarketChangePercent = s.StockProfile != null ? s.StockProfile.RegularMarketChangePercent : null,
-                    RegularMarketPrice = s.StockProfile != null ? s.StockProfile.RegularMarketPrice : null,
-                    EarningsDate = s.StockProfile != null ? s.StockProfile.EarningsDate : null,
-                    DividendDate = s.StockProfile != null ? s.StockProfile.DividendDate : null,
-                    ExDividendDate = s.StockProfile != null ? s.StockProfile.ExDividendDate : null,
-                    DividendYield = s.StockProfile != null ? s.StockProfile.DividendYield : null,
-                    Beta = s.StockProfile != null ? s.StockProfile.Beta : null,
-                    Pe = s.StockProfile != null ? s.StockProfile.Pe : null,
-                    ForwardPe = s.StockProfile != null ? s.StockProfile.ForwardPe : null,
-                    ShortRatio = s.StockProfile != null ? s.StockProfile.ShortRatio : null,
-                    AnalystRecommendationMean = s.StockProfile != null ? s.StockProfile.AnalystRecommendationMean : null,
-                    AnalystRecommendationKey = s.StockProfile != null ? s.StockProfile.AnalystRecommendationKey : null,
-                    Volume = s.StockProfile != null ? s.StockProfile.Volume : null
+                    Date = s.StockProfile.Date,
+                    FullName = s.StockProfile.FullName,
+                    Sector = s.StockProfile.Sector,
+                    Currency = s.StockProfile.Currency,
+                    RegularMarketChangePercent = s.StockProfile.RegularMarketChangePercent,
+                    RegularMarketPrice = s.StockProfile.RegularMarketPrice,
+                    EarningsDate = s.StockProfile.EarningsDate,
+                    DividendDate = s.StockProfile.DividendDate,
+                    ExDividendDate = s.StockProfile.ExDividendDate,
+                    DividendYield = s.StockProfile.DividendYield,
+                    Beta = s.StockProfile.Beta,
+                    Pe = s.StockProfile.Pe,
+                    ForwardPe = s.StockProfile.ForwardPe,
+                    ShortRatio = s.StockProfile.ShortRatio,
+                    AnalystRecommendationMean = s.StockProfile.AnalystRecommendationMean,
+                    AnalystRecommendationKey = s.StockProfile.AnalystRecommendationKey,
+                    Volume = s.StockProfile.Volume
                 })
                 .ToListAsync();
         }
