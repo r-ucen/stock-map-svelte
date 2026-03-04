@@ -60,9 +60,9 @@ public class PortfolioFacade : IPortfolioFacade
         return await _getPortfoliosByUserIdHandler.Handle(query);
     }
 
-    public async Task EditPortfolioAsync(EditPortfolioCommand cmd)
+    public async Task<PortfolioStockDto> EditPortfolioAsync(EditPortfolioCommand cmd)
     {
-        await _editPortfolioHandler.Handle(cmd);
+        return await _editPortfolioHandler.Handle(cmd);
     }
 
     public async Task DeletePortfolioAsync(Guid portfolioId)
