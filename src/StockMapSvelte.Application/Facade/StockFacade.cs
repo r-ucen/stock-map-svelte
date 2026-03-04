@@ -36,14 +36,9 @@ public class StockFacade : IStockFacade
         return await _getAllStocksHandler.Handle();
     }
 
-    public async Task CreateStockAsync(string ticker)
+    public async Task<StockDto> CreateStockAsync(CreateStockCommand cmd)
     {
-        var cmd = new CreateStockCommand
-        {
-            TickerSymbol = ticker
-        };
-
-        await _createStockHandler.Handle(cmd);
+        return await _createStockHandler.Handle(cmd);
     }
 
     public async Task DeleteStockAsync(DeleteStockCommand cmd)
