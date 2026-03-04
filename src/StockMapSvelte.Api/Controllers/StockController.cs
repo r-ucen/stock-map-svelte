@@ -41,5 +41,12 @@ public class StockController : Controller
         return Ok(stocks);
     }
 
-
+    [HttpGet]
+    [Authorize(Roles = "Admin,Manager")]
+    [Route("all")]
+    public async Task<IActionResult> GetAllStocks()
+    {
+        var stocks = await _stockFacade.GetAllStocksAsync();
+        return Ok(stocks);
+    }
 }
