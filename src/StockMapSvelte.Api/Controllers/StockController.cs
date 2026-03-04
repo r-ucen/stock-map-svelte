@@ -65,4 +65,18 @@ public class StockController : Controller
         await _stockFacade.EditStockAsync(cmd);
         return NoContent();
     }
+
+    [HttpDelete]
+    [Authorize(Roles = "Admin,Manager")]
+    [Route("{stockId:guid}")]
+    public async Task<IActionResult> DeleteStock(Guid stockId)
+    {
+        var cmd = new DeleteStockCommand
+        {
+            StockId = stockId
+        };
+        
+        await _stockFacade.DeleteStockAsync(cmd);
+        return NoContent();
+    }
 }
