@@ -18,11 +18,6 @@ public class GetPossibleToAddStocksHandler
     
     public async Task<IReadOnlyList<StockDto>> Handle(GetPossibleToAddStocksQuery query)
     {
-        if (!await _userContext.IsUserAuthenticatedAsync())
-        {
-            throw new UnauthorizedAccessException($"User {await _userContext.GetCurrentUserIdAsync()} is not authenticated to get possible to add stocks.");
-        }
-        
-        return await _stockRepository.GetPossibleToAddStocksAsync(query.Filter, query.StocksInPortfolio, query.CancellationToken);
+        return await _stockRepository.GetPossibleToAddStocksAsync(query.Filter.ToUpper(), query.StocksInPortfolio, query.CancellationToken);
     }
 }

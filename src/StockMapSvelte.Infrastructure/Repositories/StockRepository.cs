@@ -94,14 +94,14 @@ public class StockRepository : IStockRepository
     
     public async Task<IReadOnlyList<StockDto>> GetPossibleToAddStocksAsync(string filter, IList<string> stocksInPortfolio, CancellationToken cancellationToken)
     {
-        await using var _dbContext = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
         
         var upperTickersInPortfolio = stocksInPortfolio
             .Where(t => !string.IsNullOrWhiteSpace(t))
             .Select(t => t.Trim().ToUpperInvariant())
             .ToList();
 
-        return await _dbContext.Stocks
+        return await context.Stocks
             .AsNoTracking()
             .Where(s => !upperTickersInPortfolio.Contains(s.TickerSymbol!))
             .Where(s => s.TickerSymbol!.Contains(filter))
