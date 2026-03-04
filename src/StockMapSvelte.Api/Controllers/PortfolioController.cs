@@ -8,7 +8,7 @@ using StockMapSvelte.Application.UseCases.PortfolioUseCases.Queries;
 namespace StockMapSvelte.Api.Controllers;
 
 [ApiController]
-[Authorize]
+[Authorize] 
 [Route("portfolio")]
 public class PortfolioController : Controller
 {
