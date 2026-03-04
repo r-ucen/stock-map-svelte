@@ -12,6 +12,7 @@ public interface IPortfolioRepository
     Task<int> EditPortfolioAsync(Guid portfolioId, string portfolioName, IList<string> tickerSymbols);
     Task<int> DeletePortfolioAsync(Guid portfolioId);
     Task<Portfolio?> GetPortfolioByIdAsync(Guid portfolioId);
+    Task<PortfolioStockDto?> GetPortfolioByIdForUserAsync(string userId, Guid portfolioId);
     Task<IReadOnlyList<Portfolio>> GetAllPortfoliosAsync();
     Task<bool> PortfolioNameExistsAsync(string userId, string portfolioName);
     Task<int> GetPortfolioCountByUserIdAsync(string userId);

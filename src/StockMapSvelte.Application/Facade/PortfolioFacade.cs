@@ -16,6 +16,7 @@ public class PortfolioFacade : IPortfolioFacade
     private readonly EditPortfolioHandler _editPortfolioHandler;
     private readonly GetPortfoliosByUserIdHandler _getPortfoliosByUserIdHandler;
     private readonly GetAllPortfoliosHandler _getAllPortfoliosHandler;
+    private readonly GetPortfolioByIdHandler _getPortfolioByIdHandler;
     
 
     public PortfolioFacade(
@@ -24,7 +25,8 @@ public class PortfolioFacade : IPortfolioFacade
         DeletePortfolioHandler deletePortfolioHandler,
         EditPortfolioHandler editPortfolioHandler,
         GetPortfoliosByUserIdHandler getPortfoliosByUserIdHandler,
-        GetAllPortfoliosHandler getAllPortfoliosHandler
+        GetAllPortfoliosHandler getAllPortfoliosHandler,
+        GetPortfolioByIdHandler getPortfolioByIdHandler
         )
     {
         _userContext = userContext;
@@ -33,17 +35,12 @@ public class PortfolioFacade : IPortfolioFacade
         _editPortfolioHandler = editPortfolioHandler;
         _getPortfoliosByUserIdHandler = getPortfoliosByUserIdHandler;
         _getAllPortfoliosHandler = getAllPortfoliosHandler;
+        _getPortfolioByIdHandler = getPortfolioByIdHandler;
     }
     
-    public async Task CreatePortfolioAsync(string portfolioName, IList<string> tickers)
+    public async Task<PortfolioStockDto> CreatePortfolioAsync(CreatePortfolioCommand cmd)
     {
-        var cmd = new CreatePortfolioCommand
-        {
-            PortfolioName = portfolioName,
-            TickerSymbols = tickers
-        };
-
-        await _createPortfolioHandler.Handle(cmd);
+        return await _createPortfolioHandler.Handle(cmd);
     }
 
     public async Task<IReadOnlyList<PortfolioStockDto>> GetAllPortfolioStockViewModelsAsync()
@@ -63,15 +60,8 @@ public class PortfolioFacade : IPortfolioFacade
         return await _getPortfoliosByUserIdHandler.Handle(query);
     }
 
-    public async Task EditPortfolioAsync(PortfolioStockDto portfolio)
+    public async Task EditPortfolioAsync(EditPortfolioCommand cmd)
     {
-        var cmd = new EditPortfolioCommand
-        {
-            PortfolioId = portfolio.PortfolioId,
-            PortfolioName = portfolio.PortfolioName,
-            TickerSymbols = portfolio.TickerSymbols
-        };
-
         await _editPortfolioHandler.Handle(cmd);
     }
 
@@ -83,5 +73,10 @@ public class PortfolioFacade : IPortfolioFacade
         };
 
         await _deletePortfolioHandler.Handle(cmd);
+    }
+
+    public async Task<PortfolioStockDto> GetPortfolioStockByIdAsync(GetPortfolioByIdQuery query)
+    {
+        return await _getPortfolioByIdHandler.Handle(query);
     }
 }

@@ -1,5 +1,6 @@
 using Scalar.AspNetCore;
 using StockMapSvelte.Api;
+using StockMapSvelte.Api.Middleware;
 using StockMapSvelte.Application;
 using StockMapSvelte.Infrastructure;
 using StockMapSvelte.Infrastructure.Identity;
@@ -31,7 +32,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapIdentityApi<ApplicationUser>(); 
-
+app.UseMiddleware<GlobalExceptionMiddleware>();
 app.MapControllers();
 
 app.Run();

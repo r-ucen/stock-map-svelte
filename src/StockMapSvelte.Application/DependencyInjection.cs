@@ -53,6 +53,7 @@ public static class DependencyInjection
         services.AddScoped<GetToastAutoHideValueHandler>();
         services.AddScoped<GetToastAutoHideDelayMsHandler>();
         services.AddScoped<SetToastAutoHideDelayMsHandler>();
+        services.AddScoped<GetPortfolioByIdHandler>();
         
         return services;
     }

@@ -1,9 +1,6 @@
 namespace StockMapSvelte.Application.Exceptions.Portfolio;
 
-public class PortfolioDeletionFailedException : Exception
+public class PortfolioDeletionFailedException : AppException
 {
-    public PortfolioDeletionFailedException(string message)
-        : base(message)
-    {
-    }
+    public PortfolioDeletionFailedException(string message) : base(message, 500) { }
 }

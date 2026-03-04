@@ -1,5 +1,6 @@
 using StockMapSvelte.Application.Abstractions;
 using StockMapSvelte.Application.Abstractions.Repositories;
+using StockMapSvelte.Application.DTOs;
 using StockMapSvelte.Application.Exceptions.Portfolio;
 using StockMapSvelte.Application.UseCases.PortfolioUseCases.Commands;
 
@@ -18,7 +19,7 @@ public class CreatePortfolioHandler
         _userSettingRepository = userSettingRepository;
     }
 
-    public async Task Handle(CreatePortfolioCommand cmd)
+    public async Task<PortfolioStockDto> Handle(CreatePortfolioCommand cmd)
     {
         if (string.IsNullOrWhiteSpace(cmd.PortfolioName))
         {
@@ -58,5 +59,13 @@ public class CreatePortfolioHandler
         {
             throw new PortfolioCreationFailedException("Failed to create portfolio.");
         }
+
+        return new PortfolioStockDto()
+        {
+            PortfolioId = entity.Id,
+            UserId = entity.UserId,
+            PortfolioName = entity.Name ?? "",
+            TickerSymbols = cmd.TickerSymbols ?? []
+        };
     }
 }
