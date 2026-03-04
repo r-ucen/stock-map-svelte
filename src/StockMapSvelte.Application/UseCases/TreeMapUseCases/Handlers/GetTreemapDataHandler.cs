@@ -33,7 +33,7 @@ public class GetTreemapDataHandler
             
         if (portfolio.UserId != currentUserId)
         {
-            throw new UnauthorizedAccessException($"User {currentUserId} does not have permission to view portfolio with id {portfolioId}.");
+            throw new UnauthorizedAccessException($"You do not have permission to view portfolio with id {portfolioId}.");
         }
         
         return await _treeMapRepository.GetTreemapDataViewModelByIdAsync(portfolioId) ?? new TreemapDataDto();
