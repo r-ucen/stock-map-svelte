@@ -79,4 +79,21 @@ public class StockController : Controller
         await _stockFacade.DeleteStockAsync(cmd);
         return NoContent();
     }
+
+    [HttpPost]
+    [Authorize(Roles = "Admin,Manager")]
+    public async Task<IActionResult> CreateStock(string ticker)
+    {
+        var cmd = new CreateStockCommand
+        {
+            TickerSymbol = ticker
+        };
+        
+        var createdStock = await _stockFacade.CreateStockAsync(cmd);
+        
+        return CreatedAtAction(
+            nameof(GetStock),
+            new { stockId = createdStock.Id },
+            createdStock);
+    }
 }
