@@ -55,8 +55,8 @@ public class PortfolioController : Controller
             TickerSymbols = request.TickerSymbols
         };
         
-        await _portfolioFacade.EditPortfolioAsync(cmd);
-        return NoContent();
+        var editedPortfolio = await _portfolioFacade.EditPortfolioAsync(cmd);
+        return Ok(editedPortfolio);
     }
     
     [HttpGet]

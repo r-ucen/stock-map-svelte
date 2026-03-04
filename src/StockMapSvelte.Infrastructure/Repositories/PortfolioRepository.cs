@@ -127,7 +127,7 @@ public class PortfolioRepository : IPortfolioRepository
             .AnyAsync(p => p.UserId == userId &&  p.Id != portfolioId && p.Name == portfolioName);
     }
 
-    public async Task<int> EditPortfolioAsync(Guid portfolioId, string portfolioName, IList<string> tickerSymbols)
+    public async Task<Portfolio> EditPortfolioAsync(Guid portfolioId, string portfolioName, IList<string> tickerSymbols)
     {
         await using var context = await _contextFactory.CreateDbContextAsync();
         
@@ -158,7 +158,9 @@ public class PortfolioRepository : IPortfolioRepository
         portfolioToEdit.Name = portfolioName;
         
         context.Portfolios.Update(portfolioToEdit);
-        return await context.SaveChangesAsync();
+        var result = await context.SaveChangesAsync();
+        
+        return result <= 0 ? throw new Exception("Failed to update portfolio.") : portfolioToEdit;
     }
     
     public async Task<int> DeletePortfolioAsync(Guid portfolioId)
