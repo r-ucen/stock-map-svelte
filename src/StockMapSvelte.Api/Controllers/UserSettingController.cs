@@ -66,4 +66,17 @@ public class UserSettingController : Controller
         await  _userSettingFacade.SetToastAutoHideDelayMsAsync(cmd);
         return NoContent();
     }
+
+    [HttpPost]
+    [Route("{value:bool}/set-toast-auto-hide-value")]
+    public async Task<IActionResult> SetToastAutoHideValue(bool value)
+    {
+        var cmd = new SetToastAutoHideValueCommand
+        {
+            Value = value
+        };
+        
+        await _userSettingFacade.SetToastAutoHideValueAsync(cmd);
+        return NoContent();
+    }
 }

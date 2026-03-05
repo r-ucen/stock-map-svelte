@@ -41,14 +41,9 @@ public class UserSettingFacade : IUserSettingFacade
         return await _getDefaultPortfolioIdHandler.Handle();
     }
     
-    public async Task<bool> SetToastAutoHideValueAsync(bool value)
+    public async Task SetToastAutoHideValueAsync(SetToastAutoHideValueCommand cmd)
     {
-        var cmd = new SetToastAutoHideValueCommand
-        {
-            Value = value
-        };
-        
-        return await _setToastAutoHideValueHandler.Handle(cmd);
+        await _setToastAutoHideValueHandler.Handle(cmd);
     }
     
     public async Task<bool> GetToastAutoHideValueAsync()
