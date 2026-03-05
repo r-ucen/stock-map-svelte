@@ -18,10 +18,6 @@ public class GetUserHandler
     
     public async Task<UserDto> HandleAsync(GetUserQuery query)
     {
-        if (!await _userContext.IsInRoleAsync("Admin"))
-        {
-            throw new UnauthorizedAccessException($"User {await _userContext.GetCurrentUserIdAsync()} does not have permission to get this user.");
-        }
         return await _userRepository.GetByIdAsync(query.UserId);
     }
 }

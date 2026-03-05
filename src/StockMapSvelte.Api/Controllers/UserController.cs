@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StockMapSvelte.Application.Abstractions.Facades;
+using StockMapSvelte.Application.UseCases.UserUseCases.Queries;
 
 namespace StockMapSvelte.Api.Controllers;
 
@@ -24,5 +25,20 @@ public class UserController : Controller
         var users = await _userFacade.GetAllUsersAsync();
         return Ok(users);
     }
+
+    [HttpGet]
+    [Authorize(Roles = "Admin,Manager")]
+    [Route("{userId}")]
+    public async Task<IActionResult> GetUser(string userId)
+    {
+        var query = new GetUserQuery
+        {
+            UserId = userId
+        };
+        
+        var user = await _userFacade.GetUserAsync(query);
+        return Ok(user);
+    }
+    
     
 }
