@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StockMapSvelte.Application.Abstractions.Facades;
+using StockMapSvelte.Application.UseCases.UserUseCases.Commands;
 using StockMapSvelte.Application.UseCases.UserUseCases.Queries;
 
 namespace StockMapSvelte.Api.Controllers;
@@ -39,6 +40,15 @@ public class UserController : Controller
         var user = await _userFacade.GetUserAsync(query);
         return Ok(user);
     }
-    
-    
+
+    [HttpDelete]
+    [Authorize(Roles = "Admin")]
+    [Route("{userId}")]
+    public async Task<IActionResult> DeleteUser(string userId)
+    {
+        var cmd = new DeleteUserCommand { UserId = userId };
+        
+        await _userFacade.DeleteUserAsync(cmd);
+        return NoContent();
+    }
 }
