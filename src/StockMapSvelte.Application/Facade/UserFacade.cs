@@ -22,10 +22,8 @@ public class UserFacade : IUserFacade
         _getUserHandler = getUserHandler;
     }
     
-    public async Task DeleteUserAsync(string userId)
+    public async Task DeleteUserAsync(DeleteUserCommand cmd)
     {
-        var cmd = new DeleteUserCommand { UserId = userId };
-        
         await _deleteUserHandler.Handle(cmd);
     }
     
