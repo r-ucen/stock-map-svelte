@@ -20,5 +20,4 @@ public class GetToastAutoHideValueHandler
         
         return await _userSettingRepository.GetToastAutoHideValueAsync(currentUserId) ?? true;
     }
-
 }
