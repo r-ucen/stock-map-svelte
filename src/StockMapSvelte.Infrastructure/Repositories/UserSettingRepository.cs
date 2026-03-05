@@ -39,7 +39,7 @@ public class UserSettingRepository : IUserSettingRepository
         return await context.SaveChangesAsync();
     }
     
-    public async Task<Guid?> GetDefaultPortfolioAsync(string userId)
+    public async Task<Guid?> GetDefaultPortfolioIdAsync(string userId)
     {
         await using var context = await _contextFactory.CreateDbContextAsync();
 
