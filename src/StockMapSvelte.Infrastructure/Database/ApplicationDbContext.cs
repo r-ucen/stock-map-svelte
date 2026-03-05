@@ -72,34 +72,4 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Role, str
             modelBuilder.Entity<IdentityUserRole<string>>().HasData(managerUserRoles);
             modelBuilder.Entity<IdentityUserRole<string>>().HasData(demoUserRoles);
         }
-
-    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
-        var newUsers = ChangeTracker.Entries<ApplicationUser>()
-            .Where(e => e.State == EntityState.Added)
-            .Select(e => e.Entity)
-            .ToList();
-        
-        foreach (var user in newUsers)
-        {
-            var portfolio = new Portfolio
-            {
-                Id = Guid.NewGuid(),
-                UserId = user.Id,
-                Name = "Default portfolio"
-            };
-            
-            Portfolios.Add(portfolio);
-        
-            UserSettings.Add(new UserSetting
-            {
-                UserId = user.Id,
-                DefaultPortfolioId = portfolio.Id,
-                ToastAutoHide = true,
-                ToastAutoHideDelayMs = 3000
-            });
-        }
-        
-        return await base.SaveChangesAsync(cancellationToken);
-    }
 }
