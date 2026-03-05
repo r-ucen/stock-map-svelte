@@ -6,7 +6,7 @@ namespace StockMapSvelte.Api.Controllers;
 
 [ApiController]
 [Authorize]
-[Route("[controller]")]
+[Route("treemap-data")]
 public class TreemapDataController : Controller
 {
     private readonly ITreeMapFacade _treeMapFacade;
