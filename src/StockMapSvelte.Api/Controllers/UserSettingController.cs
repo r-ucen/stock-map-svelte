@@ -53,4 +53,17 @@ public class UserSettingController : Controller
         await _userSettingFacade.SetPortfolioAsDefaultAsync(cmd);
         return NoContent();
     }
+
+    [HttpPost]
+    [Route("{delay:int}/set-toast-auto-hide-delay-ms")]
+    public async Task<IActionResult> SetToastAutoHideDelayMs(int delay)
+    {
+        var cmd = new SetToastAutoHideDelayMsCommand
+        {
+            DelayMs = delay
+        };
+        
+        await  _userSettingFacade.SetToastAutoHideDelayMsAsync(cmd);
+        return NoContent();
+    }
 }

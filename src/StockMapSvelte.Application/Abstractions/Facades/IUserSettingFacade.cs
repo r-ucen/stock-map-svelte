@@ -9,5 +9,5 @@ public interface IUserSettingFacade
     Task<bool> GetToastAutoHideValueAsync();
     Task<bool> SetToastAutoHideValueAsync(bool value);
     Task<int> GetToastAutoHideDelayMs();
-    Task<bool> SetToastAutoHideDelayMsAsync(int value);
+    Task SetToastAutoHideDelayMsAsync(SetToastAutoHideDelayMsCommand cmd);
 }

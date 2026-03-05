@@ -61,13 +61,8 @@ public class UserSettingFacade : IUserSettingFacade
         return await _getToastAutoHideDelayMs.Handle();
     }
 
-    public async Task<bool> SetToastAutoHideDelayMsAsync(int value)
+    public async Task SetToastAutoHideDelayMsAsync(SetToastAutoHideDelayMsCommand cmd)
     {
-        var cmd = new SetToastAutoHideDelayMsCommand
-        {
-            DelayMs = value
-        };
-        
-        return await _setToastAutoHideDelayMs.Handle(cmd);
+        await _setToastAutoHideDelayMs.Handle(cmd);
     }
 }
