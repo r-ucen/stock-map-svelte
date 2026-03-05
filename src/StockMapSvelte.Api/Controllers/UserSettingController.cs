@@ -23,5 +23,20 @@ public class UserSettingController : Controller
         var defaultPortfolioId = await _userSettingFacade.GetDefaultPortfolioIdAsync();
         return Ok(defaultPortfolioId);
     }
-    
+
+    [HttpGet]
+    [Route("toast-auto-hide-delay-ms")]
+    public async Task<IActionResult> GetToastAutoHideDelayMs()
+    {
+        var delayMs = await _userSettingFacade.GetToastAutoHideDelayMs();
+        return Ok(delayMs);
+    }
+
+    [HttpGet]
+    [Route("toast-auto-hide-value")]
+    public async Task<IActionResult> GetToastAutoHideValue()
+    {
+        var value = await _userSettingFacade.GetToastAutoHideValueAsync();
+        return Ok(value);
+    }
 }
