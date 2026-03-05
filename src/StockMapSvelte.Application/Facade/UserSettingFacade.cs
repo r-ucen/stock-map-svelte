@@ -7,27 +7,24 @@ namespace StockMapSvelte.Application.Facade;
 
 public class UserSettingFacade : IUserSettingFacade
 {
-    private readonly IUserContext _userContext;
     
     private readonly SetPortfolioAsDefaultHandler _setPortfolioAsDefaultHandler;
-    private readonly GetDefaultPortfolioHandler _getDefaultPortfolioHandler;
+    private readonly GetDefaultPortfolioIdHandler _getDefaultPortfolioIdHandler;
     private readonly GetToastAutoHideValueHandler _getToastAutoHideValueHandler;
     private readonly SetToastAutoHideValueHandler _setToastAutoHideValueHandler;
     private readonly GetToastAutoHideDelayMsHandler _getToastAutoHideDelayMs;
     private readonly SetToastAutoHideDelayMsHandler _setToastAutoHideDelayMs;
     
     public UserSettingFacade(
-        IUserContext userContext,
         SetPortfolioAsDefaultHandler setPortfolioAsDefaultHandler,
-        GetDefaultPortfolioHandler getDefaultPortfolioHandler,
+        GetDefaultPortfolioIdHandler getDefaultPortfolioIdHandler,
         GetToastAutoHideValueHandler getToastAutoHideValueHandler,
         SetToastAutoHideValueHandler setToastAutoHideValueHandler,
         GetToastAutoHideDelayMsHandler getToastAutoHideDelayMsHandler,
         SetToastAutoHideDelayMsHandler setToastAutoHideDelayMsHandler)
     {
-        _userContext = userContext;
         _setPortfolioAsDefaultHandler = setPortfolioAsDefaultHandler;
-        _getDefaultPortfolioHandler = getDefaultPortfolioHandler;
+        _getDefaultPortfolioIdHandler = getDefaultPortfolioIdHandler;
         _getToastAutoHideValueHandler = getToastAutoHideValueHandler;
         _setToastAutoHideValueHandler = setToastAutoHideValueHandler;
         _getToastAutoHideDelayMs = getToastAutoHideDelayMsHandler;
@@ -36,7 +33,7 @@ public class UserSettingFacade : IUserSettingFacade
     
     public async Task<bool> SetPortfolioAsDefaultAsync(Guid portfolioId)
     {
-        var cmd = new UseCases.UserSettingUseCases.Commands.SetPortfolioAsDefaultCommand
+        var cmd = new SetPortfolioAsDefaultCommand
         {
             PortfolioId = portfolioId
         };
@@ -44,9 +41,9 @@ public class UserSettingFacade : IUserSettingFacade
         return await _setPortfolioAsDefaultHandler.Handle(cmd);
     }
     
-    public async Task<Guid> GetDefaultPortfolioAsync()
+    public async Task<Guid> GetDefaultPortfolioIdAsync()
     {
-        return await _getDefaultPortfolioHandler.Handle();
+        return await _getDefaultPortfolioIdHandler.Handle();
     }
     
     public async Task<bool> SetToastAutoHideValueAsync(bool value)

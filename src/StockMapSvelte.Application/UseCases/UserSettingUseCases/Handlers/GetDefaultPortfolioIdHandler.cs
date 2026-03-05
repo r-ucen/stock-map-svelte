@@ -3,23 +3,21 @@ using StockMapSvelte.Application.Abstractions.Repositories;
 
 namespace StockMapSvelte.Application.UseCases.UserSettingUseCases.Handlers;
 
-public class GetDefaultPortfolioHandler
+public class GetDefaultPortfolioIdHandler
 {
     private readonly IUserSettingRepository _userSettingRepository;
-    private readonly IPortfolioRepository _portfolioRepository;
     private readonly IUserContext _userContext;
     
-    public GetDefaultPortfolioHandler(IUserSettingRepository userSettingRepository, IUserContext userContext, IPortfolioRepository portfolioRepository)
+    public GetDefaultPortfolioIdHandler(IUserSettingRepository userSettingRepository, IUserContext userContext)
     {
         _userSettingRepository = userSettingRepository;
         _userContext = userContext;
-        _portfolioRepository = portfolioRepository;
     }
     
     public async Task<Guid> Handle()
     {
         var currentUserId = await _userContext.GetCurrentUserIdAsync();
         
-        return await _userSettingRepository.GetDefaultPortfolioAsync(currentUserId) ?? Guid.Empty;
+        return await _userSettingRepository.GetDefaultPortfolioIdAsync(currentUserId) ?? Guid.Empty;
     }
 }
