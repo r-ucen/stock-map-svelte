@@ -31,14 +31,9 @@ public class UserSettingFacade : IUserSettingFacade
         _setToastAutoHideDelayMs = setToastAutoHideDelayMsHandler;
     }
     
-    public async Task<bool> SetPortfolioAsDefaultAsync(Guid portfolioId)
+    public async Task SetPortfolioAsDefaultAsync(SetPortfolioAsDefaultCommand cmd)
     {
-        var cmd = new SetPortfolioAsDefaultCommand
-        {
-            PortfolioId = portfolioId
-        };
-        
-        return await _setPortfolioAsDefaultHandler.Handle(cmd);
+        await _setPortfolioAsDefaultHandler.Handle(cmd);
     }
     
     public async Task<Guid> GetDefaultPortfolioIdAsync()

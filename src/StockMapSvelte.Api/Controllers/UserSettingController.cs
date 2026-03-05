@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StockMapSvelte.Application.Abstractions.Facades;
+using StockMapSvelte.Application.UseCases.UserSettingUseCases.Commands;
 
 namespace StockMapSvelte.Api.Controllers;
 
@@ -38,5 +39,18 @@ public class UserSettingController : Controller
     {
         var value = await _userSettingFacade.GetToastAutoHideValueAsync();
         return Ok(value);
+    }
+
+    [HttpPost]
+    [Route("{portfolioId:guid}/set-default-portfolio")]
+    public async Task<IActionResult> SetDefaultPortfolio(Guid portfolioId)
+    {
+        var cmd = new SetPortfolioAsDefaultCommand
+        {
+            PortfolioId = portfolioId
+        };
+        
+        await _userSettingFacade.SetPortfolioAsDefaultAsync(cmd);
+        return NoContent();
     }
 }
