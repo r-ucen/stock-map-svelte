@@ -54,6 +54,14 @@ public static class DependencyInjection
         services.AddHostedService<StockDataUpdateTimedService>();
         services.AddSingleton<YahooQuotes>(new YahooQuotesBuilder().Build());
         
+        // Authorization policies
+        services.AddAuthorizationBuilder()
+            // every authenticated user is a customer
+            .AddPolicy("IsCustomer", policy =>
+            {
+                policy.RequireAuthenticatedUser();
+            });
+        
         return services;
     }
 }
