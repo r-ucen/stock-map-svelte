@@ -1,8 +1,10 @@
+using StockMapSvelte.Application.UseCases.UserSettingUseCases.Commands;
+
 namespace StockMapSvelte.Application.Abstractions.Facades;
 
 public interface IUserSettingFacade
 {
-    Task<bool> SetPortfolioAsDefaultAsync(Guid portfolioId);
+    Task SetPortfolioAsDefaultAsync(SetPortfolioAsDefaultCommand cmd);
     Task<Guid> GetDefaultPortfolioIdAsync();
     Task<bool> GetToastAutoHideValueAsync();
     Task<bool> SetToastAutoHideValueAsync(bool value);
