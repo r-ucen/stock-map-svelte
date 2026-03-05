@@ -34,13 +34,8 @@ public class UserFacade : IUserFacade
         return await _getAllUsersHandler.HandleAsync();
     }
     
-    public async Task<UserDto> GetUserAsync(string id)
+    public async Task<UserDto> GetUserAsync(GetUserQuery query)
     {
-        var query = new GetUserQuery
-        {
-            UserId = id
-        };
-        
         return await _getUserHandler.HandleAsync(query);
     }
 }
