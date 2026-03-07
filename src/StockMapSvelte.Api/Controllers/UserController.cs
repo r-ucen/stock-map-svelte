@@ -18,6 +18,15 @@ public class UserController : Controller
         _userFacade = userFacade;
     }
     
+    [HttpPost]
+    [Authorize]
+    [Route("logout")]
+    public async Task<IActionResult> Logout()
+    {
+        await _userFacade.LogOutAsync();
+        return NoContent();
+    }
+    
     [HttpGet]
     [Authorize(Roles = "Admin,Manager")]
     [Route("all")]

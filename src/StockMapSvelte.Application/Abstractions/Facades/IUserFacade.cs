@@ -9,4 +9,5 @@ public interface IUserFacade
     Task DeleteUserAsync(DeleteUserCommand cmd);
     Task<List<UserDto>> GetAllUsersAsync();
     Task<UserDto> GetUserAsync(GetUserQuery query);
+    Task LogOutAsync();
 }
