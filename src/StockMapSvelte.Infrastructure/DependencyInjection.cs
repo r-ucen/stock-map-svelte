@@ -27,8 +27,6 @@ public static class DependencyInjection
         services.AddScoped(p => 
             p.GetRequiredService<IDbContextFactory<ApplicationDbContext>>().CreateDbContext());
         
-        services.AddAuthorizationBuilder();
-        
         services.AddIdentityApiEndpoints<ApplicationUser>(options => {
                 options.SignIn.RequireConfirmedAccount = true;
             })
