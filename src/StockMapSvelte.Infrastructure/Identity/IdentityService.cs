@@ -7,13 +7,13 @@ public class IdentityService : IIdentityService
 {
     private readonly SignInManager<ApplicationUser> _signInManager;
 
-    IdentityService(SignInManager<ApplicationUser> signInManager)
+    public IdentityService(SignInManager<ApplicationUser> signInManager)
     {
         _signInManager = signInManager;
     }
     
-    public Task LogOutAsync()
-    {
-        return _signInManager.SignOutAsync();
+    public async Task LogOutAsync()
+    { 
+        await _signInManager.SignOutAsync();
     }
 }
