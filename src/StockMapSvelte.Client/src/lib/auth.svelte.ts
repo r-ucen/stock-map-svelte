@@ -1,5 +1,6 @@
 import { PUBLIC_API_BASE_URL } from '$env/static/public';
 import { goto } from '$app/navigation';
+import { resolve } from '$app/paths';
 
 export interface User {
 	email: string;
@@ -53,7 +54,8 @@ class AuthManager {
 
 		if (res.ok) {
 			await this.checkAuth();
-			await goto("account");
+			const resolvedAccount = resolve("/account");
+			await goto(resolvedAccount);
 			return { success: true };
 		}
 		return { success: false, status: res.status };
@@ -62,7 +64,8 @@ class AuthManager {
 	async logout() {
 		await this.apiFetch('/user/logout', { method: 'POST' });
 		this.#user = null;
-		await goto("/login");
+		const resolvedLogin = resolve("/login");
+		await goto(resolvedLogin);
 	}
 }
 
