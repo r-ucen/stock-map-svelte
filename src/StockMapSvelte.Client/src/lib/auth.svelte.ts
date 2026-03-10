@@ -94,7 +94,7 @@ class AuthManager {
 	}
 	
 	async logout() {
-		await this.apiFetch('/user/logout', { method: 'POST' });
+		await this.apiFetch('/logout', { method: 'POST' });
 		this.#user = null;
 		const resolvedLogin = resolve("/login");
 		await goto(resolvedLogin);
