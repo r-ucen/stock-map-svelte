@@ -8,7 +8,7 @@ namespace StockMapSvelte.Api.Controllers;
 
 [ApiController]
 [Authorize]
-[Route("user")]
+[Route("users")]
 public class UserController : Controller
 {
     private readonly IUserFacade _userFacade;
@@ -18,18 +18,8 @@ public class UserController : Controller
         _userFacade = userFacade;
     }
     
-    [HttpPost]
-    [Authorize]
-    [Route("logout")]
-    public async Task<IActionResult> Logout()
-    {
-        await _userFacade.LogOutAsync();
-        return NoContent();
-    }
-    
     [HttpGet]
     [Authorize(Roles = "Admin,Manager")]
-    [Route("all")]
     public async Task<IActionResult> GetAllUsers()
     {
         var users = await _userFacade.GetAllUsersAsync();

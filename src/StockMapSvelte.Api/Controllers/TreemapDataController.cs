@@ -13,7 +13,7 @@ public class TreemapDataController : Controller
     
     public TreemapDataController(ITreeMapFacade treeMapFacade)
     {
-        this._treeMapFacade = treeMapFacade;
+        _treeMapFacade = treeMapFacade;
     }
 
     [HttpGet("{portfolioId:guid}")]

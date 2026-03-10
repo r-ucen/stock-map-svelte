@@ -6,7 +6,7 @@ namespace StockMapSvelte.Api.Controllers;
 
 [ApiController]
 [Authorize]
-[Route("stock-profile")]
+[Route("stock-profiles")]
 public class StockProfilesController : Controller
 {
     private readonly IStockProfileFacade _stockProfileFacade;
@@ -18,7 +18,6 @@ public class StockProfilesController : Controller
 
     [HttpGet]
     [Authorize(Roles = "Admin,Manager")]
-    [Route("all")]
     public async Task<IActionResult> GetAllStockProfiles()
     {
         var stockProfiles = await _stockProfileFacade.GetAllStockProfilesAsync();

@@ -7,7 +7,7 @@ namespace StockMapSvelte.Api.Controllers;
 
 [ApiController]
 [Authorize]
-[Route("user-setting")]
+[Route("user-settings")]
 public class UserSettingController : Controller
 {
     private readonly IUserSettingFacade _userSettingFacade;
@@ -17,66 +17,45 @@ public class UserSettingController : Controller
         _userSettingFacade = userSettingFacade;
     }
 
-    [HttpGet]
-    [Route("default-portfolio-id")]
+    [HttpGet("default-portfolio")]
     public async Task<IActionResult> GetDefaultPortfolioId()
     {
         var defaultPortfolioId = await _userSettingFacade.GetDefaultPortfolioIdAsync();
         return Ok(defaultPortfolioId);
     }
 
-    [HttpGet]
-    [Route("toast-auto-hide-delay-ms")]
+    [HttpPut("default-portfolio")]
+    public async Task<IActionResult> SetDefaultPortfolio([FromBody] SetPortfolioAsDefaultCommand command)
+    {
+        await _userSettingFacade.SetPortfolioAsDefaultAsync(command);
+        return NoContent();
+    }
+
+    [HttpGet("toast-delay")]
     public async Task<IActionResult> GetToastAutoHideDelayMs()
     {
         var delayMs = await _userSettingFacade.GetToastAutoHideDelayMs();
         return Ok(delayMs);
     }
 
-    [HttpGet]
-    [Route("toast-auto-hide-value")]
+    [HttpPut("toast-delay")]
+    public async Task<IActionResult> SetToastAutoHideDelayMs([FromBody] SetToastAutoHideDelayMsCommand command)
+    {
+        await _userSettingFacade.SetToastAutoHideDelayMsAsync(command);
+        return NoContent();
+    }
+
+    [HttpGet("toast-auto-hide")]
     public async Task<IActionResult> GetToastAutoHideValue()
     {
         var value = await _userSettingFacade.GetToastAutoHideValueAsync();
         return Ok(value);
     }
 
-    [HttpPost]
-    [Route("{portfolioId:guid}/set-default-portfolio")]
-    public async Task<IActionResult> SetDefaultPortfolio(Guid portfolioId)
+    [HttpPut("toast-auto-hide")]
+    public async Task<IActionResult> SetToastAutoHideValue([FromBody] SetToastAutoHideValueCommand command)
     {
-        var cmd = new SetPortfolioAsDefaultCommand
-        {
-            PortfolioId = portfolioId
-        };
-        
-        await _userSettingFacade.SetPortfolioAsDefaultAsync(cmd);
-        return NoContent();
-    }
-
-    [HttpPost]
-    [Route("{delay:int}/set-toast-auto-hide-delay-ms")]
-    public async Task<IActionResult> SetToastAutoHideDelayMs(int delay)
-    {
-        var cmd = new SetToastAutoHideDelayMsCommand
-        {
-            DelayMs = delay
-        };
-        
-        await  _userSettingFacade.SetToastAutoHideDelayMsAsync(cmd);
-        return NoContent();
-    }
-
-    [HttpPost]
-    [Route("{value:bool}/set-toast-auto-hide-value")]
-    public async Task<IActionResult> SetToastAutoHideValue(bool value)
-    {
-        var cmd = new SetToastAutoHideValueCommand
-        {
-            Value = value
-        };
-        
-        await _userSettingFacade.SetToastAutoHideValueAsync(cmd);
+        await _userSettingFacade.SetToastAutoHideValueAsync(command);
         return NoContent();
     }
 }
