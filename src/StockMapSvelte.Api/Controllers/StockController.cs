@@ -8,7 +8,7 @@ namespace StockMapSvelte.Api.Controllers;
 
 [ApiController]
 [Authorize] 
-[Route("stock")]
+[Route("stocks")]
 public class StockController : Controller
 {
     private readonly IStockFacade _stockFacade;
@@ -44,7 +44,6 @@ public class StockController : Controller
 
     [HttpGet]
     [Authorize(Roles = "Admin,Manager")]
-    [Route("all")]
     public async Task<IActionResult> GetAllStocks()
     {
         var stocks = await _stockFacade.GetAllStocksAsync();
@@ -82,13 +81,8 @@ public class StockController : Controller
 
     [HttpPost]
     [Authorize(Roles = "Admin,Manager")]
-    public async Task<IActionResult> CreateStock(string ticker)
+    public async Task<IActionResult> CreateStock([FromBody] CreateStockCommand cmd)
     {
-        var cmd = new CreateStockCommand
-        {
-            TickerSymbol = ticker
-        };
-        
         var createdStock = await _stockFacade.CreateStockAsync(cmd);
         
         return CreatedAtAction(
