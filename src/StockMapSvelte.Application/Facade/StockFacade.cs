@@ -36,34 +36,18 @@ public class StockFacade : IStockFacade
         return await _getAllStocksHandler.Handle();
     }
 
-    public async Task CreateStockAsync(string ticker)
+    public async Task<StockDto> CreateStockAsync(CreateStockCommand cmd)
     {
-        var cmd = new CreateStockCommand
-        {
-            TickerSymbol = ticker
-        };
-
-        await _createStockHandler.Handle(cmd);
+        return await _createStockHandler.Handle(cmd);
     }
 
-    public async Task DeleteStockAsync(Guid stockId)
+    public async Task DeleteStockAsync(DeleteStockCommand cmd)
     {
-        var cmd = new DeleteStockCommand
-        {
-            StockId = stockId
-        };
-
         await _deleteStockHandler.Handle(cmd);
     }
 
-    public async Task EditStockAsync(Guid stockId, string ticker)
+    public async Task EditStockAsync(EditStockCommand cmd)
     {
-        var cmd = new EditStockCommand
-        {
-            Id = stockId,
-            TickerSymbol = ticker
-        };
-        
         await _editStockHandler.Handle(cmd);
     }
 
@@ -77,15 +61,8 @@ public class StockFacade : IStockFacade
         return await _getStockHandler.Handle(query);
     }
     
-    public async Task<IReadOnlyList<StockDto>> GetPossibleToAddStocksAsync(string filter, IList<string> stocksInPortfolio, CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<StockDto>> GetPossibleToAddStocksAsync(GetPossibleToAddStocksQuery query)
     {
-        var query = new GetPossibleToAddStocksQuery
-        {
-            Filter = filter,
-            StocksInPortfolio = stocksInPortfolio,
-            CancellationToken = cancellationToken
-        };
-        
         return await _getPossibleToAddStocksHandler.Handle(query);
     }
 }

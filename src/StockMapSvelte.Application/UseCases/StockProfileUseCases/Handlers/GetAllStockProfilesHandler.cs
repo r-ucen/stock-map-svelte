@@ -19,11 +19,6 @@ public class GetAllStockProfilesHandler
     
     public async Task<IReadOnlyList<StockStockProfileDto>> Handle()
     {
-        if (!await _userContext.IsInRoleAsync("Admin") && !await _userContext.IsInRoleAsync("Manager"))
-        {
-            throw new UnauthorizedAccessException($"User {await _userContext.GetCurrentUserIdAsync()} does not have permission to access all stock profiles.");
-        }
-
         return await _stockProfileRepository.GetAllStockProfilesAsync();
     }
         

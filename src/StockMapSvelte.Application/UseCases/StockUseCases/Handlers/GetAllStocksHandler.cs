@@ -18,11 +18,6 @@ public class GetAllStocksHandler
     
     public async Task<IReadOnlyList<StockDto>> Handle()
     {
-        if (!await _userContext.IsInRoleAsync("Admin") && !await _userContext.IsInRoleAsync("Manager"))
-        {
-            throw new UnauthorizedAccessException($"User {await _userContext.GetCurrentUserIdAsync()} does not have permission to access all stocks.");
-        }
-        
         return await _stockRepository.GetAllStocksAsync() ?? new List<StockDto>();
     }
 }

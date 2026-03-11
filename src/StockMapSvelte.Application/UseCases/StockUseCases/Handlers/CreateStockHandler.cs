@@ -1,5 +1,6 @@
 using StockMapSvelte.Application.Abstractions;
 using StockMapSvelte.Application.Abstractions.Repositories;
+using StockMapSvelte.Application.DTOs;
 using StockMapSvelte.Application.Exceptions.Stock;
 using StockMapSvelte.Application.UseCases.StockUseCases.Commands;
 using StockMapSvelte.Domain.Entities;
@@ -25,13 +26,8 @@ public class CreateStockHandler
         _stockClient = stockClient;
     }
 
-    public async Task Handle(CreateStockCommand cmd)
+    public async Task<StockDto> Handle(CreateStockCommand cmd)
     {
-        if (!await _userContext.IsInRoleAsync("Admin") && !await _userContext.IsInRoleAsync("Manager"))
-        {
-            throw new UnauthorizedAccessException($"User {await _userContext.GetCurrentUserIdAsync()} does not have permission to create stocks.");
-        }
-        
         if (string.IsNullOrWhiteSpace(cmd.TickerSymbol))
         {
             throw new MissingTickerSymbolException("Ticker symbol field is required.");
@@ -69,5 +65,11 @@ public class CreateStockHandler
         {
             throw new CreateStockFailException("Failed to create the stock.");
         }
+
+        return new StockDto()
+        {
+            Id = entity.Id,
+            TickerSymbol = entity.TickerSymbol
+        };
     }
 }

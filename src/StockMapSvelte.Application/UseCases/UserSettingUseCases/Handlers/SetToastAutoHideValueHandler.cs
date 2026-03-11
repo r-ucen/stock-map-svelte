@@ -15,12 +15,15 @@ public class SetToastAutoHideValueHandler
         _userContext = userContext;
     }
     
-    public async Task<bool> Handle(SetToastAutoHideValueCommand autoHide)
+    public async Task Handle(SetToastAutoHideValueCommand cmd)
     {
         var currentUserId = await _userContext.GetCurrentUserIdAsync();
 
-        var result = await _userSettingRepository.SetToastAutoHideValueAsync(currentUserId, autoHide.Value);
+        var result = await _userSettingRepository.SetToastAutoHideValueAsync(currentUserId, cmd.Value);
         
-        return result > 0;
+        if (result < 0)
+        {
+            throw new Exception($"Failed to set toast auto-hide value: {result}");
+        }
     }
 }

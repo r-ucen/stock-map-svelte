@@ -1,5 +1,6 @@
 using StockMapSvelte.Application.Abstractions;
 using StockMapSvelte.Application.Abstractions.Repositories;
+using StockMapSvelte.Application.DTOs;
 using StockMapSvelte.Application.Exceptions.Portfolio;
 using StockMapSvelte.Application.UseCases.PortfolioUseCases.Commands;
 
@@ -16,7 +17,7 @@ public class EditPortfolioHandler
         _portfolioRepository = portfolioRepository;
     }
     
-    public async Task Handle(EditPortfolioCommand cmd)
+    public async Task<PortfolioStockDto> Handle(EditPortfolioCommand cmd)
     {
         if (string.IsNullOrWhiteSpace(cmd.PortfolioName))
         {
@@ -29,6 +30,11 @@ public class EditPortfolioHandler
         if (existing == null)
         {
             throw new PortfolioNotFoundException("Portfolio not found.");
+        }
+        
+        if (cmd.PortfolioName == existing.Name || cmd.TickerSymbols.SequenceEqual(existing.Stocks.Select(s => s.TickerSymbol)))
+        {
+            throw new PortfolioUnchangedException("Portfolio name and stocks are unchanged.");
         }
             
         if (existing.UserId != currentUserId)
@@ -44,9 +50,14 @@ public class EditPortfolioHandler
 
         var result = await _portfolioRepository.EditPortfolioAsync(cmd.PortfolioId, cmd.PortfolioName.Trim(), cmd.TickerSymbols);
         
-        if (result <= 0)
+        var portfolioDto = new PortfolioStockDto
         {
-            throw new Exception("Failed to update portfolio.");
-        }
+            PortfolioId = result.Id,
+            UserId = result.UserId,
+            PortfolioName = result.Name ?? "",
+            TickerSymbols = result.Stocks.Select(s => s.TickerSymbol).ToList() ?? []
+        };
+        
+        return portfolioDto;
     }
 }

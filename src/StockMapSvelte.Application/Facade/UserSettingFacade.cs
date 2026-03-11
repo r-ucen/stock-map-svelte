@@ -7,56 +7,43 @@ namespace StockMapSvelte.Application.Facade;
 
 public class UserSettingFacade : IUserSettingFacade
 {
-    private readonly IUserContext _userContext;
     
     private readonly SetPortfolioAsDefaultHandler _setPortfolioAsDefaultHandler;
-    private readonly GetDefaultPortfolioHandler _getDefaultPortfolioHandler;
+    private readonly GetDefaultPortfolioIdHandler _getDefaultPortfolioIdHandler;
     private readonly GetToastAutoHideValueHandler _getToastAutoHideValueHandler;
     private readonly SetToastAutoHideValueHandler _setToastAutoHideValueHandler;
     private readonly GetToastAutoHideDelayMsHandler _getToastAutoHideDelayMs;
     private readonly SetToastAutoHideDelayMsHandler _setToastAutoHideDelayMs;
     
     public UserSettingFacade(
-        IUserContext userContext,
         SetPortfolioAsDefaultHandler setPortfolioAsDefaultHandler,
-        GetDefaultPortfolioHandler getDefaultPortfolioHandler,
+        GetDefaultPortfolioIdHandler getDefaultPortfolioIdHandler,
         GetToastAutoHideValueHandler getToastAutoHideValueHandler,
         SetToastAutoHideValueHandler setToastAutoHideValueHandler,
         GetToastAutoHideDelayMsHandler getToastAutoHideDelayMsHandler,
         SetToastAutoHideDelayMsHandler setToastAutoHideDelayMsHandler)
     {
-        _userContext = userContext;
         _setPortfolioAsDefaultHandler = setPortfolioAsDefaultHandler;
-        _getDefaultPortfolioHandler = getDefaultPortfolioHandler;
+        _getDefaultPortfolioIdHandler = getDefaultPortfolioIdHandler;
         _getToastAutoHideValueHandler = getToastAutoHideValueHandler;
         _setToastAutoHideValueHandler = setToastAutoHideValueHandler;
         _getToastAutoHideDelayMs = getToastAutoHideDelayMsHandler;
         _setToastAutoHideDelayMs = setToastAutoHideDelayMsHandler;
     }
     
-    public async Task<bool> SetPortfolioAsDefaultAsync(Guid portfolioId)
+    public async Task SetPortfolioAsDefaultAsync(SetPortfolioAsDefaultCommand cmd)
     {
-        var cmd = new UseCases.UserSettingUseCases.Commands.SetPortfolioAsDefaultCommand
-        {
-            PortfolioId = portfolioId
-        };
-        
-        return await _setPortfolioAsDefaultHandler.Handle(cmd);
+        await _setPortfolioAsDefaultHandler.Handle(cmd);
     }
     
-    public async Task<Guid> GetDefaultPortfolioAsync()
+    public async Task<Guid> GetDefaultPortfolioIdAsync()
     {
-        return await _getDefaultPortfolioHandler.Handle();
+        return await _getDefaultPortfolioIdHandler.Handle();
     }
     
-    public async Task<bool> SetToastAutoHideValueAsync(bool value)
+    public async Task SetToastAutoHideValueAsync(SetToastAutoHideValueCommand cmd)
     {
-        var cmd = new SetToastAutoHideValueCommand
-        {
-            Value = value
-        };
-        
-        return await _setToastAutoHideValueHandler.Handle(cmd);
+        await _setToastAutoHideValueHandler.Handle(cmd);
     }
     
     public async Task<bool> GetToastAutoHideValueAsync()
@@ -69,13 +56,8 @@ public class UserSettingFacade : IUserSettingFacade
         return await _getToastAutoHideDelayMs.Handle();
     }
 
-    public async Task<bool> SetToastAutoHideDelayMsAsync(int value)
+    public async Task SetToastAutoHideDelayMsAsync(SetToastAutoHideDelayMsCommand cmd)
     {
-        var cmd = new SetToastAutoHideDelayMsCommand
-        {
-            DelayMs = value
-        };
-        
-        return await _setToastAutoHideDelayMs.Handle(cmd);
+        await _setToastAutoHideDelayMs.Handle(cmd);
     }
 }
