@@ -1,0 +1,1 @@
+<p>Stock map</p>

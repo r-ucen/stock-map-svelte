@@ -86,8 +86,8 @@ class AuthManager {
 
 		if (res.ok) {
 			await this.checkAuth();
-			const resolvedAccount = resolve("/account");
-			await goto(resolvedAccount);
+			const resolvedReturnPath = resolve("/");
+			await goto(resolvedReturnPath);
 			return { success: true };
 		}
 		return { success: false, status: res.status };
