@@ -8,8 +8,8 @@ using StockMapSvelte.Application.UseCases.PortfolioUseCases.Queries;
 namespace StockMapSvelte.Api.Controllers;
 
 [ApiController]
-[Authorize]
-[Route("portfolio")]
+[Authorize] 
+[Route("portfolios")]
 public class PortfolioController : Controller
 {
     private readonly IPortfolioFacade _portfolioFacade;
@@ -21,7 +21,6 @@ public class PortfolioController : Controller
 
     [HttpGet]
     [Authorize(Roles = "Admin,Manager")]
-    [Route("all")]
     public async Task<IActionResult> GetAllPortfolios()
     {
         var portfolios = await _portfolioFacade.GetAllPortfolioStockViewModelsAsync();
@@ -29,7 +28,7 @@ public class PortfolioController : Controller
     }
 
     [HttpGet]
-    [Route("currentUser")]
+    [Route("me")]
     public async Task<IActionResult> GetCurrentUserPortfolios()
     {
         var portfolios = await _portfolioFacade.GetPortfoliosByUserIdAsync();
@@ -55,8 +54,8 @@ public class PortfolioController : Controller
             TickerSymbols = request.TickerSymbols
         };
         
-        await _portfolioFacade.EditPortfolioAsync(cmd);
-        return NoContent();
+        var editedPortfolio = await _portfolioFacade.EditPortfolioAsync(cmd);
+        return Ok(editedPortfolio);
     }
     
     [HttpGet]

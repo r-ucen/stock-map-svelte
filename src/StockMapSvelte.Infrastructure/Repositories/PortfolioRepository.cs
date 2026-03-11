@@ -84,13 +84,41 @@ public class PortfolioRepository : IPortfolioRepository
         
         var userSetting = await context.UserSettings
             .FirstOrDefaultAsync(us => us.UserId == userId);
+        
+        var portfolios = await context.Portfolios
+            .Where(p => p.UserId == userId)
+            .Include(p => p.Stocks)
+            .ToListAsync();
 
-        if (userSetting == null)
+        var noPortfolios = portfolios.Count == 0;
+        var noUserSettings = userSetting == null;
+        
+        var defaultPortfolioId = userSetting?.DefaultPortfolioId;
+        
+        if (noPortfolios)
+        {
+            var defaultPortfolio = new Portfolio
+            {
+                Id = Guid.NewGuid(),
+                UserId = userId,
+                Name = "Default Portfolio"
+            };
+            
+            defaultPortfolioId = defaultPortfolio.Id;
+
+            var createPortfolioResult = await CreatePortfolioAsync(defaultPortfolio, []);
+            if (createPortfolioResult <= 0)
+            {
+                throw new InvalidOperationException("Failed to create default portfolio.");
+            }
+        }
+
+        if (noUserSettings)
         {
             userSetting = new UserSetting
             {
                 UserId = userId,
-                DefaultPortfolioId = null
+                DefaultPortfolioId = defaultPortfolioId
             };
             
             context.UserSettings.Add(userSetting);
@@ -100,13 +128,6 @@ public class PortfolioRepository : IPortfolioRepository
                 throw new InvalidOperationException("Failed to initialize user settings.");
             }
         }
-        
-        var defaultPortfolioId = userSetting.DefaultPortfolioId;
-        
-        var portfolios = await context.Portfolios
-            .Where(p => p.UserId == userId)
-            .Include(p => p.Stocks)
-            .ToListAsync();
         
         return portfolios
             .Select(p => new PortfolioStockDto
@@ -127,7 +148,7 @@ public class PortfolioRepository : IPortfolioRepository
             .AnyAsync(p => p.UserId == userId &&  p.Id != portfolioId && p.Name == portfolioName);
     }
 
-    public async Task<int> EditPortfolioAsync(Guid portfolioId, string portfolioName, IList<string> tickerSymbols)
+    public async Task<Portfolio> EditPortfolioAsync(Guid portfolioId, string portfolioName, IList<string> tickerSymbols)
     {
         await using var context = await _contextFactory.CreateDbContextAsync();
         
@@ -158,7 +179,9 @@ public class PortfolioRepository : IPortfolioRepository
         portfolioToEdit.Name = portfolioName;
         
         context.Portfolios.Update(portfolioToEdit);
-        return await context.SaveChangesAsync();
+        var result = await context.SaveChangesAsync();
+        
+        return result <= 0 ? throw new Exception("Failed to update portfolio.") : portfolioToEdit;
     }
     
     public async Task<int> DeletePortfolioAsync(Guid portfolioId)

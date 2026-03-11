@@ -121,23 +121,8 @@ namespace StockMapSvelte.Infrastructure.Migrations
                         },
                         new
                         {
-                            UserId = "702f52fd-f23b-462d-b84b-0e1acc17785c",
-                            RoleId = "3"
-                        },
-                        new
-                        {
                             UserId = "b3546cea-bc20-4f06-9341-15fb80768cf6",
                             RoleId = "2"
-                        },
-                        new
-                        {
-                            UserId = "b3546cea-bc20-4f06-9341-15fb80768cf6",
-                            RoleId = "3"
-                        },
-                        new
-                        {
-                            UserId = "505aedf9-29e3-4728-a8f0-d295040dbaef",
-                            RoleId = "3"
                         });
                 });
 
@@ -500,13 +485,6 @@ namespace StockMapSvelte.Infrastructure.Migrations
                             ConcurrencyStamp = "be0efcde-9d0a-461d-8eb6-444b043d6660",
                             Name = "Manager",
                             NormalizedName = "MANAGER"
-                        },
-                        new
-                        {
-                            Id = "3",
-                            ConcurrencyStamp = "29dafca7-cd20-4cd9-a3dd-4779d7bac3ee",
-                            Name = "Customer",
-                            NormalizedName = "CUSTOMER"
                         });
                 });
 

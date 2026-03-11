@@ -17,11 +17,6 @@ internal class UserRolesInit
             {
                 UserId = "702f52fd-f23b-462d-b84b-0e1acc17785c",
                 RoleId = "2"
-            },
-            new IdentityUserRole<string>()
-            {
-                UserId = "702f52fd-f23b-462d-b84b-0e1acc17785c",
-                RoleId = "3"
             }
         };
 
@@ -37,28 +32,9 @@ internal class UserRolesInit
             {
                 UserId = "b3546cea-bc20-4f06-9341-15fb80768cf6",
                 RoleId = "2"
-            },
-            new IdentityUserRole<string>()
-            {
-                UserId = "b3546cea-bc20-4f06-9341-15fb80768cf6",
-                RoleId = "3"
             }
         };
 
         return managerUserRoles;
-    }
-    
-    public List<IdentityUserRole<string>> GetRolesForDemoUser()
-    {
-        List<IdentityUserRole<string>> demoUserRoles = new List<IdentityUserRole<string>>()
-        {
-            new IdentityUserRole<string>()
-            {
-                UserId = "505aedf9-29e3-4728-a8f0-d295040dbaef",
-                RoleId = "3"
-            }
-        };
-            
-        return demoUserRoles;
     }
 }

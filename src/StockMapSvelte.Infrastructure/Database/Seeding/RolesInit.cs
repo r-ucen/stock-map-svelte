@@ -4,7 +4,7 @@ namespace StockMapSvelte.Infrastructure.Database.Seeding;
 
 internal class RolesInit
 {
-    public List<Role> GetRolesAmc()
+    public List<Role> GetRolesAm()
     {
         List<Role> roles = new List<Role>();
 
@@ -24,18 +24,8 @@ internal class RolesInit
             ConcurrencyStamp = "be0efcde-9d0a-461d-8eb6-444b043d6660"
         };
 
-        Role roleCustomer = new Role()
-        {
-            Id = "3",
-            Name = "Customer",
-            NormalizedName = "CUSTOMER",
-            ConcurrencyStamp = "29dafca7-cd20-4cd9-a3dd-4779d7bac3ee"
-        };
-
-
         roles.Add(roleAdmin);
         roles.Add(roleManager);
-        roles.Add(roleCustomer);
 
         return roles;
     }

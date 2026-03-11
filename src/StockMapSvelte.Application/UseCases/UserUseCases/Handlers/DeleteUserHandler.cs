@@ -23,11 +23,6 @@ public class DeleteUserHandler
         {
             throw new DeleteYourselfNotPossibleException("Cannot delete yourself.");
         }
-        
-        if (!await _userContext.IsInRoleAsync("Admin"))
-        {
-            throw new UnauthorizedAccessException($"User {await _userContext.GetCurrentUserIdAsync()} does not have permission to delete users.");
-        }
 
         var result = await _userRepository.DeleteAsync(cmd.UserId);
         

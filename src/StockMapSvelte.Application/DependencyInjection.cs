@@ -48,7 +48,7 @@ public static class DependencyInjection
         services.AddScoped<GetAllUsersHandler>();
         services.AddScoped<GetUserHandler>();
         services.AddScoped<SetPortfolioAsDefaultHandler>();
-        services.AddScoped<GetDefaultPortfolioHandler>();
+        services.AddScoped<GetDefaultPortfolioIdHandler>();
         services.AddScoped<SetToastAutoHideValueHandler>();
         services.AddScoped<GetToastAutoHideValueHandler>();
         services.AddScoped<GetToastAutoHideDelayMsHandler>();

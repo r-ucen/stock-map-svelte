@@ -52,7 +52,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Role, str
 
             // Init roles
             RolesInit rolesInit = new RolesInit();
-            modelBuilder.Entity<Role>().HasData(rolesInit.GetRolesAmc());
+            modelBuilder.Entity<Role>().HasData(rolesInit.GetRolesAm());
 
             // init users
             UserInit userInit = new UserInit();
@@ -67,39 +67,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Role, str
             UserRolesInit userRolesInit = new UserRolesInit();
             List<IdentityUserRole<string>> adminUserRoles = userRolesInit.GetRolesForAdmin();
             List<IdentityUserRole<string>> managerUserRoles = userRolesInit.GetRolesForManager();
-            List<IdentityUserRole<string>> demoUserRoles = userRolesInit.GetRolesForDemoUser();
             modelBuilder.Entity<IdentityUserRole<string>>().HasData(adminUserRoles);
             modelBuilder.Entity<IdentityUserRole<string>>().HasData(managerUserRoles);
-            modelBuilder.Entity<IdentityUserRole<string>>().HasData(demoUserRoles);
         }
-
-    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
-        var newUsers = ChangeTracker.Entries<ApplicationUser>()
-            .Where(e => e.State == EntityState.Added)
-            .Select(e => e.Entity)
-            .ToList();
-        
-        foreach (var user in newUsers)
-        {
-            var portfolio = new Portfolio
-            {
-                Id = Guid.NewGuid(),
-                UserId = user.Id,
-                Name = "Default portfolio"
-            };
-            
-            Portfolios.Add(portfolio);
-        
-            UserSettings.Add(new UserSetting
-            {
-                UserId = user.Id,
-                DefaultPortfolioId = portfolio.Id,
-                ToastAutoHide = true,
-                ToastAutoHideDelayMs = 3000
-            });
-        }
-        
-        return await base.SaveChangesAsync(cancellationToken);
-    }
 }

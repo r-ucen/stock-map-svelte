@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -27,13 +28,25 @@ public static class DependencyInjection
         services.AddScoped(p => 
             p.GetRequiredService<IDbContextFactory<ApplicationDbContext>>().CreateDbContext());
         
-        services.AddAuthorizationBuilder();
-        
         services.AddIdentityApiEndpoints<ApplicationUser>(options => {
                 options.SignIn.RequireConfirmedAccount = true;
             })
             .AddRoles<Role>()
             .AddEntityFrameworkStores<ApplicationDbContext>();
+
+        services.ConfigureApplicationCookie(options =>
+        {
+            options.Cookie.HttpOnly = true;
+            options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            options.Cookie.SameSite = SameSiteMode.None;
+            
+            // disable redirect to login page for API calls, return 401 instead
+            options.Events.OnRedirectToLogin = context =>
+            {
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                return Task.CompletedTask;
+            };
+        });
         
         // Resend
         services.AddOptions<ResendClientOptions>()
@@ -42,6 +55,7 @@ public static class DependencyInjection
         services.AddTransient<IEmailSender<ApplicationUser>, ResendEmailSender>();
         
         // DI
+        services.AddScoped<IIdentityService, IdentityService>();
         services.AddScoped<IStockUpdateService, StockUpdateService>();
         services.AddScoped<IStockRepository, StockRepository>();
         services.AddScoped<IStockClient, YahooStockClient>();
@@ -53,6 +67,14 @@ public static class DependencyInjection
         
         services.AddHostedService<StockDataUpdateTimedService>();
         services.AddSingleton<YahooQuotes>(new YahooQuotesBuilder().Build());
+        
+        // Authorization policies
+        services.AddAuthorizationBuilder()
+            // every authenticated user is a customer
+            .AddPolicy("IsCustomer", policy =>
+            {
+                policy.RequireAuthenticatedUser();
+            });
         
         return services;
     }

@@ -1,4 +1,6 @@
 using StockMapSvelte.Application.DTOs;
+using StockMapSvelte.Application.UseCases.StockUseCases.Commands;
+using StockMapSvelte.Application.UseCases.StockUseCases.Queries;
 
 namespace StockMapSvelte.Application.Abstractions.Facades;
 
@@ -6,9 +8,8 @@ public interface IStockFacade
 {
     Task<IReadOnlyList<StockDto>> GetAllStocksAsync();
     Task<StockDto> GetStockViewModelByIdAsync(Guid stockId);
-    Task CreateStockAsync(string ticker);
-    Task DeleteStockAsync(Guid stockId);
-    Task EditStockAsync(Guid stockId, string ticker);
-    Task<IReadOnlyList<StockDto>> GetPossibleToAddStocksAsync(string filter, IList<string> stocksInPortfolio,
-        CancellationToken cancellationToken);
+    Task<StockDto> CreateStockAsync(CreateStockCommand cmd);
+    Task DeleteStockAsync(DeleteStockCommand cmd);
+    Task EditStockAsync(EditStockCommand cmd);
+    Task<IReadOnlyList<StockDto>> GetPossibleToAddStocksAsync(GetPossibleToAddStocksQuery query);
 }

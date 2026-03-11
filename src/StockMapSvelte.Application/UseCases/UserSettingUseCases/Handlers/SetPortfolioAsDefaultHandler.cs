@@ -18,7 +18,7 @@ public class SetPortfolioAsDefaultHandler
         _portfolioRepository = portfolioRepository;
     }
     
-    public async Task<bool> Handle(SetPortfolioAsDefaultCommand cmd)
+    public async Task Handle(SetPortfolioAsDefaultCommand cmd)
     {
         var existing = await _portfolioRepository.GetPortfolioByIdAsync(cmd.PortfolioId);
         if (existing == null)
@@ -34,7 +34,10 @@ public class SetPortfolioAsDefaultHandler
         }
         
         var result = await _userSettingRepository.SetPortfolioAsDefaultAsync(currentUserId, cmd.PortfolioId);
-        
-        return result > 0;
+
+        if (result < 0)
+        {
+            throw new Exception("Failed to set portfolio as default.");
+        }
     }
 }
