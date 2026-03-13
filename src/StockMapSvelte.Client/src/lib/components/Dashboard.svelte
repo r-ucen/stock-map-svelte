@@ -7,7 +7,11 @@
 	let { children } = $props();
 
 	import { page } from "$app/state";
-
+	import { onMount, setContext } from 'svelte';
+	import GalleryVerticalEndIcon from '@lucide/svelte/icons/gallery-vertical-end';
+	import type { IPortfolio, IState } from '$lib/Abstractions/IState';
+	import { apiFetch } from '$lib/apiFetch';
+	
 	const tabNames: Record<string, string> = {
 		'portfolios': 'Portfolios',
 		'account': 'Manage Account',
@@ -16,6 +20,27 @@
 	let currentTabName = $derived(
 		tabNames[page.url.searchParams.get('tab') ?? ''] ?? 'Stock Map'
 	);
+	
+	let state = $state<IState>({
+		portfolios: [],
+		portfolioLogoDefault: GalleryVerticalEndIcon,
+		selectedPortfolioId: null,
+	})
+	setContext('state', state);
+	
+	onMount(async () => {
+		try {
+			const response = await apiFetch('/portfolios/me');
+			if (!response.ok) {
+				throw new Error('Failed to fetch portfolios');
+			}
+			const data: IPortfolio[] = await response.json();
+			state.portfolios = data;
+			state.selectedPortfolioId = data.filter(p => p.isDefault)[0]?.portfolioId ?? null;
+		} catch (error) {
+			console.error('Error fetching portfolios:', error);
+		}
+	})
 </script>
 
 <Sidebar.Provider>
