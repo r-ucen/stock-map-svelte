@@ -1,5 +1,7 @@
 import type { ColumnDef } from '@tanstack/table-core';
 import type { IPortfolio} from '$lib/Abstractions/IState';
+import DataTableActions from "./data-table-actions.svelte";
+import { renderComponent } from '$lib/components/ui/data-table';
 
 export const columns: ColumnDef<IPortfolio>[] = [
 	{
@@ -21,5 +23,11 @@ export const columns: ColumnDef<IPortfolio>[] = [
 			const tickerSymbols = getValue() as string[];
 			return tickerSymbols.slice(0, 4).join(', ');
 		}
-	}
+	},
+	{
+		id: "actions",
+		cell: ({ row }) => {
+			return renderComponent(DataTableActions, { id: row.original.portfolioId });
+		},
+	},
 ];
