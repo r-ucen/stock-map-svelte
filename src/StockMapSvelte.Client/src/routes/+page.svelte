@@ -5,7 +5,7 @@
 	import { Spinner } from '$lib/components/ui/spinner';
 	import { page } from '$app/state';
 	import ManageAccount from '$lib/components/ManageAccount.svelte';
-	import Portfolios from '$lib/components/Portfolios.svelte';
+	import Portfolios from '$lib/components/Portfolios/Portfolios.svelte';
 	import StockTreeMap from '$lib/components/StockTreeMap.svelte';
 </script>
 
