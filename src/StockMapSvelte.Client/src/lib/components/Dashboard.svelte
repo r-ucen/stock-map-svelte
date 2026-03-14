@@ -7,10 +7,11 @@
 	let { children } = $props();
 
 	import { page } from "$app/state";
-	import { onMount, setContext } from 'svelte';
+	import { onDestroy, onMount, setContext } from 'svelte';
 	import GalleryVerticalEndIcon from '@lucide/svelte/icons/gallery-vertical-end';
 	import { type IPortfolio, type IState, MapMetric } from '$lib/Abstractions/IState';
 	import { apiFetch } from '$lib/apiFetch';
+	import { fetchTreemapData } from '$lib/portfolioFetch';
 	
 	const tabNames: Record<string, string> = {
 		'portfolios': 'Portfolios',
@@ -26,8 +27,24 @@
 		portfolioLogoDefault: GalleryVerticalEndIcon,
 		selectedPortfolioId: null,
 		selectedMetric: null,
+		treemapData: null,
 	})
 	setContext('state', state);
+
+	let treemapInterval: ReturnType<typeof setInterval> | undefined;
+
+	$effect(() => {
+		clearInterval(treemapInterval);
+		if (state.selectedPortfolioId) {
+			fetchTreemapData(state);
+			treemapInterval = setInterval(() => fetchTreemapData(state), 30000);
+		}
+	});
+
+	onDestroy(() => {
+		clearInterval(treemapInterval);
+	});
+	
 	
 	onMount(async () => {
 		try {
@@ -63,8 +80,14 @@
 				</Breadcrumb.Root>
 			</div>
 		</header>
-		<div class="flex flex-1 flex-col gap-4 p-4 pt-0">
-			{@render children()}
-		</div>
+		{#if currentTabName === 'Stock Map'}
+			<div class="relative flex flex-1 flex-col overflow-hidden min-h-0 min-w-0">
+				{@render children()}
+			</div>
+		{:else}
+			<div class="flex flex-1 flex-col gap-4 p-4 pt-0">
+				{@render children()}
+			</div>
+		{/if}
 	</Sidebar.Inset>
 </Sidebar.Provider>	

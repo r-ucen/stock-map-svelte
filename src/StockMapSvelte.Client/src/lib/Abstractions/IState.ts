@@ -1,4 +1,5 @@
 import type { Component } from 'svelte';
+import type { TreemapDataDto } from '$lib/Abstractions/Treemap';
 
 export interface IState {
 	portfolios: IPortfolio[];
@@ -7,6 +8,7 @@ export interface IState {
 	selectedMetric: MapMetric | null;
 	// isToastAutoHide: boolean | null;
 	// autoHideDelayMs: number | null;
+	treemapData: TreemapDataDto | null;
 }
 
 export interface IPortfolio {
