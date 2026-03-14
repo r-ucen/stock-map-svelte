@@ -8,6 +8,7 @@
 	import { editPortfolio, getPortfolioById } from '$lib/components/Portfolios/dataTableActions';
 	import { getContext } from 'svelte';
 	import type { IState } from '$lib/Abstractions/IState';
+	import StockLookuper from '$lib/components/Portfolios/stock-lookuper.svelte';
 
 	let { id }: { id: string } = $props();
 	let open = $state(false);
@@ -41,6 +42,7 @@
 		if (portfolio) {
 			portfolioIdBeingEdited = portfolio.portfolioId;
 			portfolioNameBeingEdited = portfolio.portfolioName;
+			portfolioStocksBeingEdited = [...portfolio.tickerSymbols];
 		}
 		open = true;
 	}
@@ -90,6 +92,7 @@
 						disabled={isBeingProcessed}
 					/>
 				</div>
+				<StockLookuper bind:selectedStocks={portfolioStocksBeingEdited} />
 			</div>
 			<Dialog.Footer>
 				<Dialog.Close type="button" class={buttonVariants({ variant: "outline" })}>

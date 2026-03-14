@@ -6,6 +6,9 @@ export default defineConfig({
 	plugins: [tailwindcss(), sveltekit()],
 	ssr: {
 		noExternal: ['bits-ui']
+	},
+	optimizeDeps: {
+		include: ['svelte-select']
 	}
 });
 
