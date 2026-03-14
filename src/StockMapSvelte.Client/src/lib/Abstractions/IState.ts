@@ -4,7 +4,7 @@ export interface IState {
 	portfolios: IPortfolio[];
 	portfolioLogoDefault: Component;
 	selectedPortfolioId: string | null;
-	// selectedMetric: string | null;
+	selectedMetric: MapMetric | null;
 	// isToastAutoHide: boolean | null;
 	// autoHideDelayMs: number | null;
 }
@@ -16,4 +16,38 @@ export interface IPortfolio {
 	isDefault: boolean;
 	tickerSymbols: string[];
 }
-	
+
+export enum MapMetric {
+	RegularMarketChangePercent,
+	PreMarketChangePercent,
+	PostMarketChangePercent,
+	MarketState,
+	Volume,
+	DividendDate,
+	ExDividendDate,
+	DividendYield,
+	EarningsDate,
+	Beta,
+	Pe,
+	ForwardPe,
+	ShortRatio
+}
+
+export function getMetricLabel(metric: MapMetric): string {
+	const labels: Record<MapMetric, string> = {
+		[MapMetric.RegularMarketChangePercent]: "Market Change (%)",
+		[MapMetric.PreMarketChangePercent]: "Pre-Market Change (%)",
+		[MapMetric.PostMarketChangePercent]: "Post-Market Change (%)",
+		[MapMetric.MarketState]: "Market State",
+		[MapMetric.Volume]: "Trading Volume",
+		[MapMetric.DividendDate]: "Dividend Date",
+		[MapMetric.ExDividendDate]: "Ex-Dividend Date",
+		[MapMetric.DividendYield]: "Dividend Yield",
+		[MapMetric.EarningsDate]: "Earnings Date",
+		[MapMetric.Beta]: "Beta (Volatility)",
+		[MapMetric.Pe]: "P/E Ratio",
+		[MapMetric.ForwardPe]: "Forward P/E",
+		[MapMetric.ShortRatio]: "Short Ratio"
+	};
+	return labels[metric] ?? "Unknown Metric";
+}

@@ -32,12 +32,17 @@
 	import TeamSwitcher from "./team-switcher.svelte";
 	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
 	import type { ComponentProps } from "svelte";
-	
+	import MapSettings from "$lib/components/map-settings.svelte";
+	import { useSidebar } from "$lib/components/ui/sidebar/index.js";
+
 	let {
 		ref = $bindable(null),
 		collapsible = "icon",
 		...restProps
 	}: ComponentProps<typeof Sidebar.Root> = $props();
+	
+	const sidebar = useSidebar();
+
 </script>
 
 <Sidebar.Root {collapsible} {...restProps}>
@@ -46,6 +51,11 @@
 	</Sidebar.Header>
 	<Sidebar.Content>
 		<NavMain items={data.navMain} />
+
+		{#if sidebar.state !== "collapsed"}
+			<MapSettings />
+		{/if}
+		
 	</Sidebar.Content>
 	<Sidebar.Footer>
 		<NavUser user={data.user} />
