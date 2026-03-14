@@ -5,7 +5,12 @@
 	import * as Dialog from "$lib/components/ui/dialog/index.js";
 	import { Input } from "$lib/components/ui/input/index.js";
 	import { Label } from "$lib/components/ui/label/index.js";
-	import { deletePortfolio, editPortfolio, getPortfolioById } from '$lib/components/Portfolios/dataTableActions';
+	import {
+		deletePortfolio,
+		editPortfolio,
+		getPortfolioById,
+		setPortfolioAsDefault
+	} from '$lib/components/Portfolios/dataTableActions';
 	import { getContext } from 'svelte';
 	import type { IState } from '$lib/Abstractions/IState';
 	import StockLookuper from '$lib/components/Portfolios/stock-lookuper.svelte';
@@ -72,6 +77,26 @@
 		}
 		deleteOpen = true;
 	}
+
+	async function onSetAsDefaultClick(id: string) {
+		isBeingProcessed = true;
+		
+		let result = await setPortfolioAsDefault(id);
+		
+		if (!result.success) {
+			toast.error(result.error ?? "An error occurred while setting the default portfolio");
+			isBeingProcessed = false;
+			return;
+		}
+		
+		const portfolio = getPortfolioById(s.portfolios, id);
+		if (portfolio) {
+			s.selectedPortfolioId = id;
+			toast.success(`Set ${portfolio.portfolioName} as default portfolio`);
+		}
+		
+		isBeingProcessed = false;
+	}
 </script>
 
 <Dialog.Root bind:open>
@@ -99,6 +124,7 @@
 			<DropdownMenu.Separator />
 			<DropdownMenu.Item onclick={() => onEditClick(id)}>Edit</DropdownMenu.Item>
 			<DropdownMenu.Item onclick={() => onDeleteClick(id)}>Delete</DropdownMenu.Item>
+			<DropdownMenu.Item onclick={() => onSetAsDefaultClick(id)}>Set As Default</DropdownMenu.Item>
 		</DropdownMenu.Content>
 	</DropdownMenu.Root>
 

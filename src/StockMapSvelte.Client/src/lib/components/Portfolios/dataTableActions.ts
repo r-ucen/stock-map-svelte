@@ -1,6 +1,27 @@
 import { apiFetch } from '$lib/apiFetch';
 import type { IPortfolio, IState } from '$lib/Abstractions/IState';
 
+export async function setPortfolioAsDefault(id: string) {
+	const res = await apiFetch(`/user-settings/default-portfolio`, {
+		method: 'PUT',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({
+			portfolioId: id
+		})
+	});
+
+	if (res.ok) {
+		console.log(res.body);
+		return { success: true };
+	} else {
+		const errorData = await res.json().catch(() => ({}));
+		const error = errorData.message || 'Failed to set portfolio as default';
+		return { success: false, status: res.status, error };
+	}
+}
+
 export async function deletePortfolio(state: IState, id: string) {
 	const res = await apiFetch(`/portfolios/${id}`, {
 		method: 'DELETE'
