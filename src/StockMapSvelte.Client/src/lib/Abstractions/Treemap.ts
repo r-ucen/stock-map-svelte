@@ -1,0 +1,43 @@
+export interface RectangleDto {
+	x: number;
+	y: number;
+	width: number;
+	height: number;
+}
+
+export interface TreemapNodeDto {
+	tickerSymbol: string;
+	sector: string;
+	fullName: string;
+	marketCap: number;
+	rectangle: RectangleDto;
+	regularMarketChangePercent?: number;
+	regularMarketPrice?: number;
+	preMarketChangePercent?: number;
+	preMarketPrice?: number;
+	postMarketChangePercent?: number;
+	postMarketPrice?: number;
+	marketState?: string;
+	currency?: string;
+	volume?: number;
+	dividendDate?: string;
+	exDividendDate?: string;
+	earningsDate?: string;
+	dividendYield?: number;
+	beta?: number;
+	pe?: number;
+	forwardPe?: number;
+	shortRatio?: number;
+}
+
+export interface TreemapSectorDto {
+	sectorName: string;
+	totalMarketCap: number;
+	stocks: TreemapNodeDto[];
+	rectangle: RectangleDto;
+}
+
+export interface TreemapDataDto {
+	sectors: TreemapSectorDto[];
+	totalMarketCap: number;
+}

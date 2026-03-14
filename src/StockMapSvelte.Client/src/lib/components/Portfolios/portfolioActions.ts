@@ -13,7 +13,6 @@ export async function setPortfolioAsDefault(id: string) {
 	});
 
 	if (res.ok) {
-		console.log(res.body);
 		return { success: true };
 	} else {
 		const errorData = await res.json().catch(() => ({}));
@@ -28,7 +27,6 @@ export async function deletePortfolio(state: IState, id: string) {
 	});
 
 	if (res.ok) {
-		console.log(res.body);
 		deletePortfolioInState(state, id);
 		return { success: true };
 	} else {
@@ -82,7 +80,6 @@ export async function editPortfolio(state: IState, id: string, p_portfolioName: 
 	});
 
 	if (res.ok) {
-		console.log(res.body);
 		editPortfolioInState(state, id, p_portfolioName, p_tickerSymbols);
 		return { success: true };
 	} else {
