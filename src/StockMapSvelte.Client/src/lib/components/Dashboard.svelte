@@ -81,10 +81,10 @@
 			</div>
 		</header>
 		{#if currentTabName === 'Stock Map'}
-			<div class="flex flex-1 flex-col">
+			<div class="relative flex flex-1 flex-col overflow-hidden min-h-0 min-w-0">
 				{@render children()}
 			</div>
-		{:else }
+		{:else}
 			<div class="flex flex-1 flex-col gap-4 p-4 pt-0">
 				{@render children()}
 			</div>
