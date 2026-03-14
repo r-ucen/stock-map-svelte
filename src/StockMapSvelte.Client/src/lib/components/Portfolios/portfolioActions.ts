@@ -42,6 +42,33 @@ function deletePortfolioInState(state: IState, id: string) {
 	state.portfolios = state.portfolios.filter((p) => p.portfolioId !== id);
 }
 
+function addPortfolioToState(state: IState, newPortfolio: IPortfolio) {
+	state.portfolios = [...state.portfolios, newPortfolio];
+}
+
+export async function createPortfolio(state: IState, p_portfolioName: string, p_tickerSymbols: string[]) {
+	const res = await apiFetch(`/portfolios`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({
+			portfolioName: p_portfolioName,
+			tickerSymbols: p_tickerSymbols
+		})
+	});
+
+	if (res.ok) {
+		const newPortfolio = await res.json();
+		addPortfolioToState(state, newPortfolio);
+		return { success: true };
+	} else {
+		const errorData = await res.json().catch(() => ({}));
+		const error = errorData.message || 'Failed to create portfolio';
+		return { success: false, status: res.status, error };
+	}
+}
+
 export async function editPortfolio(state: IState, id: string, p_portfolioName: string, p_tickerSymbols: string[]) {
 	const res = await apiFetch(`/portfolios/${id}`, {
 		method: 'PUT',
