@@ -60,7 +60,6 @@
 		} else {
 			toast.success("Portfolio deleted successfully");
 			deleteOpen = false;
-			return;
 		}
 		isBeingProcessed = false;
 	}
