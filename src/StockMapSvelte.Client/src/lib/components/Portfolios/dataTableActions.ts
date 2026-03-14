@@ -32,8 +32,6 @@ export async function editPortfolio(state: IState, id: string, p_portfolioName: 
 			tickerSymbols: p_tickerSymbols
 		})
 	});
-	
-	console.log(res);
 
 	if (res.ok) {
 		console.log(res.body);

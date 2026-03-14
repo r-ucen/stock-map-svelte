@@ -19,7 +19,6 @@
 	const s = getContext<IState>('state');
 	
 	let isBeingProcessed = $state(false);
-	let infoMessage = $state<string | null>(null);
 	
 	let portfolioIdBeingEdited = $state("");
 	let portfolioNameBeingEdited = $state("");
@@ -31,14 +30,12 @@
 	
 	async function handleEditSubmit(e: SubmitEvent){
 		e.preventDefault();
-		console.log('Submitting:', portfolioNameBeingEdited);
-		infoMessage = null;
 		isBeingProcessed = true;
 		const result = await editPortfolio(s, portfolioIdBeingEdited, portfolioNameBeingEdited, portfolioStocksBeingEdited);
 		if (!result.success) {
-			infoMessage = result.error ?? null;
+			toast.error(result.error ?? "An error occurred while editing the portfolio");
 		} else {
-			infoMessage = "Successfully edited portfolio";
+			toast.success("Successfully edited portfolio");
 		}
 		isBeingProcessed = false;
 	}
@@ -102,7 +99,7 @@
 			</DropdownMenu.Group>
 			<DropdownMenu.Separator />
 			<DropdownMenu.Item onclick={() => onEditClick(id)}>Edit</DropdownMenu.Item>
-			<DropdownMenu.Item>Delete</DropdownMenu.Item>
+			<DropdownMenu.Item onclick={() => onDeleteClick(id)}>Delete</DropdownMenu.Item>
 		</DropdownMenu.Content>
 	</DropdownMenu.Root>
 
@@ -110,7 +107,6 @@
 		<form onsubmit={handleEditSubmit}>
 			<Dialog.Header>
 				<Dialog.Title>Edit Portfolio</Dialog.Title>
-				<Dialog.Description>{infoMessage}</Dialog.Description>
 			</Dialog.Header>
 			<div class="grid gap-4 py-4">
 				<div class="grid gap-2">
