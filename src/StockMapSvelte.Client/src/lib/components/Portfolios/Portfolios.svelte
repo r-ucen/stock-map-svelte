@@ -11,6 +11,7 @@
 	import * as Dialog from "$lib/components/ui/dialog/index.js";
 	import { createPortfolio } from '$lib/components/Portfolios/portfolioActions';
 	import { toast } from 'svelte-sonner';
+	import { fetchTreemapData } from '$lib/portfolioFetch';
 	
 	let s = getContext<IState>('state');
 	let data = $derived(s.portfolios)
@@ -29,6 +30,7 @@
 		if (!result.success) {
 			toast.error(result.error ?? "An error occurred while creating new portfolio");
 		} else {
+			await fetchTreemapData(s);
 			toast.success("Successfully created portfolio");
 		}
 		isBeingProcessed = false;
