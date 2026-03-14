@@ -9,7 +9,7 @@
 	import { page } from "$app/state";
 	import { onMount, setContext } from 'svelte';
 	import GalleryVerticalEndIcon from '@lucide/svelte/icons/gallery-vertical-end';
-	import type { IPortfolio, IState } from '$lib/Abstractions/IState';
+	import { type IPortfolio, type IState, MapMetric } from '$lib/Abstractions/IState';
 	import { apiFetch } from '$lib/apiFetch';
 	
 	const tabNames: Record<string, string> = {
@@ -25,6 +25,7 @@
 		portfolios: [],
 		portfolioLogoDefault: GalleryVerticalEndIcon,
 		selectedPortfolioId: null,
+		selectedMetric: null,
 	})
 	setContext('state', state);
 	
@@ -37,6 +38,7 @@
 			const data: IPortfolio[] = await response.json();
 			state.portfolios = data;
 			state.selectedPortfolioId = data.filter(p => p.isDefault)[0]?.portfolioId ?? null;
+			state.selectedMetric = MapMetric.RegularMarketChangePercent;
 		} catch (error) {
 			console.error('Error fetching portfolios:', error);
 		}
@@ -65,4 +67,4 @@
 			{@render children()}
 		</div>
 	</Sidebar.Inset>
-</Sidebar.Provider>
+</Sidebar.Provider>	
