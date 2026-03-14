@@ -5,13 +5,16 @@
 	import * as Dialog from "$lib/components/ui/dialog/index.js";
 	import { Input } from "$lib/components/ui/input/index.js";
 	import { Label } from "$lib/components/ui/label/index.js";
-	import { editPortfolio, getPortfolioById } from '$lib/components/Portfolios/dataTableActions';
+	import { deletePortfolio, editPortfolio, getPortfolioById } from '$lib/components/Portfolios/dataTableActions';
 	import { getContext } from 'svelte';
 	import type { IState } from '$lib/Abstractions/IState';
 	import StockLookuper from '$lib/components/Portfolios/stock-lookuper.svelte';
+	import * as AlertDialog from "$lib/components/ui/alert-dialog/index.js";
+	import { toast } from "svelte-sonner";
 
 	let { id }: { id: string } = $props();
 	let open = $state(false);
+	let deleteOpen = $state(false);
 
 	const s = getContext<IState>('state');
 	
@@ -21,6 +24,9 @@
 	let portfolioIdBeingEdited = $state("");
 	let portfolioNameBeingEdited = $state("");
 	let portfolioStocksBeingEdited = $state<string[]>([]);
+	
+	let portfolioIdBeingDeleted = $state("");
+	let portfolioNameBeingDeleted = $state("");
 	
 	
 	async function handleEditSubmit(e: SubmitEvent){
@@ -45,6 +51,30 @@
 			portfolioStocksBeingEdited = [...portfolio.tickerSymbols];
 		}
 		open = true;
+	}
+	
+	async function handleDeleteSubmit() {
+		isBeingProcessed = true;
+
+		let result = await deletePortfolio(s, portfolioIdBeingDeleted);
+		
+		if (!result.success) {
+			toast.error(result.error ?? "An error occurred while deleting the portfolio");
+		} else {
+			toast.success("Portfolio deleted successfully");
+			deleteOpen = false;
+			return;
+		}
+		isBeingProcessed = false;
+	}
+	
+	function onDeleteClick(id: string){
+		const portfolio = getPortfolioById(s.portfolios, id);
+		if (portfolio) {
+			portfolioIdBeingDeleted = portfolio.portfolioId;
+			portfolioNameBeingDeleted = portfolio.portfolioName;
+		}
+		deleteOpen = true;
 	}
 </script>
 
@@ -106,3 +136,18 @@
 		</form>
 	</Dialog.Content>
 </Dialog.Root>
+
+<AlertDialog.Root bind:open={deleteOpen}>
+	<AlertDialog.Content>
+		<AlertDialog.Header>
+			<AlertDialog.Title>Are you absolutely sure you want to delete this portfolio?</AlertDialog.Title>
+			<AlertDialog.Description>
+				This action cannot be undone. This will permanently delete the portfolio <strong>{portfolioNameBeingDeleted}</strong> and all of its data.
+			</AlertDialog.Description>
+		</AlertDialog.Header>
+		<AlertDialog.Footer>
+			<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+			<AlertDialog.Action onclick={() => { handleDeleteSubmit() }}>Continue</AlertDialog.Action>
+		</AlertDialog.Footer>
+	</AlertDialog.Content>
+</AlertDialog.Root>
