@@ -63,8 +63,14 @@
 				</Breadcrumb.Root>
 			</div>
 		</header>
-		<div class="flex flex-1 flex-col gap-4 p-4 pt-0">
-			{@render children()}
-		</div>
+		{#if currentTabName === 'Stock Map'}
+			<div class="flex flex-1 flex-col">
+				{@render children()}
+			</div>
+		{:else }
+			<div class="flex flex-1 flex-col gap-4 p-4 pt-0">
+				{@render children()}
+			</div>
+		{/if}
 	</Sidebar.Inset>
 </Sidebar.Provider>	
