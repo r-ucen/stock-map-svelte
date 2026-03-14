@@ -32,7 +32,7 @@ public class EditPortfolioHandler
             throw new PortfolioNotFoundException("Portfolio not found.");
         }
         
-        if (cmd.PortfolioName == existing.Name || cmd.TickerSymbols.SequenceEqual(existing.Stocks.Select(s => s.TickerSymbol)))
+        if (cmd.PortfolioName == existing.Name && cmd.TickerSymbols.SequenceEqual(existing.Stocks.Select(s => s.TickerSymbol)))
         {
             throw new PortfolioUnchangedException("Portfolio name and stocks are unchanged.");
         }
