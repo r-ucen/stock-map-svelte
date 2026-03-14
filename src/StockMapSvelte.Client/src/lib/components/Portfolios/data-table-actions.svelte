@@ -10,7 +10,7 @@
 		editPortfolio,
 		getPortfolioById,
 		setPortfolioAsDefault
-	} from '$lib/components/Portfolios/dataTableActions';
+	} from '$lib/components/Portfolios/portfolioActions';
 	import { getContext } from 'svelte';
 	import type { IState } from '$lib/Abstractions/IState';
 	import StockLookuper from '$lib/components/Portfolios/stock-lookuper.svelte';
