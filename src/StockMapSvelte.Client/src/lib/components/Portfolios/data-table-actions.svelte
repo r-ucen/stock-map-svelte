@@ -30,9 +30,10 @@
 		const result = await editPortfolio(s, portfolioIdBeingEdited, portfolioNameBeingEdited, portfolioStocksBeingEdited);
 		if (!result.success) {
 			infoMessage = result.error ?? null;
+		} else {
+			infoMessage = "Successfully edited portfolio";
 		}
 		isBeingProcessed = false;
-		infoMessage = "Successfully edited portfolio";
 	}
 	
 	function onEditClick(id: string){
