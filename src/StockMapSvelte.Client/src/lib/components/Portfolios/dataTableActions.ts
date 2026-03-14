@@ -13,12 +13,16 @@ export async function editPortfolio(state: IState, id: string, p_portfolioName: 
 			tickerSymbols: p_tickerSymbols
 		})
 	});
+	
+	console.log(res);
 
 	if (res.ok) {
+		console.log(res.body);
 		editPortfolioInState(state, id, p_portfolioName, p_tickerSymbols);
 		return { success: true };
 	} else {
-		const error = 'Failed to update portfolio';
+		const errorData = await res.json().catch(() => ({}));
+		const error = errorData.message || 'Failed to update portfolio';
 		return { success: false, status: res.status, error };
 	}
 }
