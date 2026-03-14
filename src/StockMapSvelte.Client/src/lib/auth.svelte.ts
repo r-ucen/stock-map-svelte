@@ -1,6 +1,6 @@
-import { PUBLIC_API_BASE_URL } from '$env/static/public';
 import { goto } from '$app/navigation';
 import { resolve } from '$app/paths';
+import { apiFetch } from '$lib/apiFetch'
 
 export interface User {
 	email: string;
@@ -22,16 +22,9 @@ class AuthManager {
 		return this.#initialized;
 	}
 
-	private async apiFetch(endpoint: string, options: RequestInit = {}) {
-		return fetch(`${PUBLIC_API_BASE_URL}${endpoint}`, {
-			...options,
-			credentials: 'include'
-		});
-	}
-
 	async checkAuth() {
 		try {
-			const res = await this.apiFetch('/manage/info');
+			const res = await apiFetch('/manage/info');
 			if (res.ok) {
 				this.#user = await res.json();
 			} else {
@@ -46,7 +39,7 @@ class AuthManager {
 	}
 	
 	async register(email: string, password: string) {
-		const res = await this.apiFetch('/register?useCookies=true', {
+		const res = await apiFetch('/register?useCookies=true', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ email, password })
@@ -65,7 +58,7 @@ class AuthManager {
 	}
 	
 	async confirmEmail(userId: string, code: string) {
-		const res = await this.apiFetch(
+		const res = await apiFetch(
 			`/confirmEmail?userId=${userId}&code=${code}`
 		);
 		
@@ -78,7 +71,7 @@ class AuthManager {
 	}
 
 	async login(email: string, password: string) {
-		const res = await this.apiFetch('/login?useCookies=true', {
+		const res = await apiFetch('/login?useCookies=true', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ email, password })
@@ -94,7 +87,7 @@ class AuthManager {
 	}
 	
 	async logout() {
-		await this.apiFetch('/logout', { method: 'POST' });
+		await apiFetch('/logout', { method: 'POST' });
 		this.#user = null;
 		const resolvedLogin = resolve("/login");
 		await goto(resolvedLogin);
