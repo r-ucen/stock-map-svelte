@@ -1,6 +1,25 @@
 import { apiFetch } from '$lib/apiFetch';
 import type { IPortfolio, IState } from '$lib/Abstractions/IState';
 
+export async function deletePortfolio(state: IState, id: string) {
+	const res = await apiFetch(`/portfolios/${id}`, {
+		method: 'DELETE'
+	});
+
+	if (res.ok) {
+		console.log(res.body);
+		deletePortfolioInState(state, id);
+		return { success: true };
+	} else {
+		const errorData = await res.json().catch(() => ({}));
+		const error = errorData.message || 'Failed to delete portfolio';
+		return { success: false, status: res.status, error };
+	}
+}
+
+function deletePortfolioInState(state: IState, id: string) {
+	state.portfolios = state.portfolios.filter((p) => p.portfolioId !== id);
+}
 
 export async function editPortfolio(state: IState, id: string, p_portfolioName: string, p_tickerSymbols: string[]) {
 	const res = await apiFetch(`/portfolios/${id}`, {
