@@ -8,6 +8,7 @@
 	const s: IState = getContext<IState>('state');
 
 	const textColor = $derived(mode.current === 'light' ? 'black' : 'white');
+	const strokeColor = $derived(mode.current === 'light' ? 'white' : 'black');
 
 	let container: HTMLDivElement | undefined = $state();
 	let width = $state(0);
@@ -64,6 +65,8 @@
 							width={stock.rectangle.width}
 							height={stock.rectangle.height}
 							fill={color}
+							stroke={strokeColor}
+							stroke-width="1"
 							rx="5"
 							ry="5"
 						>
