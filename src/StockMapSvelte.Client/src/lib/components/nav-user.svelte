@@ -9,6 +9,10 @@
 	import CreditCardIcon from "@lucide/svelte/icons/credit-card";
 	import LogOutIcon from "@lucide/svelte/icons/log-out";
 	import SparklesIcon from "@lucide/svelte/icons/sparkles";
+	import { toggleMode } from "mode-watcher";
+	import SunIcon from "@lucide/svelte/icons/sun";
+	import MoonIcon from "@lucide/svelte/icons/moon";
+	import { Button } from "$lib/components/ui/button/index.js";
 
 	let { user }: { user: { name: string; email: string; avatar: string } } = $props();
 	const sidebar = useSidebar();
@@ -52,6 +56,15 @@
 							<span class="truncate font-medium">{user.name}</span>
 							<span class="truncate text-xs">{user.email}</span>
 						</div>
+						<Button onclick={toggleMode} variant="outline" size="icon">
+							<SunIcon
+								class="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 !transition-all dark:scale-0 dark:-rotate-90"
+							/>
+							<MoonIcon
+								class="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 !transition-all dark:scale-100 dark:rotate-0"
+							/>
+							<span class="sr-only">Toggle theme</span>
+						</Button>
 					</div>
 				</DropdownMenu.Label>
 				<DropdownMenu.Separator />
