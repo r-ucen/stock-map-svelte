@@ -3,8 +3,11 @@
 	import type { IState } from '$lib/Abstractions/IState';
 	import type { TreemapDataDto } from '$lib/Abstractions/Treemap';
 	import { calculateTreemapRectangles, getCellColor, getCellDescription } from '$lib/services/treemap';
+	import { mode } from 'mode-watcher';
 
 	const s: IState = getContext<IState>('state');
+
+	const textColor = $derived(mode.current === 'light' ? 'black' : 'white');
 
 	let container: HTMLDivElement | undefined = $state();
 	let width = $state(0);
@@ -38,7 +41,7 @@
 
 <div
 	bind:this={container}
-	class="absolute inset-0 overflow-hidden bg-black"
+	class="absolute inset-0 overflow-hidden"
 >
 	{#if calculatedTreemapData?.sectors && width > 100}
 		<svg {width} {height} viewBox="0 0 {width} {height}" preserveAspectRatio="none" style="display: block;">
@@ -72,7 +75,7 @@
 							y={stock.rectangle.y + stock.rectangle.height / 2}
 							text-anchor="middle"
 							dominant-baseline="middle"
-							fill="white"
+							fill={textColor}
 							font-size="{fontSize}px"
 							style="pointer-events: none;"
 						>
