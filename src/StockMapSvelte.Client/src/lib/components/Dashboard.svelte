@@ -12,6 +12,7 @@
 	import { type IPortfolio, type IState, MapMetric } from '$lib/Abstractions/IState';
 	import { apiFetch } from '$lib/apiFetch';
 	import { fetchTreemapData } from '$lib/portfolioFetch';
+	import { auth } from '$lib/auth.svelte';
 	
 	const tabNames: Record<string, string> = {
 		'portfolios': 'Portfolios',
@@ -23,6 +24,7 @@
 	);
 	
 	let state = $state<IState>({
+		email: null,
 		portfolios: [],
 		portfolioLogoDefault: GalleryVerticalEndIcon,
 		selectedPortfolioId: null,
@@ -48,16 +50,19 @@
 	
 	onMount(async () => {
 		try {
-			const response = await apiFetch('/portfolios/me');
-			if (!response.ok) {
+			const portfoliosResponse = await apiFetch('/portfolios/me');
+			if (!portfoliosResponse.ok) {
 				throw new Error('Failed to fetch portfolios');
 			}
-			const data: IPortfolio[] = await response.json();
-			state.portfolios = data;
-			state.selectedPortfolioId = data.filter(p => p.isDefault)[0]?.portfolioId ?? null;
+			
+			state.email = auth?.user?.email ?? null;
+			
+			const portfolios: IPortfolio[] = await portfoliosResponse.json();
+			state.portfolios = portfolios;
+			state.selectedPortfolioId = portfolios.filter(p => p.isDefault)[0]?.portfolioId ?? null;
 			state.selectedMetric = MapMetric.RegularMarketChangePercent;
 		} catch (error) {
-			console.error('Error fetching portfolios:', error);
+			console.error('Error fetching data:', error);
 		}
 	})
 </script>

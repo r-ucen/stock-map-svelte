@@ -3,11 +3,6 @@
 	import MapIcon from "@lucide/svelte/icons/map";
 
 	const data = {
-		user: {
-			name: "shadcn",
-			email: "m@example.com",
-			avatar: "/avatars/shadcn.jpg",
-		},
 		navMain: [
 			{
 				title: "Portfolios",
@@ -31,9 +26,10 @@
 	import NavUser from "./nav-user.svelte";
 	import TeamSwitcher from "./team-switcher.svelte";
 	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
-	import type { ComponentProps } from "svelte";
+	import { type ComponentProps, getContext } from 'svelte';
 	import MapSettings from "$lib/components/map-settings.svelte";
 	import { useSidebar } from "$lib/components/ui/sidebar/index.js";
+	import type { IState } from '$lib/Abstractions/IState';
 
 	let {
 		ref = $bindable(null),
@@ -42,7 +38,8 @@
 	}: ComponentProps<typeof Sidebar.Root> = $props();
 	
 	const sidebar = useSidebar();
-
+	
+	let s = getContext<IState>('state');
 </script>
 
 <Sidebar.Root {collapsible} {...restProps}>
@@ -58,7 +55,7 @@
 		
 	</Sidebar.Content>
 	<Sidebar.Footer>
-		<NavUser user={data.user} />
+		<NavUser userEmail={s.email ?? ""} />
 	</Sidebar.Footer>
 	<Sidebar.Rail />
 </Sidebar.Root>
