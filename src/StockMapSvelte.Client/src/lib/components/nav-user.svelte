@@ -13,9 +13,15 @@
 	import SunIcon from "@lucide/svelte/icons/sun";
 	import MoonIcon from "@lucide/svelte/icons/moon";
 	import { Button } from "$lib/components/ui/button/index.js";
+	import { auth } from "$lib/auth.svelte.js";
 
-	let { user }: { user: { name: string; email: string; avatar: string } } = $props();
+	let { userEmail }: { userEmail: string } = $props();
+
+	let userEmailFirstLetter = $derived(userEmail.charAt(0).toUpperCase());
+	let userEmailName = $derived(userEmail.split("@")[0]);
+	
 	const sidebar = useSidebar();
+
 </script>
 
 <Sidebar.Menu>
@@ -29,12 +35,11 @@
 						{...props}
 					>
 						<Avatar.Root class="size-8 rounded-lg">
-							<Avatar.Image src={user.avatar} alt={user.name} />
-							<Avatar.Fallback class="rounded-lg">CN</Avatar.Fallback>
+							<Avatar.Fallback class="rounded-lg">{userEmailFirstLetter}</Avatar.Fallback>
 						</Avatar.Root>
 						<div class="grid flex-1 text-start text-sm leading-tight">
-							<span class="truncate font-medium">{user.name}</span>
-							<span class="truncate text-xs">{user.email}</span>
+							<span class="truncate font-medium">{userEmailName}</span>
+							<span class="truncate text-xs">{userEmail}</span>
 						</div>
 						<ChevronsUpDownIcon class="ms-auto size-4" />
 					</Sidebar.MenuButton>
@@ -49,12 +54,11 @@
 				<DropdownMenu.Label class="p-0 font-normal">
 					<div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
 						<Avatar.Root class="size-8 rounded-lg">
-							<Avatar.Image src={user.avatar} alt={user.name} />
-							<Avatar.Fallback class="rounded-lg">CN</Avatar.Fallback>
+							<Avatar.Fallback class="rounded-lg">{userEmailFirstLetter}</Avatar.Fallback>
 						</Avatar.Root>
 						<div class="grid flex-1 text-start text-sm leading-tight">
-							<span class="truncate font-medium">{user.name}</span>
-							<span class="truncate text-xs">{user.email}</span>
+							<span class="truncate font-medium">{userEmailName}</span>
+							<span class="truncate text-xs">{userEmail}</span>
 						</div>
 						<Button onclick={toggleMode} variant="outline" size="icon">
 							<SunIcon
@@ -67,30 +71,14 @@
 						</Button>
 					</div>
 				</DropdownMenu.Label>
-				<DropdownMenu.Separator />
-				<DropdownMenu.Group>
-					<DropdownMenu.Item>
-						<SparklesIcon />
-						Upgrade to Pro
-					</DropdownMenu.Item>
-				</DropdownMenu.Group>
-				<DropdownMenu.Separator />
 				<DropdownMenu.Group>
 					<DropdownMenu.Item>
 						<BadgeCheckIcon />
 						<a href="/?tab=account">Account</a>
 					</DropdownMenu.Item>
-					<DropdownMenu.Item>
-						<CreditCardIcon />
-						Billing
-					</DropdownMenu.Item>
-					<DropdownMenu.Item>
-						<BellIcon />
-						Notifications
-					</DropdownMenu.Item>
 				</DropdownMenu.Group>
 				<DropdownMenu.Separator />
-				<DropdownMenu.Item>
+				<DropdownMenu.Item onSelect={() => auth.logout()}>
 					<LogOutIcon />
 					Log out
 				</DropdownMenu.Item>
