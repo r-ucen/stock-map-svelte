@@ -27,6 +27,11 @@
 	let portfolioNameBeingCreated = $state("");
 	let portfolioStocksBeingCreated = $state<string[]>([]);
 
+	function resetCreateForm() {
+		portfolioNameBeingCreated = "";
+		portfolioStocksBeingCreated = [];
+	}
+
 	async function handleCreateSubmit(e: SubmitEvent){
 		e.preventDefault();
 		isBeingProcessed = true;
@@ -34,6 +39,8 @@
 		if (!result.success) {
 			toast.error(result.error ?? "An error occurred while creating new portfolio");
 		} else {
+			resetCreateForm();
+			open = false;
 			await fetchTreemapData(s);
 			toast.success("Successfully created portfolio");
 		}
@@ -50,7 +57,7 @@
 </Button>
 
 <Dialog.Root bind:open>
-	<Dialog.Content class="sm:max-w-[425px]">
+	<Dialog.Content class="sm:max-w-[425px]" onInteractOutside={() => resetCreateForm()}>
 		<form onsubmit={handleCreateSubmit}>
 			<Dialog.Header>
 				<Dialog.Title>Create New Portfolio</Dialog.Title>
@@ -68,7 +75,7 @@
 				<StockLookuper bind:selectedStocks={portfolioStocksBeingCreated} />
 			</div>
 			<Dialog.Footer>
-				<Dialog.Close type="button" class={buttonVariants({ variant: "outline" })}>
+				<Dialog.Close type="button" class={buttonVariants({ variant: "outline" })} onclick={resetCreateForm}>
 					Cancel
 				</Dialog.Close>
 				<Button
