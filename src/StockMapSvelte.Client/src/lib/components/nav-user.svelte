@@ -74,7 +74,7 @@
 				<DropdownMenu.Group>
 					<DropdownMenu.Item>
 						<BadgeCheckIcon />
-						<a href="/?tab=account">Account</a>
+						<a href="/account">Account</a>
 					</DropdownMenu.Item>
 				</DropdownMenu.Group>
 				<DropdownMenu.Separator />
