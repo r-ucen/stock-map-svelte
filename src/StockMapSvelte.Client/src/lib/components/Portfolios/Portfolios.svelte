@@ -17,7 +17,9 @@
 	let { items }: {items: IPortfolio[]} = $props();
 
 	$effect(() => {
-		s.portfolios = items;
+		if (s.portfolios.length === 0 && items.length > 0) {
+			s.portfolios = items;
+		}
 	});
 
 	let open = $state(false);
