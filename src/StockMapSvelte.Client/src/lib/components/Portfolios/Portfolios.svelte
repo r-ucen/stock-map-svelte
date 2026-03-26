@@ -2,7 +2,7 @@
 	import DataTable from "./data-table.svelte";
 	import { columns } from "./columns.js";
 	import { getContext } from 'svelte';
-	import type { IState } from '$lib/Abstractions/IState';
+	import { type IPortfolio, type IState } from '$lib/Abstractions/IState';
 	import { Button, buttonVariants } from '$lib/components/ui/button';
 	import Plus  from "@lucide/svelte/icons/plus";
 	import StockLookuper from '$lib/components/Portfolios/stock-lookuper.svelte';
@@ -14,7 +14,11 @@
 	import { fetchTreemapData } from '$lib/portfolioFetch';
 	
 	let s = getContext<IState>('state');
-	let data = $derived(s.portfolios)
+	let { items }: {items: IPortfolio[]} = $props();
+
+	$effect(() => {
+		s.portfolios = items;
+	});
 
 	let open = $state(false);
 
@@ -76,4 +80,4 @@
 	</Dialog.Content>
 </Dialog.Root>
 
-<DataTable data={data} {columns}  />
+<DataTable data={s.portfolios} {columns}  />
