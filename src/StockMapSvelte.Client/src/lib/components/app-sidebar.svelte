@@ -6,14 +6,14 @@
 		navMain: [
 			{
 				title: "Portfolios",
-				url: "/?tab=portfolios",
+				url: "/portfolios",
 				icon: ChartPieIcon,
 				isActive: true,
 				items: [],
 			},
 			{
 				title: "Stock Map ",
-				url: "/",
+				url: "/map",
 				icon: MapIcon,
 				items: [],
 			}
