@@ -1,43 +1,8 @@
 import { goto } from '$app/navigation';
 import { resolve } from '$app/paths';
-import { apiFetch } from '$lib/apiFetch'
-
-export interface User {
-	email: string;
-	isEmailConfirmed: boolean;
-}
+import { apiFetch } from '$lib/apiFetch';
 
 class AuthManager {
-	#user = $state<User | null>(null);
-	#initialized = $state(false);
-
-	get user() {
-		return this.#user;
-	}
-
-	get isAuthenticated() {
-		return !!this.#user;
-	}
-	get isInitialized() {
-		return this.#initialized;
-	}
-
-	async checkAuth() {
-		try {
-			const res = await apiFetch('/manage/info');
-			if (res.ok) {
-				this.#user = await res.json();
-			} else {
-				this.#user = null;
-			}
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		} catch (e) {
-			this.#user = null;
-		} finally {
-			this.#initialized = true;
-		}
-	}
-	
 	async register(email: string, password: string) {
 		const res = await apiFetch('/register?useCookies=true', {
 			method: 'POST',
@@ -78,8 +43,7 @@ class AuthManager {
 		});
 
 		if (res.ok) {
-			await this.checkAuth();
-			const resolvedReturnPath = resolve("/");
+			const resolvedReturnPath = resolve("/map");
 			await goto(resolvedReturnPath);
 			return { success: true };
 		}
@@ -88,8 +52,7 @@ class AuthManager {
 	
 	async logout() {
 		await apiFetch('/logout', { method: 'POST' });
-		this.#user = null;
-		const resolvedLogin = resolve("/login");
+		const resolvedLogin = resolve("/");
 		await goto(resolvedLogin);
 	}
 }
