@@ -2,7 +2,7 @@ import type { Component } from 'svelte';
 import type { TreemapDataDto } from '$lib/Abstractions/Treemap';
 
 export interface IState {
-	email: string | null;
+	email: string | undefined;
 	portfolios: IPortfolio[];
 	portfolioLogoDefault: Component;
 	selectedPortfolioId: string | null;

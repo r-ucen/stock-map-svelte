@@ -12,6 +12,7 @@
 
 	import { onMount } from 'svelte';
 	import { apiFetch } from '$lib/apiFetch';
+	import { mode } from 'mode-watcher';
 	let mounted = $state(false);
 	onMount(() => mounted = true);
 
@@ -49,6 +50,7 @@
 			label: stock.tickerSymbol
 		}));
 	}
+	const selectInputBgColor = $derived(mode.current === 'light' ? 'oklch(1 0 0)' : 'oklch(0.929 0.013 255.508)');
 </script>
 
 {#if mounted}
@@ -57,6 +59,8 @@
 			{loadOptions}
 			bind:value={selectedValue}
 			placeholder="Search for a stock..."
+			containerStyles="background-color: {selectInputBgColor}; color: black; border: 2px solid var(--border);"
+			inputStyles="color: black;"
 		/>
 	</div>
 	

@@ -3,7 +3,17 @@
 declare global {
 	namespace App {
 		// interface Error {}
-		// interface Locals {}
+		interface Locals {
+			user?: {
+				email: string;
+				isAuthenticated: boolean;
+				roles: {
+					admin: boolean;
+					manager: boolean;
+					customer: boolean;
+				};
+			};
+		}
 		// interface PageData {}
 		// interface PageState {}
 		// interface Platform {}

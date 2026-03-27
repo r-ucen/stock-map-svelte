@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { auth } from '$lib/auth.svelte.js';
+	let { user } = $props();
 </script>
 
-<p>You are logged in as {auth.user?.email}</p>
+<p>You are logged in as {user.email}</p>

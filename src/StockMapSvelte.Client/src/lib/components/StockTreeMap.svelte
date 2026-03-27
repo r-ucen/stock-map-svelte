@@ -1,11 +1,13 @@
 <script lang="ts">
-	import { getContext } from 'svelte';
-	import type { IState } from '$lib/Abstractions/IState';
+	import { MapMetric } from '$lib/Abstractions/IState';
 	import type { TreemapDataDto } from '$lib/Abstractions/Treemap';
 	import { calculateTreemapRectangles, getCellColor, getCellDescription } from '$lib/services/treemap';
 	import { mode } from 'mode-watcher';
-
-	const s: IState = getContext<IState>('state');
+	
+	let { treemapData, selectedMetric }: {
+			treemapData: TreemapDataDto | null,
+			selectedMetric: MapMetric | null
+	} = $props();
 
 	const textColor = $derived(mode.current === 'light' ? 'black' : 'white');
 	const strokeColor = $derived(mode.current === 'light' ? 'white' : 'black');
@@ -15,8 +17,8 @@
 	let height = $state(0);
 
 	let calculatedTreemapData: TreemapDataDto | null = $derived.by(() => {
-		if (s.treemapData && width > 0 && height > 0) {
-			const dataCopy = JSON.parse(JSON.stringify(s.treemapData));
+		if (treemapData && width > 0 && height > 0) {
+			const dataCopy = JSON.parse(JSON.stringify(treemapData));
 			return calculateTreemapRectangles(dataCopy, width, height);
 		}
 		return null;
@@ -48,8 +50,8 @@
 		<svg {width} {height} viewBox="0 0 {width} {height}" preserveAspectRatio="none" style="display: block;">
 			{#each calculatedTreemapData.sectors as sector (sector.sectorName)}
 				{#each sector.stocks as stock (stock.tickerSymbol)}
-					{@const info = getCellDescription(stock, s.selectedMetric)}
-					{@const color = getCellColor(stock, s.selectedMetric)}
+					{@const info = getCellDescription(stock, selectedMetric)}
+					{@const color = getCellColor(stock, selectedMetric)}
 					{@const fontSize = Math.max(12, Math.floor(stock.rectangle.width * 0.008))}
 					{@const charWidth = fontSize * 0.6}
 					{@const lineHeight = fontSize * 1.2}

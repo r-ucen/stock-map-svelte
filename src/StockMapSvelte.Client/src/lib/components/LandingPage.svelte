@@ -1,3 +1,0 @@
-
-
-<p>Landing page</p>
