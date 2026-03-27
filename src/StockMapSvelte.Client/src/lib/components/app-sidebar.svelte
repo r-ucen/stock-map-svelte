@@ -30,6 +30,10 @@
 						title: "Manage Stocks",
 						url: "/admin/stocks",
 					},
+					{
+						title: "Stock Profiles",
+						url: "/admin/stock-profiles"
+					}
 				],
 			}
 		],
