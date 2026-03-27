@@ -33,6 +33,10 @@
 					{
 						title: "Stock Profiles",
 						url: "/admin/stock-profiles"
+					},
+					{
+						title: "Portfolios",
+						url: "/admin/portfolios"
 					}
 				],
 			}
