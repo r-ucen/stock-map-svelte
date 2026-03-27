@@ -27,7 +27,7 @@
 				isAdminOnly: true,
 				items: [
 					{
-						title: "Manage Stocks",
+						title: "Stocks",
 						url: "/admin/stocks",
 					},
 					{
