@@ -29,6 +29,10 @@
 		'/portfolios': 'Portfolios',
 		'/account': 'Manage Account',
 		'/map': 'Stock Map',
+		'/admin/stocks': 'Manage Stocks',
+		'/admin/stock-profiles': 'Stock Profiles',
+		'/admin/portfolios': 'Manage Portfolios',
+		'/admin/users': 'Manage Users',
 	};
 
 	let currentTabName = $derived(

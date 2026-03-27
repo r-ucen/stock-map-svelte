@@ -1,6 +1,7 @@
 <script lang="ts" module>
 	import ChartPieIcon from "@lucide/svelte/icons/chart-pie";
 	import MapIcon from "@lucide/svelte/icons/map";
+	import ShieldIcon from "@lucide/svelte/icons/shield";
 
 	const data = {
 		navMain: [
@@ -9,13 +10,39 @@
 				url: "/portfolios",
 				icon: ChartPieIcon,
 				isActive: true,
+				isAdminOnly: false,
 				items: [],
 			},
 			{
 				title: "Stock Map ",
 				url: "/map",
 				icon: MapIcon,
+				isAdminOnly: false,
 				items: [],
+			},
+			{
+				title: "Administration",
+				url: "/#",
+				icon: ShieldIcon,
+				isAdminOnly: true,
+				items: [
+					{
+						title: "Stocks",
+						url: "/admin/stocks",
+					},
+					{
+						title: "Stock Profiles",
+						url: "/admin/stock-profiles"
+					},
+					{
+						title: "Portfolios",
+						url: "/admin/portfolios"
+					},
+					{
+						title: "Users",
+						url: "/admin/users"
+					}
+				],
 			}
 		],
 	};
@@ -30,6 +57,7 @@
 	import MapSettings from "$lib/components/map-settings.svelte";
 	import { useSidebar } from "$lib/components/ui/sidebar/index.js";
 	import type { IState } from '$lib/Abstractions/IState';
+	import { page } from '$app/state';
 
 	let {
 		ref = $bindable(null),
@@ -47,7 +75,7 @@
 		<TeamSwitcher />
 	</Sidebar.Header>
 	<Sidebar.Content>
-		<NavMain items={data.navMain} />
+		<NavMain items={data.navMain} data={page.data}/>
 
 		{#if sidebar.state !== "collapsed"}
 			<MapSettings />
