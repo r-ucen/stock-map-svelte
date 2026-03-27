@@ -1,9 +1,8 @@
 <script lang="ts">
 	import * as Select from "$lib/components/ui/select/index.js";
-	import { MapMetric, type IState, getMetricLabel } from "$lib/Abstractions/IState";
-	import { getContext } from "svelte";
+	import { MapMetric, getMetricLabel } from "$lib/Abstractions/IState";
 
-	let s = getContext<IState>("state");
+	let { selectedMetric = $bindable<MapMetric | null>(null) } = $props();
 
 	const metrics = Object.values(MapMetric)
 		.filter((v): v is MapMetric => typeof v === "number")
@@ -12,26 +11,23 @@
 			value: value.toString()
 		}));
 
-	let selectedValue = $state(s.selectedMetric?.toString() ?? "");
-
-	const selectedLabel = $derived(
-		s.selectedMetric !== null ? getMetricLabel(s.selectedMetric) : "Select a metric"
-	);
-
 	function handleValueChange(v: string | undefined) {
-		if (v !== undefined) {
-			s.selectedMetric = Number(v) as MapMetric;
+		if (!v) {
+			selectedMetric = null;
+			return;
 		}
+
+		selectedMetric = Number(v) as MapMetric;
 	}
 </script>
 
 <Select.Root
 	type="single"
-	bind:value={selectedValue}
+	value={selectedMetric?.toString() ?? ""}
 	onValueChange={handleValueChange}
 >
 	<Select.Trigger class="w-60">
-		{selectedLabel}
+		{selectedMetric !== null ? getMetricLabel(selectedMetric) : "Select a metric"}
 	</Select.Trigger>
 	<Select.Content>
 		{#each metrics as metric (metric.value)}
