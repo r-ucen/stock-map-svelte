@@ -4,6 +4,7 @@
 
 	let adminState = $state<IAdminState>({
 		stocks: [],
+		stockProfiles: []
 	})
 	setContext('stateAdmin', adminState);
 
