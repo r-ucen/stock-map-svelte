@@ -37,6 +37,10 @@
 					{
 						title: "Portfolios",
 						url: "/admin/portfolios"
+					},
+					{
+						title: "Users",
+						url: "/admin/users"
 					}
 				],
 			}
