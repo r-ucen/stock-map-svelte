@@ -44,10 +44,12 @@ public class ResendEmailSender : IEmailSender<ApplicationUser>
 
     public async Task SendPasswordResetCodeAsync(ApplicationUser user, string email, string resetCode)
     {
+        var resetLink = $"{_frontendUrl}/reset-password?code={Uri.EscapeDataString(resetCode)}&email={Uri.EscapeDataString(email)}";
+
         await SendEmailAsync(
             email,
             "Reset your password",
-            $"Please reset your password using the following code: <strong>{resetCode}</strong>");
+            $"Please reset your password by <a href='{resetLink}'>clicking here</a> or use this code: <strong>{resetCode}</strong>");
     }
 
     private async Task SendEmailAsync(string email, string subject, string htmlBody)

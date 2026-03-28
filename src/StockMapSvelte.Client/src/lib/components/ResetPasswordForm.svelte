@@ -7,31 +7,40 @@
 	import type { HTMLAttributes } from "svelte/elements";
 	import { resolve } from '$app/paths';
 	import { auth } from '$lib/auth.svelte';
+	import { page } from '$app/state';
 	import { toast } from 'svelte-sonner';
-
-	let { class: className, ...restProps }: HTMLAttributes<HTMLDivElement> = $props();
 	
+	let { class: className, ...restProps }: HTMLAttributes<HTMLDivElement> = $props();
+
 	const resolvedLogin = resolve("/login")
 	const resolvedPrivacyPolicy = resolve("/privacy-policy");
-	
-	let email = $state("");
+
+	let email = $state(page.url.searchParams.get('email') ?? "");
+	let code = $state(page.url.searchParams.get('code') ?? "");
 	let password = $state("");
 	let confirmPassword = $state("");
-
+	
 	let isLoading = $state(false);
 	let success = $state(false);
-	
-	let arePasswordsMatching = $derived(password === confirmPassword)
 
+	let arePasswordsMatching = $derived(password === confirmPassword)
+	let passwordsMeetRequirements = $derived(arePasswordsMatching && /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/.test(password))
+	
 	async function handleSubmit() {
 		isLoading = true;
 		
-		const result = await auth.register(email, password);
-		
+		if (!passwordsMeetRequirements) {
+			toast.error("Passwords do not match");
+			isLoading = false;
+			return;
+		}
+
+		const result = await auth.resetPassword(email, code, password);
+
 		if (result.success) {
 			success = true;
 		} else {
-			toast.error("Failed to create account. Please try again later.");
+      toast.error("Failed to reset password")
 		}
 		isLoading = false;
 	}
@@ -39,16 +48,15 @@
 
 {#if success}
 	<div class="text-center">
-		<h1 class="text-2xl">Account created successfully!</h1>
-		<h2 class="text-lg">Check your email for a confirmation link to complete your registration</h2>
-		<h2 class="text-lg"><a href="/resend-email-confirmation" class="text-primary font-medium underline underline-offset-4">Resend email confirmation</a></h2>
+		<h1 class="text-2xl">Password reset successful!</h1>
+		<p>You can now <a href={resolvedLogin} class="text-primary font-medium underline underline-offset-4">sign in</a> with your new password.</p>
 	</div>
 {:else}
 	<div class={cn("flex flex-col gap-6", className)} {...restProps}>
 		<Card.Root>
 			<Card.Header class="text-center">
-				<Card.Title class="text-xl">Create your account</Card.Title>
-				<Card.Description>Enter your email below to create your account</Card.Description>
+				<Card.Title class="text-xl">Reset your password</Card.Title>
+				<Card.Description>Enter your new password to reset it</Card.Description>
 			</Card.Header>
 			<Card.Content>
 				<form onsubmit={handleSubmit}>
@@ -94,10 +102,10 @@
 						<Field.Field>
 							<Button
 								type="submit"
-								disabled={!arePasswordsMatching || isLoading}
-							>Create Account</Button>
+								disabled={!passwordsMeetRequirements || isLoading}
+							>Reset Password</Button>
 							<Field.Description class="text-center">
-								Already have an account? <a href={resolvedLogin}>Sign in</a>
+								Remember your password? <a href={resolvedLogin}>Sign in</a>
 							</Field.Description>
 						</Field.Field>
 					</Field.Group>
