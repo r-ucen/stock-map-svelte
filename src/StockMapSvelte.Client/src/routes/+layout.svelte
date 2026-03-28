@@ -9,6 +9,6 @@
 </script>
 
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
-<Toaster />
+<Toaster richColors position="top-right" />
 <ModeWatcher />
 {@render children()}
