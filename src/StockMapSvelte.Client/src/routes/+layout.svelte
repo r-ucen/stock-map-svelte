@@ -3,9 +3,12 @@
 	import favicon from '$lib/assets/favicon.png';
 	import { Toaster } from "$lib/components/ui/sonner/index.js";
 	import { ModeWatcher } from "mode-watcher";
+	import { dev } from '$app/environment';
+	import { injectAnalytics } from '@vercel/analytics/sveltekit';
 
 	let { children } = $props();
-	
+
+	injectAnalytics({ mode: dev ? 'development' : 'production' });
 </script>
 
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
