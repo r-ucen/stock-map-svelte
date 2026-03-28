@@ -35,6 +35,22 @@ class AuthManager {
 		}
 	}
 
+
+	async resetPassword(email: string, code: string, newPassword: string) {
+		const res = await apiFetch('/resetPassword', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ email, resetCode: code, newPassword })
+		});
+		
+		if (res.ok) {
+			return { success: true };
+		} else {
+			const error = 'Password reset failed';
+			return { success: false, status: res.status, error };
+		}
+	};
+	
 	async login(email: string, password: string) {
 		const res = await apiFetch('/login?useCookies=true', {
 			method: 'POST',
