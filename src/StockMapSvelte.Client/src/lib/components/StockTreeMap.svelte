@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { MapMetric } from '$lib/Abstractions/IState';
-	import type { TreemapDataDto } from '$lib/Abstractions/Treemap';
+	import type { TreemapDataDto, TreemapSectorDto, TreemapNodeDto } from '$lib/Abstractions/Treemap';
 	import { calculateTreemapRectangles, getCellColor, getCellDescription } from '$lib/services/treemap';
 	import { mode } from 'mode-watcher';
+	import { toast } from 'svelte-sonner'
 	
 	let { treemapData, selectedMetric }: {
 			treemapData: TreemapDataDto | null,
@@ -40,6 +41,12 @@
 			resizeObserver.disconnect();
 		};
 	});
+
+	function handleStockClick(sector: TreemapSectorDto, stock: TreemapNodeDto, info: string) {
+		toast.info(`${stock.tickerSymbol}${stock.fullName ? ` : ${stock.fullName}` : ''}`, {
+			description: `Sector: ${sector.sectorName}\n${info}`
+		});
+	}
 </script>
 
 <div
@@ -60,7 +67,17 @@
 					{@const lines = (stock.tickerSymbol + info).split('\n')}
 					{@const startDy = -((lines.length - 1) * 0.6)}
 
-					<g>
+					<g
+						onclick={() => handleStockClick(sector, stock, info)}
+						role="button"
+						tabindex="0"
+						style="outline: none; cursor: pointer;"
+						onkeydown={(e) => {
+							if (e.key === 'Enter' || e.key === ' ') {
+								handleStockClick(sector, stock, info);
+							}
+						}}
+					>
 						<rect
 							x={stock.rectangle.x}
 							y={stock.rectangle.y}
