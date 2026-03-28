@@ -30,7 +30,7 @@
 		isLoading = true;
 		
 		if (!passwordsMeetRequirements) {
-			toast.error("Passwords do not match");
+			toast.error("Passwords do not meet requirements");
 			isLoading = false;
 			return;
 		}
