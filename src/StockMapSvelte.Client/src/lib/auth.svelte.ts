@@ -49,6 +49,21 @@ class AuthManager {
 			return { success: false, status: res.status, error };
 		}
 	}
+	
+	async resendEmailConfirmation(email: string) {
+		const res = await apiFetch('/resendConfirmationEmail', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ email })
+		});
+		
+		if (res.ok) {
+			return { success: true };
+		} else {
+			const error = 'Resend email confirmation failed';
+			return { success: false, status: res.status, error };
+		}
+	}
 
 	async resetPassword(email: string, code: string, newPassword: string) {
 		const res = await apiFetch('/resetPassword', {

@@ -41,6 +41,7 @@
 	<div class="text-center">
 		<h1 class="text-2xl">Account created successfully!</h1>
 		<h2 class="text-lg">Check your email for a confirmation link to complete your registration</h2>
+		<h2 class="text-lg"><a href="/resend-email-confirmation" class="text-primary font-medium underline underline-offset-4">Resend email confirmation</a></h2>
 	</div>
 {:else}
 	<div class={cn("flex flex-col gap-6", className)} {...restProps}>
