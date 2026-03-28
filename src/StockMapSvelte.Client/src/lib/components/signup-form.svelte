@@ -22,9 +22,16 @@
 	let success = $state(false);
 	
 	let arePasswordsMatching = $derived(password === confirmPassword)
+	let passwordsMeetRequirements = $derived(arePasswordsMatching && /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/.test(password))
 
 	async function handleSubmit() {
 		isLoading = true;
+		
+		if (!passwordsMeetRequirements) {
+			toast.error("Passwords do not meet requirements");
+			isLoading = false;
+			return;
+		}
 		
 		const result = await auth.register(email, password);
 		
