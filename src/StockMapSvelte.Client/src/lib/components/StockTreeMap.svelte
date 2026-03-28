@@ -59,12 +59,16 @@
 				{#each sector.stocks as stock (stock.tickerSymbol)}
 					{@const info = getCellDescription(stock, selectedMetric)}
 					{@const color = getCellColor(stock, selectedMetric)}
-					{@const fontSize = Math.max(12, Math.floor(stock.rectangle.width * 0.008))}
+					{@const initialFontSize = Math.max(12, Math.floor(stock.rectangle.width * 0.008))}
+					{@const fontSize = (stock.rectangle.width < 50 || stock.rectangle.height < 30) ? Math.max(6, Math.floor(initialFontSize * 0.75)) : initialFontSize}
 					{@const charWidth = fontSize * 0.6}
 					{@const lineHeight = fontSize * 1.2}
-					{@const showTicker = stock.tickerSymbol.length * charWidth <= stock.rectangle.width && lineHeight <= stock.rectangle.height}
-					{@const showFull = (stock.tickerSymbol.length * charWidth <= stock.rectangle.width) && (lineHeight * (info.split('\n').length + 1) <= stock.rectangle.height) && (stock.rectangle.width > 50 && stock.rectangle.height > 30)}
-					{@const lines = (stock.tickerSymbol + info).split('\n')}
+					{@const textContent = stock.tickerSymbol + info}
+					{@const maxLineLen = Math.max(stock.tickerSymbol.length, info.length)}
+					{@const newlineCount = (textContent.match(/\n/g) || []).length}
+					{@const showFull = maxLineLen * charWidth <= stock.rectangle.width && (lineHeight * newlineCount) <= stock.rectangle.height}
+					{@const showTicker = !showFull && stock.tickerSymbol.length * charWidth <= stock.rectangle.width && lineHeight <= stock.rectangle.height}
+					{@const lines = textContent.split('\n')}
 					{@const startDy = -((lines.length - 1) * 0.6)}
 
 					<g
