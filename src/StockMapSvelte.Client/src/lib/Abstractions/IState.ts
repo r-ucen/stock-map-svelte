@@ -47,7 +47,7 @@ export function getMetricLabel(metric: MapMetric): string {
 		[MapMetric.ExDividendDate]: "Ex-Dividend Date",
 		[MapMetric.DividendYield]: "Dividend Yield",
 		[MapMetric.EarningsDate]: "Earnings Date",
-		[MapMetric.Beta]: "Beta (Volatility)",
+		[MapMetric.Beta]: "Beta",
 		[MapMetric.Pe]: "P/E Ratio",
 		[MapMetric.ForwardPe]: "Forward P/E",
 		[MapMetric.ShortRatio]: "Short Ratio"
