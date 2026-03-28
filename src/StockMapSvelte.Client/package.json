@@ -47,6 +47,7 @@
 	},
 	"dependencies": {
 		"@vercel/analytics": "^2.0.1",
+		"@vercel/speed-insights": "^2.0.0",
 		"svelte-guard": "^1.1.1",
 		"svelte-select": "^5.8.3"
 	}
