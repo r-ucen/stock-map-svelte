@@ -11,6 +11,7 @@
 	let { class: className, ...restProps }: HTMLAttributes<HTMLDivElement> = $props();
 	
 	const resolvedLogin = resolve("/login")
+	const resolvedPrivacyPolicy = resolve("/privacy-policy");
 	
 	let email = $state("");
 	let password = $state("");
@@ -105,7 +106,6 @@
 		</Card.Content>
 	</Card.Root>
 	<Field.Description class="px-6 text-center">
-		By clicking continue, you agree to our <a href="#/">Terms of Service</a>
-		and <a href="#/">Privacy Policy</a>.
+		By clicking continue, you agree to our <a href={resolvedPrivacyPolicy}>Privacy Policy</a>.
 	</Field.Description>
 </div>
