@@ -10,28 +10,24 @@
 	import { toast } from 'svelte-sonner';
 
 	let { class: className, ...restProps }: HTMLAttributes<HTMLDivElement> = $props();
-	
+
 	const resolvedLogin = resolve("/login")
 	const resolvedPrivacyPolicy = resolve("/privacy-policy");
-	
+
 	let email = $state("");
-	let password = $state("");
-	let confirmPassword = $state("");
 
 	let isLoading = $state(false);
 	let success = $state(false);
 	
-	let arePasswordsMatching = $derived(password === confirmPassword)
-
 	async function handleSubmit() {
 		isLoading = true;
-		
-		const result = await auth.register(email, password);
-		
+
+		const result = await auth.forgotPassword(email);
+
 		if (result.success) {
 			success = true;
 		} else {
-			toast.error("Failed to create account. Please try again later.");
+			toast.error("Failed to send reset link. Please try again later.");
 		}
 		isLoading = false;
 	}
@@ -39,16 +35,14 @@
 
 {#if success}
 	<div class="text-center">
-		<h1 class="text-2xl">Account created successfully!</h1>
-		<h2 class="text-lg">Check your email for a confirmation link to complete your registration</h2>
-		<h2 class="text-lg"><a href="/resend-email-confirmation" class="text-primary font-medium underline underline-offset-4">Resend email confirmation</a></h2>
+		<h1 class="text-2xl">Reset link sent successfully to your email. Check your inbox!</h1>
 	</div>
 {:else}
 	<div class={cn("flex flex-col gap-6", className)} {...restProps}>
 		<Card.Root>
 			<Card.Header class="text-center">
-				<Card.Title class="text-xl">Create your account</Card.Title>
-				<Card.Description>Enter your email below to create your account</Card.Description>
+				<Card.Title class="text-xl">Reset your password</Card.Title>
+				<Card.Description>Enter your email address below.</Card.Description>
 			</Card.Header>
 			<Card.Content>
 				<form onsubmit={handleSubmit}>
@@ -65,39 +59,12 @@
 							/>
 						</Field.Field>
 						<Field.Field>
-							<Field.Field class="grid grid-cols-2 gap-4">
-								<Field.Field>
-									<Field.Label for="password">Password</Field.Label>
-									<Input
-										id="password"
-										type="password"
-										required
-										bind:value={password}
-										disabled={isLoading}
-									/>
-								</Field.Field>
-								<Field.Field>
-									<Field.Label for="confirm-password">Confirm Password</Field.Label>
-									<Input
-										id="confirm-password"
-										type="password"
-										required
-										bind:value={confirmPassword}
-										disabled={isLoading}
-									/>
-								</Field.Field>
-							</Field.Field>
-							<Field.Description>
-								Must be at least 6 characters long, contain uppercase letter, number and a special symbol.
-							</Field.Description>
-						</Field.Field>
-						<Field.Field>
 							<Button
 								type="submit"
-								disabled={!arePasswordsMatching || isLoading}
-							>Create Account</Button>
+								disabled={isLoading}
+							>Reset Password</Button>
 							<Field.Description class="text-center">
-								Already have an account? <a href={resolvedLogin}>Sign in</a>
+								Remember your password? <a href={resolvedLogin}>Sign in</a>
 							</Field.Description>
 						</Field.Field>
 					</Field.Group>

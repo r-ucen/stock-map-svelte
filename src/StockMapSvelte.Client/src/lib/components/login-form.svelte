@@ -10,25 +10,24 @@
 	} from "$lib/components/ui/field/index.js";
 	import { auth } from '$lib/auth.svelte';
 	import { Spinner } from '$lib/components/ui/spinner';
+	import { toast } from 'svelte-sonner';
 	
 	let { id = "login-form" } = $props();
 
 	let email = $state("");
 	let password = $state("");
 	let isLoading = $state(false);
-	let error = $state<string | null>(null);
 
 	async function handleSubmit() {
 		isLoading = true;
 		const result = await auth.login(email, password);
 		if (!result.success) {
-			error = 'Invalid credentials';
+			toast.error('Invalid credentials');
 		}
 		isLoading = false;
 	}
 </script>
 
-<p>{error}</p>
 
 <Card.Root class="mx-auto w-full max-w-sm">
 	<Card.Header>
