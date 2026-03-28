@@ -22,6 +22,30 @@ class AuthManager {
 		return { success: false, status: res.status, errors };
 	}
 	
+	async changePassword(oldPassword: string, newPassword: string) {
+		const res = await apiFetch('/manage/info', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				newEmail: null,
+				oldPassword,
+				newPassword
+			})
+		});
+		
+		if (res.ok) {
+			return { success: true };
+		} else {
+			const body = await res.json();
+			const errors: string[] = body.errors
+				? Object.values<string[]>(body.errors).flat()
+				: [body.title ?? body.detail ?? 'Password change failed'];
+			return { success: false, status: res.status, errors };
+		}
+	}
+	
 	async confirmEmail(userId: string, code: string) {
 		const res = await apiFetch(
 			`/confirmEmail?userId=${userId}&code=${code}`
