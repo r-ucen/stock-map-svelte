@@ -3,7 +3,6 @@ WORKDIR /src
 
 COPY ["src/StockMapSvelte.Api/StockMapSvelte.Api.csproj", "StockMapSvelte.Api/"]
 COPY ["src/StockMapSvelte.Application/StockMapSvelte.Application.csproj", "StockMapSvelte.Application/"]
-COPY ["src/StockMapSvelte.Client/StockMapSvelte.Client.csproj", "StockMapSvelte.Client/"]
 COPY ["src/StockMapSvelte.Domain/StockMapSvelte.Domain.csproj", "StockMapSvelte.Domain/"]
 COPY ["src/StockMapSvelte.Infrastructure/StockMapSvelte.Infrastructure.csproj", "StockMapSvelte.Infrastructure/"]
 
