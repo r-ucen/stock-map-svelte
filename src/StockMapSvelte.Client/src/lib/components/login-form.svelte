@@ -51,7 +51,7 @@
 				<Field>
 					<div class="flex items-center">
 						<FieldLabel for="password-{id}">Password</FieldLabel>
-						<a href="##" class="ms-auto inline-block text-sm underline">
+						<a href="/forgot-password" class="ms-auto inline-block text-sm underline">
 							Forgot your password?
 						</a>
 					</div>
@@ -75,7 +75,7 @@
 						{/if}
 					</Button>
 					<FieldDescription class="text-center">
-						Don't have an account? <a href="##">Sign up</a>
+						Don't have an account? <a href="/register">Sign up</a>
 					</FieldDescription>
 				</Field>
 			</FieldGroup>
