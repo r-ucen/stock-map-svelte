@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using StockMapSvelte.Infrastructure.Database;
@@ -11,9 +12,11 @@ using StockMapSvelte.Infrastructure.Database;
 namespace StockMapSvelte.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260329090301_DeploymentTest")]
+    partial class DeploymentTest
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -178,14 +181,6 @@ namespace StockMapSvelte.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("DeploymentTest");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedAt = new DateTime(2026, 3, 29, 9, 6, 36, 930, DateTimeKind.Utc).AddTicks(1772),
-                            TestValue = "Test"
-                        });
                 });
 
             modelBuilder.Entity("StockMapSvelte.Domain.Entities.Portfolio", b =>
