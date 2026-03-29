@@ -1,4 +1,3 @@
-using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using StockMapSvelte.Api;
 using StockMapSvelte.Api.Middleware;
@@ -51,10 +50,11 @@ var app = builder.Build();
 app.UseMiddleware<GlobalExceptionMiddleware>();
 
 // Configure the HTTP request pipeline.
-
-app.MapOpenApi();
-app.MapScalarApiReference();
-
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+    app.MapScalarApiReference();
+}
 
 app.UseHttpsRedirection();
 
