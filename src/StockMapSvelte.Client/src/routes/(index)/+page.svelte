@@ -181,7 +181,7 @@
 
   <section class="container mx-auto px-4 flex flex-col items-center justify-center text-center min-h-[50vh] py-20 md:py-32">
    <div class="max-w-[800px] flex flex-col items-center">
-    <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-6 text-balance">
+    <h1 class="text-primary leading-tighter mb-6 text-4xl font-semibold tracking-tight text-balance lg:leading-[1.1] lg:font-semibold xl:text-5xl xl:tracking-tighter max-w-4xl">
      Visualize the Market
     </h1>
     <p class="text-lg sm:text-xl text-muted-foreground mb-10 max-w-[600px] text-balance">
