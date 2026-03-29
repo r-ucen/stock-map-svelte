@@ -157,35 +157,7 @@ namespace StockMapSvelte.Infrastructure.Migrations
 
                     b.HasIndex("StocksId");
 
-                    b.ToTable("PortfolioStock");
-                });
-
-            modelBuilder.Entity("StockMapSvelte.Domain.Entities.DeploymentTest", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("TestValue")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("DeploymentTest");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedAt = new DateTime(2026, 3, 29, 9, 6, 36, 930, DateTimeKind.Utc).AddTicks(1772),
-                            TestValue = "Test"
-                        });
+                    b.ToTable("PortfolioStock", (string)null);
                 });
 
             modelBuilder.Entity("StockMapSvelte.Domain.Entities.Portfolio", b =>
@@ -205,7 +177,7 @@ namespace StockMapSvelte.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Portfolio");
+                    b.ToTable("Portfolio", (string)null);
                 });
 
             modelBuilder.Entity("StockMapSvelte.Domain.Entities.Stock", b =>
@@ -220,7 +192,7 @@ namespace StockMapSvelte.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Stock");
+                    b.ToTable("Stock", (string)null);
 
                     b.HasData(
                         new
@@ -338,7 +310,7 @@ namespace StockMapSvelte.Infrastructure.Migrations
                     b.HasIndex("StockId")
                         .IsUnique();
 
-                    b.ToTable("StockProfile");
+                    b.ToTable("StockProfile", (string)null);
                 });
 
             modelBuilder.Entity("StockMapSvelte.Domain.Entities.UserSetting", b =>
@@ -357,7 +329,7 @@ namespace StockMapSvelte.Infrastructure.Migrations
 
                     b.HasKey("UserId");
 
-                    b.ToTable("UserSetting");
+                    b.ToTable("UserSetting", (string)null);
                 });
 
             modelBuilder.Entity("StockMapSvelte.Infrastructure.Identity.ApplicationUser", b =>
