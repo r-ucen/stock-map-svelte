@@ -13,7 +13,6 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Role, str
     public DbSet<Portfolio> Portfolios { get; set; }
     public DbSet<StockProfile> StockProfiles { get; set; }
     public DbSet<UserSetting> UserSettings { get; set; }
-    public DbSet<DeploymentTest> DeploymentTests { get; set; }
     
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
     
@@ -46,9 +45,6 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Role, str
                 
 
             // SEEDING ENTITIES
-            modelBuilder.Entity<DeploymentTest>().HasData(
-                new DeploymentTest { Id = 1, TestValue = "Test", CreatedAt = DateTime.UtcNow }
-            );
             
             StockInit stockInit = new StockInit();
             modelBuilder.Entity<Stock>().HasData(stockInit.GetStocks());

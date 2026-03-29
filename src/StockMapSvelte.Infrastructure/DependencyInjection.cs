@@ -23,8 +23,7 @@ public static class DependencyInjection
         var connectionString = configuration.GetConnectionString("DefaultConnection");
         
         services.AddDbContextFactory<ApplicationDbContext>(options =>
-            options.UseNpgsql(connectionString, 
-                x => x.MigrationsAssembly("StockMapSvelte.Infrastructure")));
+            options.UseNpgsql(connectionString));
         
         services.AddScoped(p => 
             p.GetRequiredService<IDbContextFactory<ApplicationDbContext>>().CreateDbContext());
