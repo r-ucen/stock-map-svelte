@@ -55,22 +55,6 @@
 		s.selectedPortfolioId = data.portfolios.filter(p => p.isDefault)[0]?.portfolioId ?? null;
 		s.selectedMetric = MapMetric.RegularMarketChangePercent;
 	});
-
-	let treemapInterval: ReturnType<typeof setInterval> | undefined;
-
-	$effect(() => {
-		clearInterval(treemapInterval);
-		if (s.selectedPortfolioId) {
-			fetchTreemapData(s);
-			treemapInterval = setInterval(() => fetchTreemapData(s), 30000);
-		}
-	});
-
-	onDestroy(() => {
-		clearInterval(treemapInterval);
-	});
-
-	
 </script>
 
 

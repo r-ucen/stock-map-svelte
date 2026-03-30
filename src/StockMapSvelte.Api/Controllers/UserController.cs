@@ -1,11 +1,13 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using StockMapSvelte.Application.Abstractions.Facades;
 using StockMapSvelte.Application.UseCases.UserUseCases.Commands;
 using StockMapSvelte.Application.UseCases.UserUseCases.Queries;
 
 namespace StockMapSvelte.Api.Controllers;
 
+[EnableRateLimiting("DataPolicy")]
 [ApiController]
 [Authorize]
 [Route("users")]
