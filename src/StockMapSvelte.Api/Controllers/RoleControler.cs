@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.RateLimiting;
 
 namespace StockMapSvelte.Api.Controllers;
 
-[EnableRateLimiting("DataPolicy")]
+[EnableRateLimiting("RoleCheckPolicy")]
 [ApiController]
 [Route("roles")]
 public class RoleControler : Controller
