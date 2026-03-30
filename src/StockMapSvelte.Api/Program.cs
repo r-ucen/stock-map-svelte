@@ -1,3 +1,4 @@
+using System.Threading.RateLimiting;
 using Scalar.AspNetCore;
 using StockMapSvelte.Api;
 using StockMapSvelte.Api.Middleware;
@@ -45,6 +46,60 @@ builder.Services.ConfigureApplicationCookie(options =>
     };
 });
 
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddPolicy("IdentityPolicy", httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 6,
+                Window = TimeSpan.FromMinutes(1)
+            }
+        )
+    );
+
+    options.AddPolicy("DataPolicy", httpContext =>
+        RateLimitPartition.GetTokenBucketLimiter(
+            partitionKey: httpContext.User.Identity?.Name ??
+                          httpContext.Connection.RemoteIpAddress?.ToString() ??
+                          "unknown",
+            factory: _ => new TokenBucketRateLimiterOptions()
+            {
+                TokenLimit = 60,
+                TokensPerPeriod = 10,
+                ReplenishmentPeriod = TimeSpan.FromSeconds(10),
+                QueueLimit = 0,
+                AutoReplenishment = true
+            }
+        )
+    );
+
+    options.AddPolicy("TreeMapDataPolicy", httpContext =>
+        RateLimitPartition.GetTokenBucketLimiter(
+            partitionKey: httpContext.User.Identity?.Name ??
+                          httpContext.Connection.RemoteIpAddress?.ToString() ??
+                          "unknown",
+            factory: _ => new TokenBucketRateLimiterOptions()
+            {
+                TokenLimit = 10,
+                TokensPerPeriod = 1,
+                ReplenishmentPeriod = TimeSpan.FromSeconds(12),
+                QueueLimit = 0,
+                AutoReplenishment = true
+            }
+        )
+    );
+    
+    options.OnRejected = async (context, cancellationToken) =>
+    {
+        context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+        await context.HttpContext.Response.WriteAsJsonAsync(new { 
+            message = "Rate limit exceeded." 
+        }, cancellationToken);
+    };
+});
+
 var app = builder.Build();
 
 app.UseMiddleware<GlobalExceptionMiddleware>();
@@ -59,6 +114,9 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseRouting();
+
+app.UseRateLimiter();
+
 app.UseCors("AllowSpecificOrigins");
 app.UseAuthentication();
 app.UseAuthorization();
