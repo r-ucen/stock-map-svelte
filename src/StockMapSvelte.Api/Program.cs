@@ -36,8 +36,10 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.SameSite = SameSiteMode.None;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
     options.Cookie.HttpOnly = true;
-    
-    options.Cookie.Domain = ".rucen.me";
+    if (!builder.Environment.IsDevelopment())
+    {
+        options.Cookie.Domain = ".rucen.me";
+    }
     
     options.Events.OnRedirectToLogin = context =>
     {
