@@ -22,7 +22,7 @@
 		isLoading = true;
 		const result = await auth.login(email, password);
 		if (!result.success) {
-			toast.error('Invalid credentials');
+			toast.error(result.error);
 		}
 		isLoading = false;
 	}

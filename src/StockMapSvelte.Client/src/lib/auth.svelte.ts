@@ -116,7 +116,12 @@ class AuthManager {
 			await goto(resolvedReturnPath);
 			return { success: true };
 		}
-		return { success: false, status: res.status };
+		
+		let msg : string | any = 'Invalid credentials';
+		if (res.status === 429){
+			 msg = 'Too many login attempts. Please try again later.';
+		}
+		return { success: false, status: res.status, error: msg };
 	}
 	
 	async logout() {
