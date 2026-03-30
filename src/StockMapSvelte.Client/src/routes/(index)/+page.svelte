@@ -261,7 +261,7 @@
 
    <ul class="flex gap-4">
     <li>
-     <a href="/privacy" class="text-sm text-muted-foreground hover:text-foreground hover:underline transition-colors">
+     <a href="/privacy-policy" class="text-sm text-muted-foreground hover:text-foreground hover:underline transition-colors">
       Privacy Policy
      </a>
     </li>
