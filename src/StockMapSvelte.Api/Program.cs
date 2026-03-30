@@ -121,7 +121,7 @@ app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapIdentityApi<ApplicationUser>();
+app.MapIdentityApi<ApplicationUser>().RequireRateLimiting("IdentityPolicy");
 app.MapControllers();
 
 app.Run();
