@@ -116,10 +116,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseRouting();
-
-app.UseRateLimiter();
-
 app.UseCors("AllowSpecificOrigins");
+app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 
