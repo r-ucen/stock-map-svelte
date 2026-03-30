@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using StockMapSvelte.Api.Requests;
 using StockMapSvelte.Application.Abstractions.Facades;
 using StockMapSvelte.Application.UseCases.PortfolioUseCases.Commands;
@@ -7,6 +8,7 @@ using StockMapSvelte.Application.UseCases.PortfolioUseCases.Queries;
 
 namespace StockMapSvelte.Api.Controllers;
 
+[EnableRateLimiting("DataPolicy")]
 [ApiController]
 [Authorize] 
 [Route("portfolios")]

@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using StockMapSvelte.Application.Abstractions.Facades;
 
 namespace StockMapSvelte.Api.Controllers;
 
+[EnableRateLimiting("DataPolicy")]
 [ApiController]
 [Authorize]
 [Route("stock-profiles")]
