@@ -1,10 +1,14 @@
 <script lang="ts">
+	import NavBarRoot from '$lib/components/NavBarRoot.svelte';
+
 	const lastUpdated = new Intl.DateTimeFormat('en-US', {
 		month: 'long',
 		day: '2-digit',
 		year: 'numeric'
 	}).format(new Date());
 </script>
+
+<NavBarRoot />
 
 <div class="container mx-auto py-10 px-4 max-w-4xl">
 	<div class="space-y-8">
