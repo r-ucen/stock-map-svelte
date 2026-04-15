@@ -24,7 +24,7 @@ public class StockDataUpdateTimedService : BackgroundService
 
         await DoWork();
 
-        using PeriodicTimer timer = new(TimeSpan.FromSeconds(30));
+        using PeriodicTimer timer = new(TimeSpan.FromMinutes(15));
 
         try
         {
