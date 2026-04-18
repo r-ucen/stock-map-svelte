@@ -29,10 +29,10 @@ public class StockDataUpdateTimedService : BackgroundService
             {
                 var (shouldExecute, delayMinutes) = StockUpdateJitter.GetVariableDelayInMinutes();
 
-                //if (shouldExecute)
-                //{
+                if (shouldExecute)
+                {
                     await DoWork();
-                //}
+                }
                 
                 _logger.LogInformation("Waiting {Minutes} minutes until next run", delayMinutes);
                 await Task.Delay(TimeSpan.FromMinutes(delayMinutes), stoppingToken);
