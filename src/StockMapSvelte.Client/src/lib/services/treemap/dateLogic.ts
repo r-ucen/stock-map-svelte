@@ -16,7 +16,7 @@ export function getDateDescription(dateStr: string | undefined | null, metric: M
 		return '\n-';
 	}
 
-	const dateString = new Intl.DateTimeFormat(undefined, {
+	const dateString = new Intl.DateTimeFormat('en-US', {
 		day: 'numeric',
 		month: 'numeric',
 		year: 'numeric',
