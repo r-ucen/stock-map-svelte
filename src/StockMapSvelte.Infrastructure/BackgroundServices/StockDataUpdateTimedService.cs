@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using StockMapSvelte.Infrastructure.Services;
 
 namespace StockMapSvelte.Infrastructure.BackgroundServices;
 
@@ -22,37 +23,40 @@ public class StockDataUpdateTimedService : BackgroundService
     {
         _logger.LogInformation("StockDataUpdateTimedService running");
 
-        await DoWork();
-
-        using PeriodicTimer timer = new(TimeSpan.FromMinutes(15));
-
-        try
+        while (!stoppingToken.IsCancellationRequested)
         {
-            while (await timer.WaitForNextTickAsync(stoppingToken))
+            try
             {
-                await DoWork();
+                var (shouldExecute, delayMinutes) = StockUpdateJitter.GetVariableDelayInMinutes();
+
+                //if (shouldExecute)
+                //{
+                    await DoWork();
+                //}
+                
+                _logger.LogInformation("Waiting {Minutes} minutes until next run", delayMinutes);
+                await Task.Delay(TimeSpan.FromMinutes(delayMinutes), stoppingToken);
             }
-        }
-        catch (OperationCanceledException)
-        {
-            _logger.LogInformation("StockDataUpdateTimedService is stopping.");
+            catch (OperationCanceledException)
+            {
+                _logger.LogInformation("StockDataUpdateTimedService is stopping.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred executing StockDataUpdateTimedService.");
+                await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
+            }
         }
     }
 
     private async Task DoWork()
     {
-        try
-        {
-            int count = Interlocked.Increment(ref _executionCount);
-
-            using var scope = _scopeFactory.CreateScope();
-            var stockUpdateService = scope.ServiceProvider.GetRequiredService<Application.Abstractions.IStockUpdateService>();
-            _logger.LogInformation("Starting stock update...");
-            await stockUpdateService.UpdateAsync();
-            _logger.LogInformation("StockDataUpdateTimedService finished. Run total of: {Count} times", count);
-        } catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error occurred executing StockDataUpdateTimedService.");
-        }
+        var count = Interlocked.Increment(ref _executionCount);
+            
+        using var scope = _scopeFactory.CreateScope();
+        var stockUpdateService = scope.ServiceProvider.GetRequiredService<Application.Abstractions.IStockUpdateService>();
+        _logger.LogInformation("Starting stock update...");
+        await stockUpdateService.UpdateAsync();
+        _logger.LogInformation("StockDataUpdateTimedService finished. Run total of: {Count} times", count);
     }
 }
