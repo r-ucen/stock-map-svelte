@@ -222,7 +222,7 @@ public class YahooStockClient : IStockClient
 
                     // SHORT RATIO
                     var shortRatio = GetDoubleFromProperty(defaultKeyStatistics.Value, "shortRatio");
-                    if (beta.HasValue)
+                    if (shortRatio.HasValue)
                     {
                         profile.ShortRatio = shortRatio;
                     }
