@@ -151,6 +151,13 @@ export function getCellDescription(stock: TreemapNodeDto, metric: MapMetric | nu
 			return stock.forwardPe ? `\n${stock.forwardPe.toFixed(2)}` : '\n-';
 		case MapMetric.ShortRatio:
 			return stock.shortRatio ? `\n${stock.shortRatio.toFixed(2)}` : '\n-';
+			
+		case MapMetric.AnalystRecommendation:
+			return stock.analystRecommendationKey
+				? `\n${stock.analystRecommendationKey.split('_')
+					.map(word => word.charAt(0).toUpperCase() + word.slice(1))
+					.join(' ')}`
+				: '\n-';
 
 		default:
 			return '\n-';
@@ -256,6 +263,19 @@ export function getCellColor(stock: TreemapNodeDto, metric: MapMetric | null): s
 		case MapMetric.ShortRatio:
 			return stock.shortRatio != null
 				? ColorUtils.positiveDecreasingAlpha(stock.shortRatio, 0.0, 12.0, green)
+				: transparent;
+
+		case MapMetric.AnalystRecommendation:
+			return stock.analystRecommendationMean != null
+				? ColorUtils.thresholdColor(
+					stock.analystRecommendationMean,
+					1.0,
+					1.5,
+					2.5,
+					3.5,
+					4.5,
+					5.0,
+					0.5)
 				: transparent;
 
 		default:
