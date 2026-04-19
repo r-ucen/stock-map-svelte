@@ -40,6 +40,7 @@ export enum MapMetric {
 	trailingEps,
 	forwardEps,
 	pegRatio,
+	oneYearChange,
 }
 
 export function getMetricLabel(metric: MapMetric): string {
@@ -63,6 +64,7 @@ export function getMetricLabel(metric: MapMetric): string {
 		[MapMetric.trailingEps]: 'EPS',
 		[MapMetric.forwardEps]: 'Forward EPS',
 		[MapMetric.pegRatio]: 'PEG Ratio (Price/Growth)',
+		[MapMetric.oneYearChange]: '1-Year Change (%)',
 	};
 	return labels[metric] ?? "Unknown Metric";
 }
