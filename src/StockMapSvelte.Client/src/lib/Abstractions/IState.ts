@@ -38,6 +38,7 @@ export enum MapMetric {
 	profitMargins,
 	earningsQuarterlyGrowth,
 	trailingEps,
+	forwardEps,
 }
 
 export function getMetricLabel(metric: MapMetric): string {
@@ -59,6 +60,7 @@ export function getMetricLabel(metric: MapMetric): string {
 		[MapMetric.profitMargins]: "Profit Margins",
 		[MapMetric.earningsQuarterlyGrowth]: "Earnings Quarterly Growth",
 		[MapMetric.trailingEps]: "EPS",
+		[MapMetric.forwardEps]: "Forward EPS",
 	};
 	return labels[metric] ?? "Unknown Metric";
 }

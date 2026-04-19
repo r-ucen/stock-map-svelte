@@ -167,6 +167,9 @@ export function getCellDescription(stock: TreemapNodeDto, metric: MapMetric | nu
 			
 		case MapMetric.trailingEps:
 			return stock.trailingEps ? `\n${stock.trailingEps.toFixed(2)}` : '\n-';
+			
+		case MapMetric.forwardEps:
+			return stock.forwardEps ? `\n${stock.forwardEps.toFixed(2)}` : '\n-';
 
 		default:
 			return '\n-';
@@ -317,6 +320,17 @@ export function getCellColor(stock: TreemapNodeDto, metric: MapMetric | null): s
 						stock.trailingEps,
 						-20.0,
 						20.0,
+						red,
+						green
+					)
+				: transparent;
+			
+		case MapMetric.forwardEps:
+			return stock.forwardEps != null
+				? ColorUtils.negativeDecreasingAlphaTransparentIncreasingAlphaPositive(
+						stock.forwardEps,
+						-30.0,
+						30.0,
 						red,
 						green
 					)
