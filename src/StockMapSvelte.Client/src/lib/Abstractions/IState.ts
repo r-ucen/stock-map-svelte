@@ -34,7 +34,8 @@ export enum MapMetric {
 	Pe,
 	ForwardPe,
 	ShortRatio,
-	AnalystRecommendation
+	AnalystRecommendation,
+	profitMargins,
 }
 
 export function getMetricLabel(metric: MapMetric): string {
@@ -52,7 +53,8 @@ export function getMetricLabel(metric: MapMetric): string {
 		[MapMetric.Pe]: "P/E Ratio",
 		[MapMetric.ForwardPe]: "Forward P/E",
 		[MapMetric.ShortRatio]: "Short Ratio",
-		[MapMetric.AnalystRecommendation]: "Analyst Recommendation"
+		[MapMetric.AnalystRecommendation]: "Analyst Recommendation",
+		[MapMetric.profitMargins]: "Profit Margins",
 	};
 	return labels[metric] ?? "Unknown Metric";
 }

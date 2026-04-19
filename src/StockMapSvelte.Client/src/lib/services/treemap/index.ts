@@ -158,6 +158,9 @@ export function getCellDescription(stock: TreemapNodeDto, metric: MapMetric | nu
 					.map(word => word.charAt(0).toUpperCase() + word.slice(1))
 					.join(' ')}`
 				: '\n-';
+			
+		case MapMetric.profitMargins:
+			return stock.profitMargins ? `\n${formatPercent(stock.profitMargins * 100)}` : '\n-';
 
 		default:
 			return '\n-';
@@ -269,14 +272,26 @@ export function getCellColor(stock: TreemapNodeDto, metric: MapMetric | null): s
 		case MapMetric.AnalystRecommendation:
 			return stock.analystRecommendationMean != null
 				? ColorUtils.thresholdColor(
-					stock.analystRecommendationMean,
-					1.0,
-					1.5,
-					2.5,
-					3.5,
-					4.5,
-					5.0,
-					0.5)
+						stock.analystRecommendationMean,
+						1.0,
+						1.5,
+						2.5,
+						3.5,
+						4.5,
+						5.0,
+						0.5
+					)
+				: transparent;
+
+		case MapMetric.profitMargins:
+			return stock.profitMargins != null
+				? ColorUtils.negativeDecreasingAlphaTransparentIncreasingAlphaPositive(
+						stock.profitMargins * 100,
+						-50.0,
+						50.0,
+						red,
+						green
+					)
 				: transparent;
 
 		default:
