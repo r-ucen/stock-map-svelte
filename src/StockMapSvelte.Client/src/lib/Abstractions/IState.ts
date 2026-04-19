@@ -42,7 +42,8 @@ export enum MapMetric {
 	pegRatio,
 	oneYearChange,
 	currentPriceToMedianTargetPriceChange,
-	totalDebt
+	totalDebt,
+	freeCashflow,
 }
 
 export function getMetricLabel(metric: MapMetric): string {
@@ -68,7 +69,8 @@ export function getMetricLabel(metric: MapMetric): string {
 		[MapMetric.pegRatio]: 'PEG Ratio (Price/Growth)',
 		[MapMetric.oneYearChange]: '1-Year Change (%)',
 		[MapMetric.currentPriceToMedianTargetPriceChange]: 'Median Target Price Change (%)',
-		[MapMetric.totalDebt]: 'Total Debt'
+		[MapMetric.totalDebt]: 'Total Debt',
+		[MapMetric.freeCashflow]: 'Free Cash Flow',
 	};
 	return labels[metric] ?? "Unknown Metric";
 }
