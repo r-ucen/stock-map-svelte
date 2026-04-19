@@ -164,6 +164,9 @@ export function getCellDescription(stock: TreemapNodeDto, metric: MapMetric | nu
 			
 		case MapMetric.earningsQuarterlyGrowth:
 			return stock.earningsQuarterlyGrowth ? `\n${formatPercent(stock.earningsQuarterlyGrowth * 100)}` : '\n-';
+			
+		case MapMetric.trailingEps:
+			return stock.trailingEps ? `\n${stock.trailingEps.toFixed(2)}` : '\n-';
 
 		default:
 			return '\n-';
@@ -303,6 +306,17 @@ export function getCellColor(stock: TreemapNodeDto, metric: MapMetric | null): s
 						stock.earningsQuarterlyGrowth * 100,
 						-75.0,
 						75.0,
+						red,
+						green
+					)
+				: transparent;
+			
+		case MapMetric.trailingEps:
+			return stock.trailingEps != null
+				? ColorUtils.negativeDecreasingAlphaTransparentIncreasingAlphaPositive(
+						stock.trailingEps,
+						-10.0,
+						10.0,
 						red,
 						green
 					)
