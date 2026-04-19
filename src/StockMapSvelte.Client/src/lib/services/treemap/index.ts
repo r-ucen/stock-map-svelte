@@ -78,6 +78,12 @@ function currencyNameToSign(currencyName: string | undefined | null): string {
 	switch (currencyName) {
 		case 'USD':
 			return '$';
+		case 'TWD':
+			return 'NT$';
+		case 'GBP':
+			return '£';
+		case 'EUR':
+			return '€';
 		default:
 			return '';
 	}
@@ -88,7 +94,7 @@ function formatPercent(value?: number): string {
 }
 
 function formatPrice(value?: number, currency?: string): string {
-	return value ? `${currencyNameToSign(currency)}${value.toFixed(2)}` : 'N/A';
+	return value ? `(${currencyNameToSign(currency)}) ${value.toFixed(2)}` : 'N/A';
 }
 
 export function getCellDescription(stock: TreemapNodeDto, metric: MapMetric | null): string {
@@ -111,8 +117,8 @@ export function getCellDescription(stock: TreemapNodeDto, metric: MapMetric | nu
 			if (!stock.postMarketPrice) return '\n-';
 			return `\n${formatPercent(stock.postMarketChangePercent)}\nPrice: ${formatPrice(stock.postMarketPrice, stock.currency)}`;
 
-		case MapMetric.MarketState:
-			{ const state = stock.marketState?.trim().toUpperCase();
+		case MapMetric.MarketState: {
+			const state = stock.marketState?.trim().toUpperCase();
 			switch (state) {
 				case 'REGULAR':
 					return '\nOPEN';
@@ -124,7 +130,8 @@ export function getCellDescription(stock: TreemapNodeDto, metric: MapMetric | nu
 					return '\nCLOSED';
 				default:
 					return '\n-';
-			} }
+			}
+		}
 
 		case MapMetric.Volume:
 			return stock.volume ? `\n${stock.volume.toLocaleString()}` : '\n-';
@@ -147,6 +154,66 @@ export function getCellDescription(stock: TreemapNodeDto, metric: MapMetric | nu
 			return stock.forwardPe ? `\n${stock.forwardPe.toFixed(2)}` : '\n-';
 		case MapMetric.ShortRatio:
 			return stock.shortRatio ? `\n${stock.shortRatio.toFixed(2)}` : '\n-';
+
+		case MapMetric.AnalystRecommendation:
+			return stock.analystRecommendationKey
+				? `\n${stock.analystRecommendationKey
+						.split('_')
+						.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+						.join(' ')}`
+				: '\n-';
+
+		case MapMetric.profitMargins:
+			return stock.profitMargins ? `\n${formatPercent(stock.profitMargins * 100)}` : '\n-';
+
+		case MapMetric.earningsQuarterlyGrowth:
+			return stock.earningsQuarterlyGrowth
+				? `\n${formatPercent(stock.earningsQuarterlyGrowth * 100)}`
+				: '\n-';
+
+		case MapMetric.trailingEps:
+			return stock.trailingEps ? `\n${stock.trailingEps.toFixed(2)}` : '\n-';
+
+		case MapMetric.forwardEps:
+			return stock.forwardEps ? `\n${stock.forwardEps.toFixed(2)}` : '\n-';
+
+		case MapMetric.pegRatio:
+			return stock.pegRatio ? `\n${stock.pegRatio.toFixed(2)}` : '\n-';
+
+		case MapMetric.oneYearChange:
+			return stock.oneYearChange ? `\n${formatPercent(stock.oneYearChange * 100)}` : '\n-';
+
+		case MapMetric.currentPriceToMedianTargetPriceChange: {
+			if (
+				stock.regularMarketPrice === null &&
+				(stock.targetMedianPrice === null || stock.targetMedianPrice === 0)
+			) {
+				return '\n-';
+			}
+			const priceChangePercent =
+				(((stock.targetMedianPrice ?? 0) - (stock.regularMarketPrice ?? 0)) /
+					(stock.regularMarketPrice ?? 1)) *
+				100;
+			return `
+			\n${formatPercent(priceChangePercent)}
+			\nCurrent Price: ${formatPrice(stock.regularMarketPrice, stock.currency)}
+			\nMedian Target Price: ${formatPrice(stock.targetMedianPrice, stock.currency)}
+			\nAverage Target Price: ${formatPrice(stock.targetMeanPrice, stock.currency)}
+			\nHigh Target Price: ${formatPrice(stock.targetHighPrice, stock.currency)}
+			\nLow Target Price: ${formatPrice(stock.targetLowPrice, stock.currency)}
+			`;
+		}
+
+		case MapMetric.totalDebt:
+			return stock.totalDebt
+				? `\n(${currencyNameToSign(stock.currency)}) ${new Intl.NumberFormat('en-US', { notation: 'compact' }).format(stock.totalDebt)}`
+				: '\n-';
+
+		case MapMetric.freeCashflow:
+			return stock.freeCashflow ? `\n${formatPrice(stock.freeCashflow, stock.currency)}` : '\n-';
+
+		case MapMetric.revenueGrowth:
+			return stock.revenueGrowth ? `\n${formatPercent(stock.revenueGrowth * 100)}` : '\n-';
 
 		default:
 			return '\n-';
@@ -194,8 +261,8 @@ export function getCellColor(stock: TreemapNodeDto, metric: MapMetric | null): s
 					)
 				: transparent;
 
-		case MapMetric.MarketState:
-			{ const state = stock.marketState?.trim().toUpperCase();
+		case MapMetric.MarketState: {
+			const state = stock.marketState?.trim().toUpperCase();
 			switch (state) {
 				case 'REGULAR':
 					return 'rgba(41, 144, 59, 1)';
@@ -207,7 +274,8 @@ export function getCellColor(stock: TreemapNodeDto, metric: MapMetric | null): s
 					return 'rgba(75, 75, 75, 1)';
 				default:
 					return transparent;
-			} }
+			}
+		}
 
 		case MapMetric.Volume:
 			return stock.volume != null
@@ -252,6 +320,123 @@ export function getCellColor(stock: TreemapNodeDto, metric: MapMetric | null): s
 		case MapMetric.ShortRatio:
 			return stock.shortRatio != null
 				? ColorUtils.positiveDecreasingAlpha(stock.shortRatio, 0.0, 12.0, green)
+				: transparent;
+
+		case MapMetric.AnalystRecommendation:
+			return stock.analystRecommendationMean != null
+				? ColorUtils.thresholdColor(
+						stock.analystRecommendationMean,
+						1.0,
+						1.5,
+						2.5,
+						3.5,
+						4.5,
+						5.0,
+						0.5
+					)
+				: transparent;
+
+		case MapMetric.profitMargins:
+			return stock.profitMargins != null
+				? ColorUtils.negativeDecreasingAlphaTransparentIncreasingAlphaPositive(
+						stock.profitMargins * 100,
+						-50.0,
+						50.0,
+						red,
+						green
+					)
+				: transparent;
+
+		case MapMetric.earningsQuarterlyGrowth:
+			return stock.earningsQuarterlyGrowth != null
+				? ColorUtils.negativeDecreasingAlphaTransparentIncreasingAlphaPositive(
+						stock.earningsQuarterlyGrowth * 100,
+						-75.0,
+						75.0,
+						red,
+						green
+					)
+				: transparent;
+
+		case MapMetric.trailingEps:
+			return stock.trailingEps != null
+				? ColorUtils.negativeDecreasingAlphaTransparentIncreasingAlphaPositive(
+						stock.trailingEps,
+						-20.0,
+						20.0,
+						red,
+						green
+					)
+				: transparent;
+
+		case MapMetric.forwardEps:
+			return stock.forwardEps != null
+				? ColorUtils.negativeDecreasingAlphaTransparentIncreasingAlphaPositive(
+						stock.forwardEps,
+						-30.0,
+						30.0,
+						red,
+						green
+					)
+				: transparent;
+
+		case MapMetric.pegRatio:
+			return stock.pegRatio != null
+				? ColorUtils.positiveDecreasingAlpha(stock.pegRatio, 0.0, 2.0, green)
+				: transparent;
+
+		case MapMetric.oneYearChange:
+			return stock.oneYearChange != null
+				? ColorUtils.negativeDecreasingAlphaTransparentIncreasingAlphaPositive(
+						stock.oneYearChange * 100,
+						-100.0,
+						200.0,
+						red,
+						green
+					)
+				: transparent;
+
+		case MapMetric.currentPriceToMedianTargetPriceChange: {
+			if (
+				stock.regularMarketPrice === null &&
+				(stock.targetMedianPrice === null || stock.targetMedianPrice === 0)
+			) {
+				return transparent;
+			}
+
+			const priceChangePercent =
+				(((stock.targetMedianPrice ?? 0) - (stock.regularMarketPrice ?? 0)) /
+					(stock.regularMarketPrice ?? 1)) *
+				100;
+
+			return ColorUtils.negativeDecreasingAlphaTransparentIncreasingAlphaPositive(
+				priceChangePercent,
+				-100.0,
+				100.0,
+				red,
+				green
+			);
+		}
+
+		case MapMetric.totalDebt:
+			return stock.totalDebt != null
+				? ColorUtils.positiveIncreasingAlpha(stock.totalDebt, 100_000_000_000.0, green)
+				: transparent;
+
+		case MapMetric.freeCashflow:
+			return stock.freeCashflow != null
+				? ColorUtils.positiveIncreasingAlpha(stock.freeCashflow, 50_000_000_000.0, green)
+				: transparent;
+
+		case MapMetric.revenueGrowth:
+			return stock.revenueGrowth != null
+				? ColorUtils.negativeDecreasingAlphaTransparentIncreasingAlphaPositive(
+						stock.revenueGrowth * 100,
+						-100.0,
+						100.0,
+						red,
+						green
+					)
 				: transparent;
 
 		default:
