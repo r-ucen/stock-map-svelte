@@ -94,7 +94,7 @@ function formatPercent(value?: number): string {
 }
 
 function formatPrice(value?: number, currency?: string): string {
-	return value ? `${currencyNameToSign(currency)}${value.toFixed(2)}` : 'N/A';
+	return value ? `(${currencyNameToSign(currency)}) ${value.toFixed(2)}` : 'N/A';
 }
 
 export function getCellDescription(stock: TreemapNodeDto, metric: MapMetric | null): string {
@@ -205,7 +205,9 @@ export function getCellDescription(stock: TreemapNodeDto, metric: MapMetric | nu
 		}
 
 		case MapMetric.totalDebt:
-			return stock.totalDebt ? `\n${formatPrice(stock.totalDebt, stock.currency)}` : '\n-';
+			return stock.totalDebt
+				? `\n(${currencyNameToSign(stock.currency)}) ${new Intl.NumberFormat('en-US', { notation: 'compact' }).format(stock.totalDebt)}`
+				: '\n-';
 
 		case MapMetric.freeCashflow:
 			return stock.freeCashflow ? `\n${formatPrice(stock.freeCashflow, stock.currency)}` : '\n-';
