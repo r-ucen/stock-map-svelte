@@ -173,6 +173,9 @@ export function getCellDescription(stock: TreemapNodeDto, metric: MapMetric | nu
 			
 		case MapMetric.pegRatio:
 			return stock.pegRatio ? `\n${stock.pegRatio.toFixed(2)}` : '\n-';
+			
+		case MapMetric.oneYearChange:
+			return stock.oneYearChange ? `\n${formatPercent(stock.oneYearChange * 100)}` : '\n-';
 
 		default:
 			return '\n-';
@@ -342,6 +345,17 @@ export function getCellColor(stock: TreemapNodeDto, metric: MapMetric | null): s
 		case MapMetric.pegRatio:
 			return stock.pegRatio != null
 				? ColorUtils.positiveDecreasingAlpha(stock.pegRatio, 0.0, 2.0, green)
+				: transparent;
+			
+		case MapMetric.oneYearChange:	
+			return stock.oneYearChange != null
+				? ColorUtils.negativeDecreasingAlphaTransparentIncreasingAlphaPositive(
+						stock.oneYearChange * 100,
+						-100.0,
+						200.0,
+						red,
+						green
+					)
 				: transparent;
 			
 		default:
