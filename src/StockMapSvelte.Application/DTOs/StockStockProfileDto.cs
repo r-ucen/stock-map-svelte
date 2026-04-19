@@ -20,4 +20,20 @@ public class StockStockProfileDto
     public double? AnalystRecommendationMean { get; set; }
     public string? AnalystRecommendationKey { get; set; }
     public long? Volume { get; set; }
+    public double? ProfitMargins { get; set; }
+    public double? EarningsQuarterlyGrowth { get; set; }
+    public double? TrailingEps { get; set; }
+    public double? ForwardEps { get; set; }
+    public double? PegRatio { get; set; }
+    public double? OneYearChange { get; set; }
+    
+    public double? TargetHighPrice { get; set; }
+    public double? TargetLowPrice { get; set; }
+    public double? TargetMeanPrice { get; set; }
+    public double? TargetMedianPrice { get; set; }
+    
+    public double? TotalDebt { get; set; }
+    public double? FreeCashflow { get; set; }
+    public double? EarningsGrowth { get; set; }
+    public double? RevenueGrowth { get; set; }
 }

@@ -42,7 +42,21 @@ public class StockProfileRepository : IStockProfileRepository
                     ShortRatio = s.StockProfile.ShortRatio,
                     AnalystRecommendationMean = s.StockProfile.AnalystRecommendationMean,
                     AnalystRecommendationKey = s.StockProfile.AnalystRecommendationKey,
-                    Volume = s.StockProfile.Volume
+                    Volume = s.StockProfile.Volume,
+                    ProfitMargins = s.StockProfile.ProfitMargins,
+                    EarningsQuarterlyGrowth = s.StockProfile.EarningsQuarterlyGrowth,
+                    TrailingEps = s.StockProfile.TrailingEps,
+                    ForwardEps = s.StockProfile.ForwardEps,
+                    PegRatio = s.StockProfile.PegRatio,
+                    OneYearChange = s.StockProfile.OneYearChange,
+                    TargetHighPrice = s.StockProfile.TargetHighPrice,
+                    TargetLowPrice = s.StockProfile.TargetLowPrice,
+                    TargetMeanPrice = s.StockProfile.TargetMeanPrice,
+                    TargetMedianPrice = s.StockProfile.TargetMedianPrice,
+                    TotalDebt = s.StockProfile.TotalDebt,
+                    FreeCashflow = s.StockProfile.FreeCashflow,
+                    EarningsGrowth = s.StockProfile.EarningsGrowth,
+                    RevenueGrowth = s.StockProfile.RevenueGrowth
                 })
                 .ToListAsync();
         }
