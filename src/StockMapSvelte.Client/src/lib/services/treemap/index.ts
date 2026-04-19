@@ -207,6 +207,9 @@ export function getCellDescription(stock: TreemapNodeDto, metric: MapMetric | nu
 		case MapMetric.totalDebt:
 			return stock.totalDebt ? `\n${formatPrice(stock.totalDebt, stock.currency)}` : '\n-';
 
+		case MapMetric.freeCashflow:
+			return stock.freeCashflow ? `\n${formatPrice(stock.freeCashflow, stock.currency)}` : '\n-';
+
 		default:
 			return '\n-';
 	}
@@ -413,6 +416,11 @@ export function getCellColor(stock: TreemapNodeDto, metric: MapMetric | null): s
 		case MapMetric.totalDebt:
 			return stock.totalDebt != null
 				? ColorUtils.positiveIncreasingAlpha(stock.totalDebt, 100_000_000_000.0, green)
+				: transparent;
+
+		case MapMetric.freeCashflow:
+			return stock.freeCashflow != null
+				? ColorUtils.positiveIncreasingAlpha(stock.freeCashflow, 50_000_000_000.0, green)
 				: transparent;
 
 		default:
