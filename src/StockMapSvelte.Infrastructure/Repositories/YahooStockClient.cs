@@ -94,7 +94,21 @@ public class YahooStockClient : IStockClient
                     ShortRatio = null,
                     AnalystRecommendationMean = null,
                     AnalystRecommendationKey = null,
-                    Volume = null
+                    Volume = null,
+                    ProfitMargins = null,
+                    EarningsQuarterlyGrowth = null,
+                    TrailingEps = null,
+                    ForwardEps = null,
+                    PegRatio = null,
+                    OneYearChange = null,
+                    TargetHighPrice = null,
+                    TargetLowPrice = null,
+                    TargetMeanPrice = null,
+                    TargetMedianPrice = null,
+                    TotalDebt = null,
+                    FreeCashflow = null,
+                    EarningsGrowth = null,
+                    RevenueGrowth = null
                 };
 
                 var modules = await _yahooQuotes.GetModulesAsync(snapshot.Key, ["assetProfile", "summaryDetail", "defaultKeyStatistics", "financialData"]);
@@ -231,26 +245,161 @@ public class YahooStockClient : IStockClient
                         Console.WriteLine("No ShortRatio data found.");
                     }
 
-                    // ANALYSTS RECOMMENDATION MEAN
-                    var recommendationMean = GetDoubleFromProperty(financialData.Value, "recommendationMean");
-                    if (recommendationMean.HasValue)
-                    {
-                        profile.AnalystRecommendationMean = recommendationMean;
-                    }
-                    else
-                    {
-                        Console.WriteLine("No Recommendation Mean data found.");
-                    }
-
-                    // ANALYSTS RECOMMENDATION KEY
-                    var recommendationKey = financialData.Value
-                        .GetProperty("recommendationKey")
-                        .GetString();
-                    profile.AnalystRecommendationKey = recommendationKey;
-
                     // VOLUME
                     var volume = snapshot.Value.RegularMarketVolume;
                     profile.Volume = volume;
+                    
+                    
+                    var profitMargins = GetDoubleFromProperty(defaultKeyStatistics.Value, "profitMargins");
+                    if (shortRatio.HasValue)
+                    {
+                        profile.ProfitMargins = profitMargins;
+                    }
+                    else
+                    {
+                        Console.WriteLine("No profitMargins data found.");
+                    }
+                
+                    var earningsQuarterlyGrowth = GetDoubleFromProperty(defaultKeyStatistics.Value, "earningsQuarterlyGrowth");
+                    if (earningsQuarterlyGrowth.HasValue)                    {
+                        profile.EarningsQuarterlyGrowth = earningsQuarterlyGrowth;
+                    }
+                    else                    {
+                        Console.WriteLine("No earningsQuarterlyGrowth data found.");
+                    }
+                    
+                    var trailingEps = GetDoubleFromProperty(defaultKeyStatistics.Value, "trailingEps");
+                    if (trailingEps.HasValue)
+                    {
+                        profile.TrailingEps = trailingEps;
+                    }
+                    else
+                    {
+                        Console.WriteLine("No trailingEps data found.");
+                    }
+                    
+                    var forwardEps = GetDoubleFromProperty(defaultKeyStatistics.Value, "forwardEps");
+                    if (forwardEps.HasValue)
+                    {
+                        profile.ForwardEps = forwardEps;
+                    }
+                    else {
+                        Console.WriteLine("No forwardEps data found.");
+                    }
+                    
+                    var pegRatio = GetDoubleFromProperty(defaultKeyStatistics.Value, "pegRatio");
+                    if (pegRatio.HasValue)
+                    {
+                        profile.PegRatio = pegRatio;
+                    }
+                    else {
+                        Console.WriteLine("No pegRatio data found.");
+                    }
+                    
+                    var oneYearChange = GetDoubleFromProperty(defaultKeyStatistics.Value, "52WeekChange");
+                    if (oneYearChange.HasValue)
+                    {
+                        profile.OneYearChange = oneYearChange;
+                    }
+                    else {
+                        Console.WriteLine("No 52WeekChange data found.");
+                    }
+                    
+                    var targetHighPrice = GetDoubleFromProperty(financialData.Value, "targetHighPrice");
+                    if (targetHighPrice.HasValue)
+                    {
+                        profile.TargetHighPrice = targetHighPrice;
+                    }
+                    else
+                    {
+                        Console.WriteLine("No targetHighPrice data found.");
+                    }
+                    
+                    var targetLowPrice = GetDoubleFromProperty(financialData.Value, "targetLowPrice");
+                    if (targetLowPrice.HasValue)
+                    {
+                        profile.TargetLowPrice = targetLowPrice;
+                    }
+                    else                    {
+                        Console.WriteLine("No targetLowPrice data found.");
+                    }
+                    
+                    var targetMeanPrice = GetDoubleFromProperty(financialData.Value, "targetMeanPrice");
+                    if (targetMeanPrice.HasValue)
+                    {
+                        profile.TargetMeanPrice = targetMeanPrice;
+                    }
+                    else                    {
+                        Console.WriteLine("No targetMeanPrice data found.");
+                    }
+                    
+                    var targetMedianPrice = GetDoubleFromProperty(financialData.Value, "targetMedianPrice");
+                    if (targetMedianPrice.HasValue)
+                    {
+                        profile.TargetMedianPrice = targetMedianPrice;
+                    }
+                    else                    {
+                        Console.WriteLine("No targetMedianPrice data found.");
+                    }
+                    
+                    var analystRecommendationMean = GetDoubleFromProperty(financialData.Value, "recommendationMean");
+                    if (analystRecommendationMean.HasValue)
+                    {
+                        profile.AnalystRecommendationMean = analystRecommendationMean;
+                    }
+                    else                    {
+                        Console.WriteLine("No recommendationMean data found.");
+                    }
+
+                    try
+                    {
+                        var recommendationKey = financialData.Value
+                            .GetProperty("recommendationKey")
+                            .GetString();
+                        profile.AnalystRecommendationKey = recommendationKey;
+                    }
+                    catch (Exception)
+                    {
+                        Console.WriteLine("No recommendationKey data found.");
+                    }
+                    
+                    var totalDebt = GetDoubleFromProperty(financialData.Value, "totalDebt");
+                    if (totalDebt.HasValue)
+                    {
+                        profile.TotalDebt = totalDebt;
+                    }
+                    else
+                    {
+                        Console.WriteLine("No totalDebt data found.");
+                    }
+                    
+                    var freeCashflow = GetDoubleFromProperty(financialData.Value, "freeCashflow");
+                    if (freeCashflow.HasValue)
+                    {
+                        profile.FreeCashflow = freeCashflow;
+                    }
+                    else                    {
+                        Console.WriteLine("No freeCashflow data found.");
+                    }
+                    
+                    var earningsGrowth = GetDoubleFromProperty(financialData.Value, "earningsGrowth");
+                    if (earningsGrowth.HasValue)
+                    {
+                        profile.EarningsGrowth = earningsGrowth;
+                    }
+                    else                    {
+                        Console.WriteLine("No earningsGrowth data found.");
+                    }
+                    
+                    var revenueGrowth = GetDoubleFromProperty(financialData.Value, "revenueGrowth");
+                    if (revenueGrowth.HasValue)
+                    {
+                        profile.RevenueGrowth = revenueGrowth;
+                    }
+                    else
+                    {
+                        Console.WriteLine("No revenueGrowth data found.");
+                    }
                 }
 
                 result.Add(profile);
