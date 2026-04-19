@@ -78,6 +78,10 @@ function currencyNameToSign(currencyName: string | undefined | null): string {
 	switch (currencyName) {
 		case 'USD':
 			return '$';
+		case 'TWD':
+			return 'NT$';
+		case 'GBP':
+			return '£';
 		default:
 			return '';
 	}
