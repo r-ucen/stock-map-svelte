@@ -17,5 +17,19 @@ export interface IStockProfile {
     analystRecommendationMean?: number;
     analystRecommendationKey?: string;
     volume?: number;
+    profitMargins?: number;
+    earningsQuarterlyGrowth?: number;
+    trailingEps?: number;
+    forwardEps?: number;
+    pegRatio?: number;
+    oneYearChange?: number;
+    targetHighPrice?: number;
+    targetLowPrice?: number;
+    targetMeanPrice?: number;
+    targetMedianPrice?: number;
+    totalDebt?: number;
+    freeCashflow?: number;
+    earningsGrowth?: number;
+    revenueGrowth?: number;
 }
 
