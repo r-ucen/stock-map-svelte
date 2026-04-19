@@ -44,6 +44,7 @@ export enum MapMetric {
 	currentPriceToMedianTargetPriceChange,
 	totalDebt,
 	freeCashflow,
+	revenueGrowth
 }
 
 export function getMetricLabel(metric: MapMetric): string {
@@ -71,6 +72,7 @@ export function getMetricLabel(metric: MapMetric): string {
 		[MapMetric.currentPriceToMedianTargetPriceChange]: 'Median Target Price Change (%)',
 		[MapMetric.totalDebt]: 'Total Debt',
 		[MapMetric.freeCashflow]: 'Free Cash Flow',
+		[MapMetric.revenueGrowth]: 'Revenue Growth'
 	};
-	return labels[metric] ?? "Unknown Metric";
+	return labels[metric] ?? 'Unknown Metric';
 }
