@@ -338,7 +338,7 @@ export function getCellColor(stock: TreemapNodeDto, metric: MapMetric | null): s
 						green
 					)
 				: transparent;
-			
+
 		case MapMetric.earningsQuarterlyGrowth:
 			return stock.earningsQuarterlyGrowth != null
 				? ColorUtils.negativeDecreasingAlphaTransparentIncreasingAlphaPositive(
@@ -349,7 +349,7 @@ export function getCellColor(stock: TreemapNodeDto, metric: MapMetric | null): s
 						green
 					)
 				: transparent;
-			
+
 		case MapMetric.trailingEps:
 			return stock.trailingEps != null
 				? ColorUtils.negativeDecreasingAlphaTransparentIncreasingAlphaPositive(
@@ -360,7 +360,7 @@ export function getCellColor(stock: TreemapNodeDto, metric: MapMetric | null): s
 						green
 					)
 				: transparent;
-			
+
 		case MapMetric.forwardEps:
 			return stock.forwardEps != null
 				? ColorUtils.negativeDecreasingAlphaTransparentIncreasingAlphaPositive(
@@ -371,13 +371,13 @@ export function getCellColor(stock: TreemapNodeDto, metric: MapMetric | null): s
 						green
 					)
 				: transparent;
-			
+
 		case MapMetric.pegRatio:
 			return stock.pegRatio != null
 				? ColorUtils.positiveDecreasingAlpha(stock.pegRatio, 0.0, 2.0, green)
 				: transparent;
-			
-		case MapMetric.oneYearChange:	
+
+		case MapMetric.oneYearChange:
 			return stock.oneYearChange != null
 				? ColorUtils.negativeDecreasingAlphaTransparentIncreasingAlphaPositive(
 						stock.oneYearChange * 100,
@@ -387,35 +387,34 @@ export function getCellColor(stock: TreemapNodeDto, metric: MapMetric | null): s
 						green
 					)
 				: transparent;
-			
-		case MapMetric.currentPriceToMedianTargetPriceChange:
-			{
-				if (stock.regularMarketPrice === null && (stock.targetMedianPrice === null || stock.targetMedianPrice === 0)) {
-					return transparent;
-				}
 
-				const priceChangePercent =
-					(((stock.targetMedianPrice ?? 0) - (stock.regularMarketPrice ?? 0)) /
-						(stock.regularMarketPrice ?? 1)) *
-					100;
-				
-				return ColorUtils.negativeDecreasingAlphaTransparentIncreasingAlphaPositive(
-					priceChangePercent,
-					-100.0,
-					100.0,
-					red,
-					green
-				);
+		case MapMetric.currentPriceToMedianTargetPriceChange: {
+			if (
+				stock.regularMarketPrice === null &&
+				(stock.targetMedianPrice === null || stock.targetMedianPrice === 0)
+			) {
+				return transparent;
 			}
-			
+
+			const priceChangePercent =
+				(((stock.targetMedianPrice ?? 0) - (stock.regularMarketPrice ?? 0)) /
+					(stock.regularMarketPrice ?? 1)) *
+				100;
+
+			return ColorUtils.negativeDecreasingAlphaTransparentIncreasingAlphaPositive(
+				priceChangePercent,
+				-100.0,
+				100.0,
+				red,
+				green
+			);
+		}
+
 		case MapMetric.totalDebt:
 			return stock.totalDebt != null
-				? ColorUtils.positiveIncreasingAlpha(
-					stock.totalDebt,
-					100_000_000_000.0, green)
+				? ColorUtils.positiveIncreasingAlpha(stock.totalDebt, 100_000_000_000.0, green)
 				: transparent;
-				
-			
+
 		default:
 			return transparent;
 	}
