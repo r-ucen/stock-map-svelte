@@ -44,7 +44,7 @@
 
 	function handleStockClick(sector: TreemapSectorDto, stock: TreemapNodeDto, info: string) {
 		toast.info(`${stock.tickerSymbol}${stock.fullName ? ` : ${stock.fullName}` : ''}`, {
-			description: `Sector: ${sector.sectorName}\n${info}`
+			description: `Sector: ${sector.sectorName} | \n${info}`
 		});
 	}
 </script>

@@ -33,24 +33,46 @@ export enum MapMetric {
 	Beta,
 	Pe,
 	ForwardPe,
-	ShortRatio
+	ShortRatio,
+	AnalystRecommendation,
+	profitMargins,
+	earningsQuarterlyGrowth,
+	trailingEps,
+	forwardEps,
+	pegRatio,
+	oneYearChange,
+	currentPriceToMedianTargetPriceChange,
+	totalDebt,
+	freeCashflow,
+	revenueGrowth
 }
 
 export function getMetricLabel(metric: MapMetric): string {
 	const labels: Record<MapMetric, string> = {
-		[MapMetric.RegularMarketChangePercent]: "Market Change (%)",
-		[MapMetric.PreMarketChangePercent]: "Pre-Market Change (%)",
-		[MapMetric.PostMarketChangePercent]: "Post-Market Change (%)",
-		[MapMetric.MarketState]: "Market State",
-		[MapMetric.Volume]: "Trading Volume",
-		[MapMetric.DividendDate]: "Dividend Date",
-		[MapMetric.ExDividendDate]: "Ex-Dividend Date",
-		[MapMetric.DividendYield]: "Dividend Yield",
-		[MapMetric.EarningsDate]: "Earnings Date",
-		[MapMetric.Beta]: "Beta",
-		[MapMetric.Pe]: "P/E Ratio",
-		[MapMetric.ForwardPe]: "Forward P/E",
-		[MapMetric.ShortRatio]: "Short Ratio"
+		[MapMetric.RegularMarketChangePercent]: 'Market Change (%)',
+		[MapMetric.PreMarketChangePercent]: 'Pre-Market Change (%)',
+		[MapMetric.PostMarketChangePercent]: 'Post-Market Change (%)',
+		[MapMetric.MarketState]: 'Market State',
+		[MapMetric.Volume]: 'Trading Volume',
+		[MapMetric.DividendDate]: 'Dividend Date',
+		[MapMetric.ExDividendDate]: 'Ex-Dividend Date',
+		[MapMetric.DividendYield]: 'Dividend Yield',
+		[MapMetric.EarningsDate]: 'Earnings Date',
+		[MapMetric.Beta]: 'Beta',
+		[MapMetric.Pe]: 'P/E Ratio',
+		[MapMetric.ForwardPe]: 'Forward P/E',
+		[MapMetric.ShortRatio]: 'Short Ratio',
+		[MapMetric.AnalystRecommendation]: 'Analyst Recommendation',
+		[MapMetric.profitMargins]: 'Profit Margins',
+		[MapMetric.earningsQuarterlyGrowth]: 'Earnings Quarterly Growth',
+		[MapMetric.trailingEps]: 'EPS',
+		[MapMetric.forwardEps]: 'Forward EPS',
+		[MapMetric.pegRatio]: 'PEG Ratio (Price/Growth)',
+		[MapMetric.oneYearChange]: '1-Year Change (%)',
+		[MapMetric.currentPriceToMedianTargetPriceChange]: 'Median Target Price Change (%)',
+		[MapMetric.totalDebt]: 'Total Debt',
+		[MapMetric.freeCashflow]: 'Free Cash Flow',
+		[MapMetric.revenueGrowth]: 'Revenue Growth'
 	};
-	return labels[metric] ?? "Unknown Metric";
+	return labels[metric] ?? 'Unknown Metric';
 }

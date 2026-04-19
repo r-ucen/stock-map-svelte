@@ -94,3 +94,28 @@ export function positiveDecreasingAlpha(
 	const ratio = 1 - clamped / hi;
 	return toRgbaString(color, ratio);
 }
+
+export function thresholdColor(
+	value: number,
+	lo: number,
+	strong_buy: number,
+	buy: number,
+	threshold_hold: number,
+	sell: number,
+	hi: number,
+	alpha: number
+): string {
+	const clamped = clamp(value, lo, hi);
+
+	if (clamped <= strong_buy) {
+		return toRgbaString({r: 0, g: 255, b: 0 }, alpha);
+	} else if (clamped <= buy) {
+		return toRgbaString({ r: 175, g: 255, b: 0 }, alpha);
+	} else if (clamped <= threshold_hold) {
+		return toRgbaString({ r: 255, g: 255, b: 0 }, alpha);
+	} else if (clamped <= sell) {
+		return toRgbaString({ r: 255, g: 175, b: 0 }, alpha);
+	} else {
+		return toRgbaString({ r: 255, g: 0, b: 0 }, alpha);
+	}
+}
