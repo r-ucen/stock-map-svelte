@@ -205,8 +205,8 @@ export function getCellColor(stock: TreemapNodeDto, metric: MapMetric | null): s
 					)
 				: transparent;
 
-		case MapMetric.MarketState:
-			{ const state = stock.marketState?.trim().toUpperCase();
+		case MapMetric.MarketState: {
+			const state = stock.marketState?.trim().toUpperCase();
 			switch (state) {
 				case 'REGULAR':
 					return 'rgba(41, 144, 59, 1)';
@@ -218,7 +218,8 @@ export function getCellColor(stock: TreemapNodeDto, metric: MapMetric | null): s
 					return 'rgba(75, 75, 75, 1)';
 				default:
 					return transparent;
-			} }
+			}
+		}
 
 		case MapMetric.Volume:
 			return stock.volume != null
