@@ -178,6 +178,25 @@ export function getCellDescription(stock: TreemapNodeDto, metric: MapMetric | nu
 			
 		case MapMetric.oneYearChange:
 			return stock.oneYearChange ? `\n${formatPercent(stock.oneYearChange * 100)}` : '\n-';
+			
+		case MapMetric.currentPriceToMedianTargetPriceChange:
+		{
+			if (stock.regularMarketPrice === null && (stock.targetMedianPrice === null || stock.targetMedianPrice === 0)) {
+				return '\n-';
+			}
+			const priceChangePercent =
+				(((stock.targetMedianPrice ?? 0) - (stock.regularMarketPrice ?? 0)) /
+					(stock.regularMarketPrice ?? 1)) *
+				100;
+			return `
+			\n${formatPercent(priceChangePercent)}
+			\nCurrent Price: ${formatPrice(stock.regularMarketPrice, stock.currency)}
+			\nMedian Target Price: ${formatPrice(stock.targetMedianPrice, stock.currency)}
+			\nAverage Target Price: ${formatPrice(stock.targetMeanPrice, stock.currency)}
+			\nHigh Target Price: ${formatPrice(stock.targetHighPrice, stock.currency)}
+			\nLow Target Price: ${formatPrice(stock.targetLowPrice, stock.currency)}
+			`;
+		}
 
 		default:
 			return '\n-';
@@ -359,6 +378,27 @@ export function getCellColor(stock: TreemapNodeDto, metric: MapMetric | null): s
 						green
 					)
 				: transparent;
+			
+		case MapMetric.currentPriceToMedianTargetPriceChange:
+			{
+				if (stock.regularMarketPrice === null && (stock.targetMedianPrice === null || stock.targetMedianPrice === 0)) {
+					return transparent;
+				}
+
+				const priceChangePercent =
+					(((stock.targetMedianPrice ?? 0) - (stock.regularMarketPrice ?? 0)) /
+						(stock.regularMarketPrice ?? 1)) *
+					100;
+				
+				return ColorUtils.negativeDecreasingAlphaTransparentIncreasingAlphaPositive(
+					priceChangePercent,
+					-100.0,
+					100.0,
+					red,
+					green
+				);
+			}
+				
 			
 		default:
 			return transparent;
