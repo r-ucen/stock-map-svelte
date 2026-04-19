@@ -315,8 +315,8 @@ export function getCellColor(stock: TreemapNodeDto, metric: MapMetric | null): s
 			return stock.trailingEps != null
 				? ColorUtils.negativeDecreasingAlphaTransparentIncreasingAlphaPositive(
 						stock.trailingEps,
-						-10.0,
-						10.0,
+						-20.0,
+						20.0,
 						red,
 						green
 					)
