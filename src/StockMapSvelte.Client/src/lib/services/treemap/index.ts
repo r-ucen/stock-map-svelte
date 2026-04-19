@@ -82,6 +82,8 @@ function currencyNameToSign(currencyName: string | undefined | null): string {
 			return 'NT$';
 		case 'GBP':
 			return '£';
+		case 'EUR':
+			return '€';
 		default:
 			return '';
 	}
