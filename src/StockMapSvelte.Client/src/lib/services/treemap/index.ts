@@ -117,8 +117,8 @@ export function getCellDescription(stock: TreemapNodeDto, metric: MapMetric | nu
 			if (!stock.postMarketPrice) return '\n-';
 			return `\n${formatPercent(stock.postMarketChangePercent)}\nPrice: ${formatPrice(stock.postMarketPrice, stock.currency)}`;
 
-		case MapMetric.MarketState:
-			{ const state = stock.marketState?.trim().toUpperCase();
+		case MapMetric.MarketState: {
+			const state = stock.marketState?.trim().toUpperCase();
 			switch (state) {
 				case 'REGULAR':
 					return '\nOPEN';
@@ -130,7 +130,8 @@ export function getCellDescription(stock: TreemapNodeDto, metric: MapMetric | nu
 					return '\nCLOSED';
 				default:
 					return '\n-';
-			} }
+			}
+		}
 
 		case MapMetric.Volume:
 			return stock.volume ? `\n${stock.volume.toLocaleString()}` : '\n-';
@@ -153,35 +154,40 @@ export function getCellDescription(stock: TreemapNodeDto, metric: MapMetric | nu
 			return stock.forwardPe ? `\n${stock.forwardPe.toFixed(2)}` : '\n-';
 		case MapMetric.ShortRatio:
 			return stock.shortRatio ? `\n${stock.shortRatio.toFixed(2)}` : '\n-';
-			
+
 		case MapMetric.AnalystRecommendation:
 			return stock.analystRecommendationKey
-				? `\n${stock.analystRecommendationKey.split('_')
-					.map(word => word.charAt(0).toUpperCase() + word.slice(1))
-					.join(' ')}`
+				? `\n${stock.analystRecommendationKey
+						.split('_')
+						.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+						.join(' ')}`
 				: '\n-';
-			
+
 		case MapMetric.profitMargins:
 			return stock.profitMargins ? `\n${formatPercent(stock.profitMargins * 100)}` : '\n-';
-			
+
 		case MapMetric.earningsQuarterlyGrowth:
-			return stock.earningsQuarterlyGrowth ? `\n${formatPercent(stock.earningsQuarterlyGrowth * 100)}` : '\n-';
-			
+			return stock.earningsQuarterlyGrowth
+				? `\n${formatPercent(stock.earningsQuarterlyGrowth * 100)}`
+				: '\n-';
+
 		case MapMetric.trailingEps:
 			return stock.trailingEps ? `\n${stock.trailingEps.toFixed(2)}` : '\n-';
-			
+
 		case MapMetric.forwardEps:
 			return stock.forwardEps ? `\n${stock.forwardEps.toFixed(2)}` : '\n-';
-			
+
 		case MapMetric.pegRatio:
 			return stock.pegRatio ? `\n${stock.pegRatio.toFixed(2)}` : '\n-';
-			
+
 		case MapMetric.oneYearChange:
 			return stock.oneYearChange ? `\n${formatPercent(stock.oneYearChange * 100)}` : '\n-';
-			
-		case MapMetric.currentPriceToMedianTargetPriceChange:
-		{
-			if (stock.regularMarketPrice === null && (stock.targetMedianPrice === null || stock.targetMedianPrice === 0)) {
+
+		case MapMetric.currentPriceToMedianTargetPriceChange: {
+			if (
+				stock.regularMarketPrice === null &&
+				(stock.targetMedianPrice === null || stock.targetMedianPrice === 0)
+			) {
 				return '\n-';
 			}
 			const priceChangePercent =
@@ -197,6 +203,9 @@ export function getCellDescription(stock: TreemapNodeDto, metric: MapMetric | nu
 			\nLow Target Price: ${formatPrice(stock.targetLowPrice, stock.currency)}
 			`;
 		}
+
+		case MapMetric.totalDebt:
+			return stock.totalDebt ? `\n${formatPrice(stock.totalDebt, stock.currency)}` : '\n-';
 
 		default:
 			return '\n-';
@@ -398,6 +407,13 @@ export function getCellColor(stock: TreemapNodeDto, metric: MapMetric | null): s
 					green
 				);
 			}
+			
+		case MapMetric.totalDebt:
+			return stock.totalDebt != null
+				? ColorUtils.positiveIncreasingAlpha(
+					stock.totalDebt,
+					100_000_000_000.0, green)
+				: transparent;
 				
 			
 		default:
