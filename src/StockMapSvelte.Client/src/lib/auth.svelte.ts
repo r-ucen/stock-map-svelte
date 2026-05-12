@@ -116,10 +116,23 @@ class AuthManager {
 			await goto(resolvedReturnPath);
 			return { success: true };
 		}
-		
-		let msg : string | any = 'Invalid credentials';
-		if (res.status === 429){
-			 msg = 'Too many login attempts. Please try again later.';
+
+		let msg: string | any = 'Invalid credentials';
+		if (res.status === 429) {
+			msg = 'Too many login attempts. Please try again later.';
+		} else if (res.status === 401) {
+			try {
+				const body = await res.json();
+				if (body.detail === 'RequiresTwoFactor') {
+					msg = 'RequiresTwoFactor';
+					return { success: false, status: res.status, error: msg, requiresTwoFactor: true };
+				} else if (body.detail === 'LockedOut') {
+					msg = 'Too many login attempts. Please try again later.';
+				}
+				// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			} catch (err) {
+				msg = 'Invalid credentials';
+			}
 		}
 		return { success: false, status: res.status, error: msg };
 	}
