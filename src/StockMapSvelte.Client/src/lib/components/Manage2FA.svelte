@@ -132,7 +132,7 @@
 	<CardContent>
 		<ButtonGroup.Root>
 			<AlertDialog.Root bind:open={qrCodeScanningInProgress}>
-				<Button variant="outline" onclick={() => enable2FA()} class={buttonVariants({ variant: "outline" })}>
+				<Button disabled={twoFaEnabled} variant="outline" onclick={() => enable2FA()} class={buttonVariants({ variant: "outline" })}>
 					Enable
 				</Button>
 				<AlertDialog.Content>
@@ -155,7 +155,7 @@
 			</AlertDialog.Root>
 
 			<AlertDialog.Root bind:open={disableConfirmOpen}>
-				<AlertDialog.Trigger class={buttonVariants({ variant: "outline" })}>
+				<AlertDialog.Trigger disabled={!twoFaEnabled} class={buttonVariants({ variant: "outline" })}>
 					Disable
 				</AlertDialog.Trigger>
 				<AlertDialog.Content>
