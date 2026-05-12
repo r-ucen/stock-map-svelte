@@ -70,15 +70,22 @@
 					<Field.Field>
 						<Field.Label class="flex justify-center" for="otp">Recovery code</Field.Label>
 						<div class="flex justify-center scale-75 origin-top">
-						<InputOTP.Root bind:value={otpValue} maxlength={10} id="otp" required>
+						<InputOTP.Root bind:value={otpValue} maxlength={11} id="otp" required>
 							{#snippet children({ cells })}
 								<InputOTP.Group>
 									{#each cells.slice(0, 5) as cell (cell)}
 										<InputOTP.Slot {cell} />
 									{/each}
 								</InputOTP.Group>
+
 								<InputOTP.Group>
-									{#each cells.slice(5, 10) as cell (cell)}
+									{#each cells.slice(5, 6) as cell (cell)}
+										<InputOTP.Slot {cell} />
+									{/each}
+								</InputOTP.Group>
+								
+								<InputOTP.Group>
+									{#each cells.slice(6, 11) as cell (cell)}
 										<InputOTP.Slot {cell} />
 									{/each}
 								</InputOTP.Group>
