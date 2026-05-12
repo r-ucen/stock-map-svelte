@@ -101,12 +101,11 @@
 		if (res.ok) {
 			toast.success("2FA enabled successfully!");
 			twoFaEnabled = true;
+			confirming2FaInProgress = false;
+			showingRecoveryCodes = true;
 		} else {
 			toast.error("Invalid verification code.");
 		}
-
-		confirming2FaInProgress = false;
-		showingRecoveryCodes = true;
 	}
 	
 </script>
