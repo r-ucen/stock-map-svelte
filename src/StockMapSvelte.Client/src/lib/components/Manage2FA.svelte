@@ -27,6 +27,8 @@
 	let confirming2FaInProgress = $state(false);
 	
 	let qrCodeScanningInProgress = $state(false);
+
+	let disableConfirmOpen = $state(false);
 	
 	async function disable2FA() {
 		const res = await apiFetch('/manage/2fa', {
@@ -41,11 +43,13 @@
 		
 		if (!res.ok){
 			toast.error('Error disabling 2FA');
+			disableConfirmOpen = false;
 			return;
 		}
 
 		twoFaEnabled = false;
 		toast.success('2FA disabled');
+		disableConfirmOpen = false;
 	}
 
 	async function enable2FA() {
@@ -144,7 +148,21 @@
 					</AlertDialog.Footer>
 				</AlertDialog.Content>
 			</AlertDialog.Root>
-			<Button  variant="outline" onclick={() => disable2FA()}>Disable</Button>
+
+			<AlertDialog.Root bind:open={disableConfirmOpen}>
+				<AlertDialog.Trigger class={buttonVariants({ variant: "outline" })}>
+					Disable
+				</AlertDialog.Trigger>
+				<AlertDialog.Content>
+					<AlertDialog.Header>
+						<AlertDialog.Title>Are you absolutely sure you want to disable 2FA??</AlertDialog.Title>
+					</AlertDialog.Header>
+					<AlertDialog.Footer>
+						<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+						<AlertDialog.Action onclick={() => disable2FA()}>Continue</AlertDialog.Action>
+					</AlertDialog.Footer>
+				</AlertDialog.Content>
+			</AlertDialog.Root>
 		</ButtonGroup.Root>
 
 		<AlertDialog.Root bind:open={confirming2FaInProgress}>
