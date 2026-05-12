@@ -93,7 +93,7 @@ builder.Services.AddRateLimiter(options =>
                 );
             }
 
-            if (path.Contains("/login") || path.Contains("/register"))
+            if (path.Contains("/register"))
             {
                 return RateLimitPartition.GetFixedWindowLimiter(
                     path +
