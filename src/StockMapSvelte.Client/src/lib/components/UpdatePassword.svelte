@@ -1,7 +1,14 @@
 <script lang="ts">
 	import { toast } from 'svelte-sonner';
 	import { auth } from '$lib/auth.svelte';
-	import { CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '$lib/components/ui/card/index.js';
+	import {
+		Card,
+		CardContent,
+		CardDescription,
+		CardFooter,
+		CardHeader,
+		CardTitle
+	} from '$lib/components/ui/card/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
@@ -50,29 +57,31 @@
 	}
 </script>
 
-<CardHeader>
-	<CardTitle>Change Password</CardTitle>
-	<CardDescription>New password must be at least 6 characters long, contain uppercase letter, number and a special symbol.
-	</CardDescription>
-</CardHeader>
-<CardContent>
-	<form id="password-form" onsubmit={updatePassword} class="space-y-4">
-		<div class="space-y-2">
-			<Label for="old-password">Current Password</Label>
-			<Input id="old-password" type="password" bind:value={oldPassword} required />
-		</div>
-		<div class="space-y-2">
-			<Label for="new-password">New Password</Label>
-			<Input id="new-password" type="password" bind:value={newPassword} required />
-		</div>
-		<div class="space-y-2">
-			<Label for="confirm-password">Confirm New Password</Label>
-			<Input id="confirm-password" type="password" bind:value={confirmPassword} required />
-		</div>
-	</form>
-</CardContent>
-<CardFooter>
-	<Button type="submit" form="password-form" disabled={isPasswordSubmitting}>
-		Update Password
-	</Button>
-</CardFooter>
+<Card>	
+	<CardHeader>
+		<CardTitle>Change Password</CardTitle>
+		<CardDescription>New password must be at least 6 characters long, contain uppercase letter, number and a special symbol.
+		</CardDescription>
+	</CardHeader>
+	<CardContent>
+		<form id="password-form" onsubmit={updatePassword} class="space-y-4">
+			<div class="space-y-2">
+				<Label for="old-password">Current Password</Label>
+				<Input id="old-password" type="password" bind:value={oldPassword} required />
+			</div>
+			<div class="space-y-2">
+				<Label for="new-password">New Password</Label>
+				<Input id="new-password" type="password" bind:value={newPassword} required />
+			</div>
+			<div class="space-y-2">
+				<Label for="confirm-password">Confirm New Password</Label>
+				<Input id="confirm-password" type="password" bind:value={confirmPassword} required />
+			</div>
+		</form>
+	</CardContent>
+	<CardFooter>
+		<Button type="submit" form="password-form" disabled={isPasswordSubmitting}>
+			Update Password
+		</Button>
+	</CardFooter>
+</Card>
