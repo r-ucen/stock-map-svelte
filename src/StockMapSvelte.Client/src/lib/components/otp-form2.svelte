@@ -21,8 +21,8 @@
 <form onsubmit={handleSubmit}>
 	<Field.Group>
 		<Field.Field>
-			<Field.Label for="otp">Verification code</Field.Label>
-			<InputOTP.Root bind:value={otpValue} maxlength={6} id="otp" required>
+			<Field.Label class="flex justify-center" for="otp">Verification code</Field.Label>
+			<InputOTP.Root class="flex justify-center" bind:value={otpValue} maxlength={6} id="otp" required>
 				{#snippet children({ cells })}
 					<InputOTP.Group
 						class="gap-2.5 *:data-[slot=input-otp-slot]:rounded-md *:data-[slot=input-otp-slot]:border"
