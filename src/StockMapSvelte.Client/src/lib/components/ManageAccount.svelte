@@ -1,8 +1,9 @@
 <script lang="ts">
-	import { Card } from '$lib/components/ui/card/index.js';
 	import UpdatePassword from '$lib/components/UpdatePassword.svelte';
+	import Manage2FA from '$lib/components/Manage2FA.svelte';
 </script>
 
-<Card>
-	<UpdatePassword />
-</Card>
+<UpdatePassword />
+
+<Manage2FA />
+
