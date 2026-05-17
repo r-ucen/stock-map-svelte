@@ -38,7 +38,7 @@
 		if (result.success) {
 			success = true;
 		} else {
-			toast.error("Failed to create account. Please try again later.");
+			result?.errors?.forEach(error => toast.error(error));
 		}
 		isLoading = false;
 	}
