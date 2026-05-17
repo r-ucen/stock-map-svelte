@@ -8,6 +8,7 @@
 	import { resolve } from '$app/paths';
 	import { auth } from '$lib/auth.svelte';
 	import { toast } from 'svelte-sonner';
+	import { PUBLIC_API_BASE_URL } from '$env/static/public';
 
 	let { class: className, ...restProps }: HTMLAttributes<HTMLDivElement> = $props();
 	
@@ -41,6 +42,11 @@
 			result?.errors?.forEach(error => toast.error(error));
 		}
 		isLoading = false;
+	}
+
+	function signupWithGoogle(){
+		let returnUrl = encodeURIComponent(`${window.location.origin}/map`);
+		window.location.href = `${PUBLIC_API_BASE_URL}/oauth/google-login?returnUrl=${returnUrl}`;
 	}
 </script>
 
@@ -103,6 +109,7 @@
 								type="submit"
 								disabled={!arePasswordsMatching || isLoading}
 							>Create Account</Button>
+							<Button variant="outline" type="button" onclick={signupWithGoogle}>Sign up with Google</Button>
 							<Field.Description class="text-center">
 								Already have an account? <a href={resolvedLogin}>Sign in</a>
 							</Field.Description>
