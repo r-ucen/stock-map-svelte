@@ -115,8 +115,9 @@ class AuthManager {
 		});
 
 		if (res.ok) {
-			const resolvedReturnPath = resolve('/map');
-			await goto(resolvedReturnPath);
+			const resolvedPath = resolve('/map');
+			// eslint-disable-next-line svelte/no-navigation-without-resolve
+			await goto(`${resolvedPath}?login=true`);
 			return { success: true };
 		}
 

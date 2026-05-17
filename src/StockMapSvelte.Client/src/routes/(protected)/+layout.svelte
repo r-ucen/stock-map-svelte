@@ -5,10 +5,11 @@
 	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
 
 	import { page } from "$app/state";
-	import { onDestroy, setContext } from 'svelte';
+	import { onDestroy, onMount, setContext } from 'svelte';
 	import GalleryVerticalEndIcon from '@lucide/svelte/icons/gallery-vertical-end';
 	import { type IPortfolio, type IState, MapMetric } from '$lib/Abstractions/IState';
 	import { fetchTreemapData } from '$lib/portfolioFetch';
+	import { apiFetch } from '$lib/apiFetch';
 
 	type ProtectedLayoutData = {
 		user?: {
@@ -55,6 +56,25 @@
 		s.selectedPortfolioId = data.portfolios.filter(p => p.isDefault)[0]?.portfolioId ?? null;
 		s.selectedMetric = MapMetric.RegularMarketChangePercent;
 	});
+	
+	onMount(async () => {
+		if (page.url.searchParams.get('login') === 'true') {
+			const res = await apiFetch('/portfolios/me');
+			if (res.ok) {
+				const updatedPortfolios = await res.json();
+
+				s.portfolios = updatedPortfolios;
+				if (updatedPortfolios.length > 0) {
+					s.selectedPortfolioId = updatedPortfolios.find(p => p.isDefault)?.portfolioId ?? updatedPortfolios[0].portfolioId;
+				}
+			}
+
+			const newUrl = new URL(window.location.href);
+			newUrl.searchParams.delete('login');
+			window.history.replaceState({}, '', newUrl);
+		}
+	});
+
 </script>
 
 
