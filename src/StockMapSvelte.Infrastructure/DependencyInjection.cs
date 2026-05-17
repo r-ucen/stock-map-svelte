@@ -62,6 +62,13 @@ public static class DependencyInjection
                 policy.RequireAuthenticatedUser();
             });
         
+        services.AddAuthentication().AddGoogleOpenIdConnect(googleOptions =>
+        {
+            googleOptions.ClientId = configuration["Authentication:Google:ClientId"];
+            googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
+            googleOptions.SignInScheme = IdentityConstants.ExternalScheme; 
+        });
+        
         return services;
     }
 }
