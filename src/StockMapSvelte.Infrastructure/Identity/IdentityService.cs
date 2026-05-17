@@ -118,4 +118,112 @@ public class IdentityService : IIdentityService
         await _signInManager.SignInAsync(user, isPersistent: false);
         return true;
     }
+        
+    public async Task<bool> HasPasswordConfiguredAsync(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+        {
+            return false;
+        }
+        return await _userManager.HasPasswordAsync(user);
+    }
+
+    public async Task<bool> SetAccountPasswordAsync(string userId, string password)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+        {
+            return false;
+        }
+
+        if (await _userManager.HasPasswordAsync(user))
+        {
+            return false; 
+        }
+
+        var result = await _userManager.AddPasswordAsync(user, password);
+        return result.Succeeded;
+    }
+    
+    public async Task<IList<UserLoginInfo>> GetExternalLoginsAsync(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+        {
+            return new List<UserLoginInfo>();
+        }
+
+        return await _userManager.GetLoginsAsync(user);
+    }
+
+    public async Task<RemoveGoogleExternalLoginStatus> RemoveGoogleExternalLoginAsync(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+        {
+            return new RemoveGoogleExternalLoginStatus
+            {
+                Success = false,
+                Message = "User not found."
+            };
+        }
+        
+        var hasPassword = await _userManager.HasPasswordAsync(user);
+        if (!hasPassword)
+        {
+            return new RemoveGoogleExternalLoginStatus
+            {
+                Success = false,
+                Message = "Cannot remove Google login because no password is set. Please set a password before removing the Google login."
+            };
+        }
+
+        var logins = await _userManager.GetLoginsAsync(user);
+        var googleLogin = logins.FirstOrDefault(l => l.LoginProvider == "GoogleOpenIdConnect");
+        if (googleLogin == null)
+        {
+            return new RemoveGoogleExternalLoginStatus
+            {
+                Success = false,
+                Message = "Google login not found for this user."
+            };
+        }
+
+        var result = await _userManager.RemoveLoginAsync(user, googleLogin.LoginProvider, googleLogin.ProviderKey);
+        if (!result.Succeeded)
+        {
+            return new RemoveGoogleExternalLoginStatus
+            {
+                Success = false,
+                Message = "Failed to remove Google login."
+            };
+        }
+
+        await _signInManager.SignOutAsync();
+        return new RemoveGoogleExternalLoginStatus
+        {
+            Success = true,
+            Message = "Google login removed successfully."
+        };
+    }
+    
+    public async Task<bool> DeleteAccountAsync(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+        {
+            return false;
+        }
+
+        var result = await _userManager.DeleteAsync(user);
+
+        if (!result.Succeeded)
+        {
+            return false;
+        }
+        await _signInManager.SignOutAsync();
+        return true;
+
+    }
 }
