@@ -56,6 +56,7 @@ public static class DependencyInjection
         services.AddScoped<SetToastAutoHideDelayMsHandler>();
         services.AddScoped<GetPortfolioByIdHandler>();
         services.AddScoped<GetAccountInfoHandler>();
+        services.AddScoped<DeleteAccountHandler>();
         
         return services;
     }
