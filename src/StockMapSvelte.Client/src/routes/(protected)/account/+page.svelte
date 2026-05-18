@@ -16,4 +16,4 @@
 	} = $props();
 </script>
 
-<ManageAccount user={data.user}/>
+<ManageAccount />

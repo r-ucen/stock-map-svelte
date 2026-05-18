@@ -14,8 +14,11 @@
 	import { buttonVariants } from '$lib/components/ui/button/index.js';
 	import ArrowRightIcon from "@lucide/svelte/icons/arrow-right";
 	import OtpForm2 from '$lib/components/otp-form2.svelte';
+	import { getContext } from 'svelte';
+	import type { IState } from '$lib/Abstractions/IState';
 
-	
+	const s = getContext<IState>('state');
+	const isPaswordlessAccount = $derived(!s.hasPasswordConfigured);
 
 	const twoFaInfoInitial: ITwoFaInfo = $derived(page.data.twoFaInfo);
 	const userEmail = $derived(page.data.user?.email);
@@ -118,7 +121,12 @@
 			<Badge variant="secondary" class="bg-blue-500 text-white dark:bg-blue-600">
 				<BadgeCheckIcon />
 				Enabled
-			</Badge>	
+			</Badge>
+		{:else if isPaswordlessAccount}
+			<Badge variant="destructive">
+				<BadgeAlertIcon />
+				Disabled - No password set
+			</Badge>
 		{:else}
 			<Badge variant="destructive">
 				<BadgeAlertIcon />
@@ -131,7 +139,7 @@
 	<CardContent>
 		<ButtonGroup.Root>
 			<AlertDialog.Root bind:open={qrCodeScanningInProgress}>
-				<Button disabled={twoFaEnabled} variant="outline" onclick={() => enable2FA()} class={buttonVariants({ variant: "outline" })}>
+				<Button disabled={twoFaEnabled || isPaswordlessAccount} variant="outline" onclick={() => enable2FA()} class={buttonVariants({ variant: "outline" })}>
 					Enable
 				</Button>
 				<AlertDialog.Content>
@@ -154,7 +162,7 @@
 			</AlertDialog.Root>
 
 			<AlertDialog.Root bind:open={disableConfirmOpen}>
-				<AlertDialog.Trigger disabled={!twoFaEnabled} class={buttonVariants({ variant: "outline" })}>
+				<AlertDialog.Trigger disabled={!twoFaEnabled || isPaswordlessAccount} class={buttonVariants({ variant: "outline" })}>
 					Disable
 				</AlertDialog.Trigger>
 				<AlertDialog.Content>

@@ -146,6 +146,21 @@ class AuthManager {
 		const resolvedLogin = resolve('/');
 		await goto(resolvedLogin);
 	}
+
+	async addPassword(newPassword: string) {
+		const res = await apiFetch('/account/set-password', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ newPassword })
+		});
+
+		if (res.ok) {
+			return { success: true };
+		} else {
+			const error = 'Failed to set password';
+			return { success: false, status: res.status, error };
+		}
+	}
 }
 
 export const auth = new AuthManager();

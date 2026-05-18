@@ -1,5 +1,6 @@
 import type { Component } from 'svelte';
 import type { TreemapDataDto } from '$lib/Abstractions/Treemap';
+import type { Login } from '$lib/Abstractions/ILogin';
 
 export interface IState {
 	email: string | undefined;
@@ -10,6 +11,9 @@ export interface IState {
 	// isToastAutoHide: boolean | null;
 	// autoHideDelayMs: number | null;
 	treemapData: TreemapDataDto | null;
+	hasPasswordConfigured: boolean;
+	hasExternalLoginConfigured: boolean;
+	externalLogins: Array<Login>;
 }
 
 export interface IPortfolio {
