@@ -10,6 +10,7 @@
 	import { type IPortfolio, type IState, MapMetric } from '$lib/Abstractions/IState';
 	import { fetchTreemapData } from '$lib/portfolioFetch';
 	import { apiFetch } from '$lib/apiFetch';
+	import type { Login } from '$lib/Abstractions/ILogin';
 
 	type ProtectedLayoutData = {
 		user?: {
@@ -20,6 +21,9 @@
 				manager: boolean;
 				customer: boolean;
 			};
+			hasPasswordConfigured: boolean;
+			hasExternalLoginConfigured: boolean;
+			externalLogins: Array<Login>;
 		};
 		portfolios: IPortfolio[];
 	};
@@ -47,6 +51,9 @@
 		selectedPortfolioId: null,
 		selectedMetric: null,
 		treemapData: null,
+		hasPasswordConfigured: false,
+		hasExternalLoginConfigured: false,
+		externalLogins: [],
 	})
 	setContext('state', s);
 
@@ -55,6 +62,9 @@
 		s.portfolios = data.portfolios;
 		s.selectedPortfolioId = data.portfolios.filter(p => p.isDefault)[0]?.portfolioId ?? null;
 		s.selectedMetric = MapMetric.RegularMarketChangePercent;
+		s.hasPasswordConfigured = data.user?.hasPasswordConfigured ?? false;
+		s.hasExternalLoginConfigured = data.user?.hasExternalLoginConfigured ?? false;
+		s.externalLogins = data.user?.externalLogins ?? [];
 	});
 	
 	onMount(async () => {
