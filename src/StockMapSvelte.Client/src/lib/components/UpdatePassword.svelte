@@ -12,6 +12,10 @@
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
+	import type { IState } from '$lib/Abstractions/IState';
+	import { getContext } from 'svelte';
+	import { Badge } from '$lib/components/ui/badge';
+	import BadgeCheckIcon from "@lucide/svelte/icons/badge-check";
 
 	let oldPassword = $state('');
 	let newPassword = $state('');
@@ -21,6 +25,9 @@
 	let arePasswordsMatching = $derived(newPassword === confirmPassword)
 	let passwordsMeetRequirements = $derived(/^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/.test(newPassword))
 
+	const s = getContext<IState>('state');
+	const isPaswordlessAccount = $derived(!s.hasPasswordConfigured);
+	
 	async function updatePassword(e: Event) {
 		e.preventDefault();
 		if (!arePasswordsMatching) {
@@ -59,7 +66,15 @@
 
 <Card>	
 	<CardHeader>
-		<CardTitle>Change Password</CardTitle>
+		<CardTitle>
+			<span class="pr-2">Change Password</span>
+			{#if isPaswordlessAccount}
+				<Badge variant="destructive">
+					<BadgeCheckIcon />
+					No password set
+				</Badge>
+			{/if}
+		</CardTitle>
 		<CardDescription>New password must be at least 6 characters long, contain uppercase letter, number and a special symbol.
 		</CardDescription>
 	</CardHeader>
@@ -67,20 +82,20 @@
 		<form id="password-form" onsubmit={updatePassword} class="space-y-4">
 			<div class="space-y-2">
 				<Label for="old-password">Current Password</Label>
-				<Input id="old-password" type="password" bind:value={oldPassword} required />
+				<Input disabled={isPaswordlessAccount} id="old-password" type="password" bind:value={oldPassword} required />
 			</div>
 			<div class="space-y-2">
 				<Label for="new-password">New Password</Label>
-				<Input id="new-password" type="password" bind:value={newPassword} required />
+				<Input disabled={isPaswordlessAccount} id="new-password" type="password" bind:value={newPassword} required />
 			</div>
 			<div class="space-y-2">
 				<Label for="confirm-password">Confirm New Password</Label>
-				<Input id="confirm-password" type="password" bind:value={confirmPassword} required />
+				<Input disabled={isPaswordlessAccount} id="confirm-password" type="password" bind:value={confirmPassword} required />
 			</div>
 		</form>
 	</CardContent>
 	<CardFooter>
-		<Button type="submit" form="password-form" disabled={isPasswordSubmitting}>
+		<Button type="submit" form="password-form" disabled={isPasswordSubmitting || isPaswordlessAccount}>
 			Update Password
 		</Button>
 	</CardFooter>
