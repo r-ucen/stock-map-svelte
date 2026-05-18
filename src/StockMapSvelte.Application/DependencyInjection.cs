@@ -57,6 +57,7 @@ public static class DependencyInjection
         services.AddScoped<GetPortfolioByIdHandler>();
         services.AddScoped<GetAccountInfoHandler>();
         services.AddScoped<DeleteAccountHandler>();
+        services.AddScoped<SetPasswordHandler>();
         services.AddScoped<RemoveGoogleExternalLoginHandler>();
         
         return services;
