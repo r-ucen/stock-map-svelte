@@ -12,15 +12,17 @@ const authHandle: Handle = async ({ event, resolve }) => {
 	}
 
 	try {
-		const [infoRes, adminRes, managerRes, customerRes] = await Promise.all([
+		const [infoRes, accountInfo, adminRes, managerRes, customerRes] = await Promise.all([
 			apiFetch('/manage/info', { event }),
+			apiFetch('/account/info', { event }),
 			apiFetch('/roles/is-admin', { event }),
 			apiFetch('/roles/is-manager', { event }),
 			apiFetch('/roles/is-customer', { event })
 		]);
 
-		if (infoRes.ok) {
+		if (infoRes.ok && accountInfo.ok) {
 			const info = await infoRes.json();
+			const aInfo = await accountInfo.json();
 
 			event.locals.user = {
 				email: info.email,
@@ -29,7 +31,10 @@ const authHandle: Handle = async ({ event, resolve }) => {
 					admin: adminRes.status === 204,
 					manager: managerRes.status === 204,
 					customer: customerRes.status === 204
-				}
+				},
+				hasPasswordConfigured: aInfo.hasPasswordConfigured,
+				hasExternalLoginConfigured: aInfo.hasExternalLoginConfigured,
+				externalLogins: aInfo.externalLogins
 			};
 		} else {
 			event.locals.user = undefined;
