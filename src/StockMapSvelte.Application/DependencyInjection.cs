@@ -25,6 +25,7 @@ public static class DependencyInjection
         services.AddScoped<TreemapLayoutCalculator>();
         services.AddScoped<CellDescriptionFormatter>();
 
+        services.AddScoped<IAccountActionFacade, AccountActionFacade>();
         services.AddScoped<IPortfolioFacade, PortfolioFacade>();
         services.AddScoped<ITreeMapFacade, TreeMapFacade>();
         services.AddScoped<IStockFacade, StockFacade>();
