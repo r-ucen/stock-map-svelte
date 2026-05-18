@@ -17,7 +17,6 @@
 	import { Badge } from '$lib/components/ui/badge';
 	import BadgeCheckIcon from "@lucide/svelte/icons/badge-check";
 
-	let oldPassword = $state('');
 	let newPassword = $state('');
 	let confirmPassword = $state('');
 	let isPasswordSubmitting = $state(false);
@@ -26,10 +25,11 @@
 	let passwordsMeetRequirements = $derived(/^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/.test(newPassword))
 
 	const s = getContext<IState>('state');
-	const isPaswordlessAccount = $derived(!s.hasPasswordConfigured);
-	
-	async function updatePassword(e: Event) {
+	const accountHasPassword = $derived(s.hasPasswordConfigured);
+
+	async function setPassword(e: Event) {
 		e.preventDefault();
+		
 		if (!arePasswordsMatching) {
 			toast.error('New passwords do not match');
 			return;
@@ -42,18 +42,18 @@
 
 		isPasswordSubmitting = true;
 		try {
-			const res = await auth.changePassword(oldPassword, newPassword);
+			const res = await auth.addPassword(newPassword);
 
 			if (res.success) {
-				toast.success('Password updated successfully');
-				oldPassword = '';
+				toast.success('Password added successfully');
+				s.hasPasswordConfigured = true;
 				newPassword = '';
 				confirmPassword = '';
 			} else {
-				if (res.errors) {
-					res.errors.forEach((err: string) => toast.error(err));
+				if (res.error) {
+					toast.error(res.error);
 				} else {
-					toast.error('Failed to update password');
+					toast.error('Failed to add password');
 				}
 			}
 		} catch {
@@ -64,39 +64,37 @@
 	}
 </script>
 
-<Card>	
+<Card>
 	<CardHeader>
 		<CardTitle>
-			<span class="pr-2">Change Password</span>
-			{#if isPaswordlessAccount}
+			<span class="pr-2">Add Password</span>
+			{#if accountHasPassword}
 				<Badge variant="destructive">
 					<BadgeCheckIcon />
-					No password set
+					Password already configured
 				</Badge>
 			{/if}
 		</CardTitle>
-		<CardDescription>New password must be at least 6 characters long, contain uppercase letter, number and a special symbol.
+		<CardDescription>
+			This action will be permanent.
+			New password must be at least 6 characters long, contain uppercase letter, number and a special symbol.
 		</CardDescription>
 	</CardHeader>
 	<CardContent>
-		<form id="password-form" onsubmit={updatePassword} class="space-y-4">
-			<div class="space-y-2">
-				<Label for="old-password">Current Password</Label>
-				<Input disabled={isPaswordlessAccount} id="old-password" type="password" bind:value={oldPassword} required />
-			</div>
+		<form id="add-password-form" onsubmit={setPassword} class="space-y-4">
 			<div class="space-y-2">
 				<Label for="new-password">New Password</Label>
-				<Input disabled={isPaswordlessAccount} id="new-password" type="password" bind:value={newPassword} required />
+				<Input disabled={accountHasPassword} id="new-password" type="password" bind:value={newPassword} required />
 			</div>
 			<div class="space-y-2">
 				<Label for="confirm-password">Confirm New Password</Label>
-				<Input disabled={isPaswordlessAccount} id="confirm-password" type="password" bind:value={confirmPassword} required />
+				<Input disabled={accountHasPassword} id="confirm-password" type="password" bind:value={confirmPassword} required />
 			</div>
 		</form>
 	</CardContent>
 	<CardFooter>
-		<Button type="submit" form="password-form" disabled={isPasswordSubmitting || isPaswordlessAccount}>
-			Update Password
+		<Button type="submit" form="add-password-form" disabled={isPasswordSubmitting || accountHasPassword}>
+			Set Password
 		</Button>
 	</CardFooter>
 </Card>
