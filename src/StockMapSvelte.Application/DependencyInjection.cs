@@ -6,6 +6,7 @@ using StockMapSvelte.Application.Services.TreeMap;
 using StockMapSvelte.Application.Services.TreeMap.Coloring;
 using StockMapSvelte.Application.Services.TreeMap.Formatting;
 using StockMapSvelte.Application.Services.TreeMap.Layout;
+using StockMapSvelte.Application.UseCases.AccountActionUseCases.Handlers;
 using StockMapSvelte.Application.UseCases.PortfolioUseCases.Handlers;
 using StockMapSvelte.Application.UseCases.StockProfileUseCases.Handlers;
 using StockMapSvelte.Application.UseCases.StockUseCases.Handlers;
@@ -54,6 +55,7 @@ public static class DependencyInjection
         services.AddScoped<GetToastAutoHideDelayMsHandler>();
         services.AddScoped<SetToastAutoHideDelayMsHandler>();
         services.AddScoped<GetPortfolioByIdHandler>();
+        services.AddScoped<GetAccountInfoHandler>();
         
         return services;
     }
