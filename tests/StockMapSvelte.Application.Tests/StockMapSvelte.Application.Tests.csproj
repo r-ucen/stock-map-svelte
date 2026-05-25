@@ -23,4 +23,9 @@
       <ProjectReference Include="..\..\src\StockMapSvelte.Application\StockMapSvelte.Application.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="IntegrationTests\" />
+      <Folder Include="UnitTests\" />
+    </ItemGroup>
+
 </Project>
