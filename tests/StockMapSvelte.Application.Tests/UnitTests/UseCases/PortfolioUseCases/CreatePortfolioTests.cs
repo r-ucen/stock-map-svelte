@@ -6,7 +6,7 @@ using StockMapSvelte.Application.UseCases.PortfolioUseCases.Commands;
 using StockMapSvelte.Application.UseCases.PortfolioUseCases.Handlers;
 using StockMapSvelte.Domain.Entities;
 
-namespace StockMapSvelte.Application.Tests.UseCases.PortfolioUseCases;
+namespace StockMapSvelte.Application.Tests.UnitTests.UseCases.PortfolioUseCases;
 
 public class CreatePortfolioTests
 {
