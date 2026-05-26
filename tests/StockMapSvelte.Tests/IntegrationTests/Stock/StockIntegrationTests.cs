@@ -3,7 +3,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using Microsoft.AspNetCore.Mvc.Testing;
 
-namespace StockMapSvelte.Application.Tests.IntegrationTests.Stock;
+namespace StockMapSvelte.Tests.IntegrationTests.Stock;
 
 [CollectionDefinition("StockIntegrationTests")]
 public class SharedTestCollection : ICollectionFixture<IntegrationTestWebApplicationFactory> { }
