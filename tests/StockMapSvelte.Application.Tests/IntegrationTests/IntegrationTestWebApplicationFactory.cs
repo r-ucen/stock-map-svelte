@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -40,6 +41,11 @@ public class IntegrationTestWebApplicationFactory : WebApplicationFactory<Progra
         {
             services.AddAuthentication(TestAuthHandler.AuthenticationScheme)
                 .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>(TestAuthHandler.AuthenticationScheme, null);
+
+            services.PostConfigureAll<OpenIdConnectOptions>(options =>
+            {
+                options.ClientId = "test-client-id";
+            });
         });
     }
 }
