@@ -48,3 +48,5 @@ app.MapIdentityApi<ApplicationUser>().RequireRateLimiting("IdentityPolicy");
 app.MapControllers();
 
 app.Run();
+
+public partial class Program { }
