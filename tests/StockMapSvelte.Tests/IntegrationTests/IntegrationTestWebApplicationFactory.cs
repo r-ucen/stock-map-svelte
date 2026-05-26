@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using StockMapSvelte.Infrastructure.Database;
 using Testcontainers.PostgreSql;
 
-namespace StockMapSvelte.Application.Tests.IntegrationTests;
+namespace StockMapSvelte.Tests.IntegrationTests;
 
 public class IntegrationTestWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
