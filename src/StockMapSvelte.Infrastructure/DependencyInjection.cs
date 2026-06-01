@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Configuration;
 using StockMapSvelte.Infrastructure.Database;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,6 +12,7 @@ using StockMapSvelte.Application.Services;
 using StockMapSvelte.Infrastructure.BackgroundServices;
 using StockMapSvelte.Infrastructure.Identity;
 using StockMapSvelte.Infrastructure.Repositories;
+using StockMapSvelte.Infrastructure.Repositories.Cached;
 using StockMapSvelte.Infrastructure.Services;
 using YahooQuotesApi;
 
@@ -43,7 +45,13 @@ public static class DependencyInjection
         // DI
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddScoped<IStockUpdateService, StockUpdateService>();
-        services.AddScoped<IStockRepository, StockRepository>();
+        services.AddScoped<StockRepository>();
+        services.AddScoped<IStockRepository>(
+            provider => new CachedStockRepository(
+                provider.GetRequiredService<StockRepository>(),
+                provider.GetRequiredService<HybridCache>()
+            )
+        );
         services.AddScoped<IStockClient, YahooStockClient>();
         services.AddScoped<IPortfolioRepository, PortfolioRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
@@ -68,6 +76,8 @@ public static class DependencyInjection
             googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
             googleOptions.SignInScheme = IdentityConstants.ExternalScheme; 
         });
+        
+        services.AddHybridCache();
         
         return services;
     }
