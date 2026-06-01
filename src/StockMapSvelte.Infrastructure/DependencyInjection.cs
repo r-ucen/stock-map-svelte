@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Configuration;
 using StockMapSvelte.Infrastructure.Database;
 using Microsoft.Extensions.DependencyInjection;
@@ -68,6 +69,8 @@ public static class DependencyInjection
             googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
             googleOptions.SignInScheme = IdentityConstants.ExternalScheme; 
         });
+        
+        services.AddHybridCache();
         
         return services;
     }
