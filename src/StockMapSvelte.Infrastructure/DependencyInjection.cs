@@ -12,6 +12,7 @@ using StockMapSvelte.Application.Services;
 using StockMapSvelte.Infrastructure.BackgroundServices;
 using StockMapSvelte.Infrastructure.Identity;
 using StockMapSvelte.Infrastructure.Repositories;
+using StockMapSvelte.Infrastructure.Repositories.Cached;
 using StockMapSvelte.Infrastructure.Services;
 using YahooQuotesApi;
 
@@ -44,7 +45,13 @@ public static class DependencyInjection
         // DI
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddScoped<IStockUpdateService, StockUpdateService>();
-        services.AddScoped<IStockRepository, StockRepository>();
+        services.AddScoped<StockRepository>();
+        services.AddScoped<IStockRepository>(
+            provider => new CachedStockRepository(
+                provider.GetRequiredService<StockRepository>(),
+                provider.GetRequiredService<HybridCache>()
+            )
+        );
         services.AddScoped<IStockClient, YahooStockClient>();
         services.AddScoped<IPortfolioRepository, PortfolioRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
