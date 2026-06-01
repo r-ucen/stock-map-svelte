@@ -33,7 +33,7 @@ public static class DependencyInjection
         
                 if (!env.IsDevelopment())
                 {
-                    options.Cookie.Domain = ".rucen.me";
+                    options.Cookie.Domain = configuration["CookieDomain"];
                 }
                 
                 options.Events.OnRedirectToLogin = context =>
