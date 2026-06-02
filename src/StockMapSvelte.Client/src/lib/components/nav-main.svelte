@@ -33,7 +33,7 @@
 </script>
 
 <Sidebar.Group>
-	<Sidebar.GroupLabel>Platform</Sidebar.GroupLabel>
+	<Sidebar.GroupLabel>Navigation</Sidebar.GroupLabel>
 	<Sidebar.Menu>
 		{#each items as item (item.title)}
 			{#if (!item.isAdminOnly || (item.isAdminOnly && (data.user?.roles.admin || data.user?.roles.manager)))}
