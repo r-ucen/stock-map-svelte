@@ -5,6 +5,7 @@
 
 	let s = getContext<IState>("state");
 </script>
+<span class="pl-3 text-xs font-semibold text-sidebar-foreground/70">Selected Metric</span>
 
 <div class="flex w-full items-center justify-center p-2">
 	<MetricSelect bind:selectedMetric={s.selectedMetric} />
