@@ -1,6 +1,6 @@
 import type { ColumnDef } from '@tanstack/table-core';
-import type { IPortfolio} from '$lib/Abstractions/IState';
-import DataTableActions from "./data-table-actions.svelte";
+import type { IPortfolio } from '$lib/Abstractions/IState';
+import DataTableActions from './data-table-actions.svelte';
 import { renderComponent } from '$lib/components/ui/data-table';
 import DataTableNameButton from '$lib/components/Portfolios/data-table-name-button.svelte';
 
