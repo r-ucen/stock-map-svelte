@@ -121,14 +121,10 @@
 		<DropdownMenu.Content>
 			<DropdownMenu.Group>
 				<DropdownMenu.Label>Actions</DropdownMenu.Label>
-				<DropdownMenu.Item onclick={() => navigator.clipboard.writeText(id)}>
-					Copy portfolio ID
-				</DropdownMenu.Item>
+				<DropdownMenu.Item onclick={() => onEditClick(id)}>Edit</DropdownMenu.Item>
+				<DropdownMenu.Item onclick={() => onSetAsDefaultClick(id)}>Set As Default</DropdownMenu.Item>
+				<DropdownMenu.Item onclick={() => onDeleteClick(id)}>Delete</DropdownMenu.Item>
 			</DropdownMenu.Group>
-			<DropdownMenu.Separator />
-			<DropdownMenu.Item onclick={() => onEditClick(id)}>Edit</DropdownMenu.Item>
-			<DropdownMenu.Item onclick={() => onDeleteClick(id)}>Delete</DropdownMenu.Item>
-			<DropdownMenu.Item onclick={() => onSetAsDefaultClick(id)}>Set As Default</DropdownMenu.Item>
 		</DropdownMenu.Content>
 	</DropdownMenu.Root>
 
@@ -153,10 +149,14 @@
 				<Dialog.Close type="button" class={buttonVariants({ variant: "outline" })}>
 					Cancel
 				</Dialog.Close>
-				<Button
-					type="submit"
-					disabled={isBeingProcessed}
-				>Save changes</Button>
+				<Dialog.Close>
+					<Button
+						type="submit"
+						disabled={isBeingProcessed}
+						>
+						Save changes
+					</Button>
+				</Dialog.Close>
 			</Dialog.Footer>
 		</form>
 	</Dialog.Content>
