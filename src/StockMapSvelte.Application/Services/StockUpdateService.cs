@@ -16,9 +16,9 @@ public class StockUpdateService : IStockUpdateService
         _stockProfileRepository = stockProfileRepository;
     }
 
-    public async Task UpdateAsync()
+    public async Task UpdateAsync(CancellationToken cancellationToken)
     {
-        var stockProfiles = await _stockClient.GetStockProfilesAsync();
-        await _stockProfileRepository.SaveStockProfilesAsync(stockProfiles);
+        var stockProfiles = await _stockClient.GetStockProfilesAsync(cancellationToken);
+        await _stockProfileRepository.SaveStockProfilesAsync(stockProfiles, cancellationToken);
     }
 }

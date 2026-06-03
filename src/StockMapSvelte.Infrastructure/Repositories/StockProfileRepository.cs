@@ -15,9 +15,9 @@ public class StockProfileRepository : IStockProfileRepository
         _contextFactory = contextFactory;
     }
     
-    public async Task<IReadOnlyList<StockStockProfileDto>> GetAllStockProfilesAsync()
+    public async Task<IReadOnlyList<StockStockProfileDto>> GetAllStockProfilesAsync(CancellationToken cancellationToken)
         {
-            await using var dbContext = await _contextFactory.CreateDbContextAsync();
+            await using var dbContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
             
             return await dbContext.Stocks
                 .AsNoTracking()
@@ -58,12 +58,12 @@ public class StockProfileRepository : IStockProfileRepository
                     EarningsGrowth = s.StockProfile.EarningsGrowth,
                     RevenueGrowth = s.StockProfile.RevenueGrowth
                 })
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }
     
-    public async Task<int> SaveStockProfilesAsync(IEnumerable<StockProfile> profiles)
+    public async Task<int> SaveStockProfilesAsync(IEnumerable<StockProfile> profiles, CancellationToken cancellationToken)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
             
         var profileList = profiles
             .GroupBy(p => p.StockId)
@@ -80,7 +80,7 @@ public class StockProfileRepository : IStockProfileRepository
         // existing profiles for the profiles being saved
         var existingProfiles = await context.StockProfiles
             .Where(sp => stockIds.Contains(sp.StockId))
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
 
         var existingByStockId = existingProfiles.ToDictionary(sp => sp.StockId);
 
@@ -104,6 +104,6 @@ public class StockProfileRepository : IStockProfileRepository
             }
         }
 
-        return await context.SaveChangesAsync();
+        return await context.SaveChangesAsync(cancellationToken);
     }
 }

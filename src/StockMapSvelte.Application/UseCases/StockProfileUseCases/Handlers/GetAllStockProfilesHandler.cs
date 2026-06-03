@@ -17,9 +17,9 @@ public class GetAllStockProfilesHandler
         _userContext = userContext;
     }
     
-    public async Task<IReadOnlyList<StockStockProfileDto>> Handle()
+    public async Task<IReadOnlyList<StockStockProfileDto>> Handle(CancellationToken cancellationToken)
     {
-        return await _stockProfileRepository.GetAllStockProfilesAsync();
+        return await _stockProfileRepository.GetAllStockProfilesAsync(cancellationToken);
     }
         
 }

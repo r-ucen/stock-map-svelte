@@ -6,8 +6,8 @@ namespace StockMapSvelte.Application.Abstractions.Facades;
 
 public interface IUserFacade
 {
-    Task DeleteUserAsync(DeleteUserCommand cmd);
-    Task<List<UserDto>> GetAllUsersAsync();
-    Task<UserDto> GetUserAsync(GetUserQuery query);
+    Task DeleteUserAsync(DeleteUserCommand cmd, CancellationToken cancellationToken);
+    Task<List<UserDto>> GetAllUsersAsync(CancellationToken cancellationToken);
+    Task<UserDto> GetUserAsync(GetUserQuery query, CancellationToken cancellationToken);
     Task LogOutAsync();
 }

@@ -52,7 +52,7 @@ public static class DependencyInjection
                         return RateLimitPartition.GetNoLimiter("preflight");
                     }
                     
-                    var path = httpContext.Request.Path.Value;
+                    var path = httpContext.Request.Path.Value ?? "";
 
                     if (path.Contains("/manage/info"))
                     {

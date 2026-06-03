@@ -31,7 +31,7 @@ public class StockDataUpdateTimedService : BackgroundService
 
                 if (shouldExecute)
                 {
-                    await DoWork();
+                    await DoWork(stoppingToken);
                 }
                 
                 _logger.LogInformation("Waiting {Minutes} minutes until next run", delayMinutes);
@@ -49,14 +49,14 @@ public class StockDataUpdateTimedService : BackgroundService
         }
     }
 
-    private async Task DoWork()
+    private async Task DoWork(CancellationToken cancellationToken)
     {
         var count = Interlocked.Increment(ref _executionCount);
             
         using var scope = _scopeFactory.CreateScope();
         var stockUpdateService = scope.ServiceProvider.GetRequiredService<Application.Abstractions.IStockUpdateService>();
         _logger.LogInformation("Starting stock update...");
-        await stockUpdateService.UpdateAsync();
+        await stockUpdateService.UpdateAsync(cancellationToken);
         _logger.LogInformation("StockDataUpdateTimedService finished. Run total of: {Count} times", count);
     }
 }

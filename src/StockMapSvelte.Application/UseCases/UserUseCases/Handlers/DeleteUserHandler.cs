@@ -16,7 +16,7 @@ public class DeleteUserHandler
         _userContext = userContext;
     }
     
-    public async Task Handle(DeleteUserCommand cmd)
+    public async Task Handle(DeleteUserCommand cmd, CancellationToken cancellationToken)
     {
         var currentUserId = await _userContext.GetCurrentUserIdAsync();
         if (currentUserId == cmd.UserId)
@@ -24,7 +24,7 @@ public class DeleteUserHandler
             throw new DeleteYourselfNotPossibleException("Cannot delete yourself.");
         }
 
-        var result = await _userRepository.DeleteAsync(cmd.UserId);
+        var result = await _userRepository.DeleteAsync(cmd.UserId, cancellationToken);
         
         if (!result)
         {

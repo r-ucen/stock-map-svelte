@@ -1,6 +1,6 @@
 namespace StockMapSvelte.Application.DTOs;
 
-public class StockStockProfileDto
+public record StockStockProfileDto
 {
     public string? TickerSymbol { get; set; }
     public DateTimeOffset? Date { get; set; }

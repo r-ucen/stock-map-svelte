@@ -1,4 +1,4 @@
-using StockMapBlazor.Application.UseCases.TreeMapUseCases.Handlers;
+using StockMapSvelte.Application.UseCases.TreeMapUseCases.Handlers;
 using StockMapSvelte.Application.Abstractions;
 using StockMapSvelte.Application.Abstractions.Facades;
 using StockMapSvelte.Application.Facade;

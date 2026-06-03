@@ -1,6 +1,6 @@
 namespace StockMapSvelte.Application.UseCases.PortfolioUseCases.Commands;
 
-public class EditPortfolioCommand
+public record EditPortfolioCommand
 {
     public Guid PortfolioId { get; set; }
     public string PortfolioName { get; set; } = null!;

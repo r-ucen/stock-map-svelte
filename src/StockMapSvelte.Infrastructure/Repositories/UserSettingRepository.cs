@@ -39,13 +39,13 @@ public class UserSettingRepository : IUserSettingRepository
         return await context.SaveChangesAsync();
     }
     
-    public async Task<Guid?> GetDefaultPortfolioIdAsync(string userId)
+    public async Task<Guid?> GetDefaultPortfolioIdAsync(string userId, CancellationToken cancellationToken)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
 
         var userSetting = await context.UserSettings
             .AsNoTracking()
-            .FirstOrDefaultAsync(us => us.UserId == userId);
+            .FirstOrDefaultAsync(us => us.UserId == userId, cancellationToken);
 
         return userSetting?.DefaultPortfolioId;
     }

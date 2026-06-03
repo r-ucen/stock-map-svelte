@@ -1,6 +1,3 @@
 namespace StockMapSvelte.Application.UseCases.StockUseCases.Queries;
 
-public class GetStockQuery
-{
-    public Guid StockId { get; set; }
-}
+public record GetStockQuery(Guid StockId);

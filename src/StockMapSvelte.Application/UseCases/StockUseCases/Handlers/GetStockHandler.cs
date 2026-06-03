@@ -14,8 +14,8 @@ public class GetStockHandler
         _stockRepository = stockRepository;
     }
 
-    public async Task<StockDto> Handle(GetStockQuery query)
+    public async Task<StockDto> Handle(GetStockQuery query, CancellationToken cancellationToken)
     {
-        return await _stockRepository.GetStockViewModelByIdAsync(query.StockId) ?? new StockDto();
+        return await _stockRepository.GetStockViewModelByIdAsync(query.StockId, cancellationToken) ?? new StockDto();
     }
 }

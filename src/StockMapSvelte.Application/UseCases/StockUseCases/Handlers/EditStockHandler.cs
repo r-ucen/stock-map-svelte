@@ -24,9 +24,9 @@ public class EditStockHandler
         _stockClient = stockClient;
     }
     
-    public async Task Handle(EditStockCommand cmd)
+    public async Task Handle(EditStockCommand cmd, CancellationToken cancellationToken)
     {
-        if (await _stockRepository.StockExistsAsync(cmd.TickerSymbol))
+        if (await _stockRepository.StockExistsAsync(cmd.TickerSymbol, cancellationToken))
         {
             throw new TickerSymbolAlreadyExists($"Stock with ticker symbol '{cmd.TickerSymbol}' already exists.");
         }
@@ -36,21 +36,21 @@ public class EditStockHandler
             throw new InvalidTickerSymbolException($"This ticker symbol: '{cmd.TickerSymbol}' is not valid.");
         }
         
-        if (!await _stockRepository.StockExistsAsync(cmd.Id))
+        if (!await _stockRepository.StockExistsAsync(cmd.Id, cancellationToken))
         {
             throw new StockNotFoundException($"Stock with id: '{cmd.Id}' was not found.", cmd.Id.ToString());
         }
         
-        var editStockResult = await _stockRepository.EditStockAsync(cmd.Id, cmd.TickerSymbol.Trim().ToUpperInvariant());
+        var editStockResult = await _stockRepository.EditStockAsync(cmd.Id, cmd.TickerSymbol.Trim().ToUpperInvariant(), cancellationToken);
         
         if (editStockResult <= 0)
         {
             throw new Exception("Failed to edit the stock.");
         }
         
-        var stockProfiles = await _stockClient.GetStockProfilesAsync();
+        var stockProfiles = await _stockClient.GetStockProfilesAsync(cancellationToken);
 
-        var saveStockProfilesResult = await _stockProfileRepository.SaveStockProfilesAsync(stockProfiles);
+        var saveStockProfilesResult = await _stockProfileRepository.SaveStockProfilesAsync(stockProfiles, cancellationToken);
         if (saveStockProfilesResult <= 0)
         {
             throw new CreateStockFailException("Failed to edit the stock.");

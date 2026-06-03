@@ -7,7 +7,7 @@ namespace StockMapSvelte.Api.Controllers;
 [EnableRateLimiting("RoleCheckPolicy")]
 [ApiController]
 [Route("roles")]
-public class RoleControler : Controller
+public class RoleController : Controller
 {
     [HttpGet]
     [Authorize(Roles = "Admin")]

@@ -1,8 +1,7 @@
 namespace StockMapSvelte.Application.DTOs;
 
-public class AccountInfoDto
-{
-    public bool HasPasswordConfigured { get; set; }
-    public bool HasExternalLoginConfigured { get; set; }
-    public IList<UserLoginInfoDto>? ExternalLogins { get; set; }
-}
+public record AccountInfoDto(
+    bool HasPasswordConfigured,
+    bool HasExternalLoginConfigured,
+    IList<UserLoginInfoDto>? ExternalLogins
+);

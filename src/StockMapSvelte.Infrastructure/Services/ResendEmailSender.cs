@@ -57,8 +57,10 @@ public class ResendEmailSender : IEmailSender<ApplicationUser>
         using var scope = _scopeFactory.CreateScope();
         var resend = scope.ServiceProvider.GetRequiredService<IResend>();
         
-        var message = new EmailMessage();
-        message.From = _fromEmail;
+        var message = new EmailMessage
+        {
+            From = _fromEmail
+        };
         message.To.Add( email );
         message.Subject = subject;
         message.HtmlBody = htmlBody;

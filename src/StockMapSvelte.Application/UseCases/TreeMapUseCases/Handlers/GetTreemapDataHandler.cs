@@ -3,7 +3,7 @@ using StockMapSvelte.Application.Abstractions.Repositories;
 using StockMapSvelte.Application.Exceptions.Portfolio;
 using StockMapSvelte.Application.DTOs;
 
-namespace StockMapBlazor.Application.UseCases.TreeMapUseCases.Handlers;
+namespace StockMapSvelte.Application.UseCases.TreeMapUseCases.Handlers;
 
 public class GetTreemapDataHandler
 {
@@ -21,10 +21,10 @@ public class GetTreemapDataHandler
         _userContext = userContext;
     }
     
-    public async Task<TreemapDataDto> Handle(Guid portfolioId)
+    public async Task<TreemapDataDto> Handle(Guid portfolioId, CancellationToken cancellationToken)
     {
         var currentUserId = await _userContext.GetCurrentUserIdAsync();
-        var portfolio = await _portfolioRepository.GetPortfolioByIdAsync(portfolioId);
+        var portfolio = await _portfolioRepository.GetPortfolioByIdAsync(portfolioId, cancellationToken);
             
         if (portfolio == null)
         {
