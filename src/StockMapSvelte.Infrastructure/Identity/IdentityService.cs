@@ -27,10 +27,11 @@ public class IdentityService : IIdentityService
         var info = await _signInManager.GetExternalLoginInfoAsync();
         if (info == null)
         {
-            return new ExternalLoginResponse()
-            {
-                Result = ExternalLoginResult.Failure
-            };
+            return new ExternalLoginResponse
+            (
+                ExternalLoginResult.Failure,
+                null
+            );
         }
         
         var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false);
@@ -46,31 +47,32 @@ public class IdentityService : IIdentityService
                     await _signInManager.SignInAsync(u, isPersistent: false);
                 }
             }
-            
-            return new ExternalLoginResponse()
-            {
-                Result = ExternalLoginResult.Success
-            };
+
+            return new ExternalLoginResponse(
+                ExternalLoginResult.Success,
+                null
+            );
         }
         
         var email = info.Principal.FindFirstValue(ClaimTypes.Email);
         if (string.IsNullOrEmpty(email))
         {
-            return new ExternalLoginResponse()
-            {
-                Result = ExternalLoginResult.Failure
-            };
+            return new ExternalLoginResponse
+            (
+                ExternalLoginResult.Failure,
+                null
+            );
         }
         
         var user = await _userManager.FindByEmailAsync(email);
         // if the user exists and is a local account, do not link automatically
         if (user != null && await _userManager.HasPasswordAsync(user))
         {
-            return new ExternalLoginResponse()
-            {
-                Result = ExternalLoginResult.AccountExistsRequireLinking,
-                Email = email
-            };
+            return new ExternalLoginResponse
+            (
+                ExternalLoginResult.AccountExistsRequireLinking,
+                email
+            );
         }
         
         // the user does not exist, in this case create and link the external provider
@@ -87,10 +89,11 @@ public class IdentityService : IIdentityService
         
         await _userManager.AddLoginAsync(user, info);
         await _signInManager.SignInAsync(user, isPersistent: false);
-        return new ExternalLoginResponse()
-        {
-            Result = ExternalLoginResult.Success
-        };
+        return new ExternalLoginResponse
+        (
+            ExternalLoginResult.Success,
+            null
+        );
     }
 
     public async Task<bool> LinkAccountWithPasswordAsync(string email, string password)
@@ -163,20 +166,20 @@ public class IdentityService : IIdentityService
         if (user == null)
         {
             return new RemoveGoogleExternalLoginStatus
-            {
-                Success = false,
-                Message = "User not found."
-            };
+            (
+                false,
+                "User not found."
+            );
         }
         
         var hasPassword = await _userManager.HasPasswordAsync(user);
         if (!hasPassword)
         {
             return new RemoveGoogleExternalLoginStatus
-            {
-                Success = false,
-                Message = "Cannot remove Google login because no password is set. Please set a password before removing the Google login."
-            };
+            (
+                false,
+                "Cannot remove Google login because no password is set. Please set a password before removing the Google login."
+            );
         }
 
         var logins = await _userManager.GetLoginsAsync(user);
@@ -184,28 +187,28 @@ public class IdentityService : IIdentityService
         if (googleLogin == null)
         {
             return new RemoveGoogleExternalLoginStatus
-            {
-                Success = false,
-                Message = "Google login not found for this user."
-            };
+            (
+                false,
+                "Google login not found for this user."
+            );
         }
 
         var result = await _userManager.RemoveLoginAsync(user, googleLogin.LoginProvider, googleLogin.ProviderKey);
         if (!result.Succeeded)
         {
             return new RemoveGoogleExternalLoginStatus
-            {
-                Success = false,
-                Message = "Failed to remove Google login."
-            };
+            (
+                false,
+                "Failed to remove Google login."
+            );
         }
 
         await _signInManager.SignOutAsync();
         return new RemoveGoogleExternalLoginStatus
-        {
-            Success = true,
-            Message = "Google login removed successfully."
-        };
+        (
+            true,
+            "Google login removed successfully."
+        );
     }
     
     public async Task<bool> DeleteAccountAsync(string userId)
