@@ -1,6 +1,6 @@
 namespace StockMapSvelte.Application.DTOs;
 
-public class TreemapNodeDto
+public record TreemapNodeDto
 {
     public string TickerSymbol { get; set; } = string.Empty;
     public string Sector { get; set; } = string.Empty;
@@ -47,7 +47,7 @@ public class TreemapNodeDto
     public double? RevenueGrowth { get; set; }
 }
 
-public class TreemapSectorDto
+public record TreemapSectorDto
 {
     public string SectorName { get; set; } = string.Empty;
     public double TotalMarketCap { get; set; }
@@ -55,13 +55,13 @@ public class TreemapSectorDto
     public RectangleDto Rectangle { get; set; } = new RectangleDto();
 }
 
-public class TreemapDataDto
+public record TreemapDataDto
 {
     public List<TreemapSectorDto> Sectors { get; set; } = [];
     public double TotalMarketCap { get; set; }
 }
 
-public class RectangleDto
+public record RectangleDto
 {
     public double X { get; set; }
     public double Y { get; set; }
