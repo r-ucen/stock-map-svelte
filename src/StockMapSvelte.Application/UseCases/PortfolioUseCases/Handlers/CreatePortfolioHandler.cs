@@ -19,7 +19,7 @@ public class CreatePortfolioHandler
         _userSettingRepository = userSettingRepository;
     }
 
-    public async Task<PortfolioStockDto> Handle(CreatePortfolioCommand cmd)
+    public async Task<PortfolioStockDto> Handle(CreatePortfolioCommand cmd, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(cmd.PortfolioName))
         {
@@ -28,7 +28,7 @@ public class CreatePortfolioHandler
         
         var userId = await _userContext.GetCurrentUserIdAsync();
         
-        var nameExists = await _portfolioRepository.PortfolioNameExistsAsync(userId, cmd.PortfolioName.Trim());
+        var nameExists = await _portfolioRepository.PortfolioNameExistsAsync(userId, cmd.PortfolioName.Trim(), cancellationToken);
         if (nameExists)
         {
             throw new PortfolioNameAlreadyExistsException(cmd.PortfolioName);
@@ -41,7 +41,7 @@ public class CreatePortfolioHandler
             UserId = userId
         };
 
-        var result = await _portfolioRepository.CreatePortfolioAsync(entity, cmd.TickerSymbols);
+        var result = await _portfolioRepository.CreatePortfolioAsync(entity, cmd.TickerSymbols, cancellationToken);
         
         var portfolioCount = await _portfolioRepository.GetPortfolioCountByUserIdAsync(userId);
         

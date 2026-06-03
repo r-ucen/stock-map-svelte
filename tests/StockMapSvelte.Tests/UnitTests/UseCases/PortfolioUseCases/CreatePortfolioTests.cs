@@ -24,11 +24,11 @@ public class CreatePortfolioTests
         userContextMock.Setup(x => x.GetCurrentUserIdAsync()).ReturnsAsync(userId);
         
         // mock portfolio repository to return that the portfolio name does not exist (false)
-        portfolioRepoMock.Setup(r => r.PortfolioNameExistsAsync(userId, It.IsAny<string>()))
+        portfolioRepoMock.Setup(r => r.PortfolioNameExistsAsync(userId, It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
         
         // return 1 on portfolio creation
-        portfolioRepoMock.Setup(r => r.CreatePortfolioAsync(It.IsAny<Portfolio>(), It.IsAny<IList<string>>()))
+        portfolioRepoMock.Setup(r => r.CreatePortfolioAsync(It.IsAny<Portfolio>(), It.IsAny<IList<string>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
         
         // assume we already have one portfolio, so that the set default checks will be skipped
@@ -38,13 +38,13 @@ public class CreatePortfolioTests
         var useCase = new CreatePortfolioHandler(userContextMock.Object, portfolioRepoMock.Object, userSettingRepoMock.Object);
         
         var cmd = new CreatePortfolioCommand
-        {
-            PortfolioName = "Test Portfolio",
-            TickerSymbols = new List<string> { "AAPL", "MSFT" }
-        };
+        (
+            "Test Portfolio",
+            new List<string> { "AAPL", "MSFT" }
+        );
         
         // Act
-        var result = await useCase.Handle(cmd);
+        var result = await useCase.Handle(cmd, CancellationToken.None);
         
         // Assert
         portfolioRepoMock.Verify(r =>
@@ -56,7 +56,8 @@ public class CreatePortfolioTests
                     It.Is<List<string>>(l =>
                         l.Contains("AAPL") &&
                         l.Contains("MSFT")
-                    )
+                    ),
+                    It.IsAny<CancellationToken>()
                 ),
             Times.Once);
         
@@ -79,11 +80,11 @@ public class CreatePortfolioTests
         userContextMock.Setup(x => x.GetCurrentUserIdAsync()).ReturnsAsync(userId);
         
         // mock portfolio repository to return that the portfolio name does not exist (false)
-        portfolioRepoMock.Setup(r => r.PortfolioNameExistsAsync(userId, It.IsAny<string>()))
+        portfolioRepoMock.Setup(r => r.PortfolioNameExistsAsync(userId, It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
         
         // return 1 on portfolio creation
-        portfolioRepoMock.Setup(r => r.CreatePortfolioAsync(It.IsAny<Portfolio>(), It.IsAny<IList<string>>()))
+        portfolioRepoMock.Setup(r => r.CreatePortfolioAsync(It.IsAny<Portfolio>(), It.IsAny<IList<string>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
         
         // assume we already have one portfolio, so that the set default checks will be skipped
@@ -93,14 +94,14 @@ public class CreatePortfolioTests
         var useCase = new CreatePortfolioHandler(userContextMock.Object, portfolioRepoMock.Object, userSettingRepoMock.Object);
         
         var cmd = new CreatePortfolioCommand
-        {
-            PortfolioName = "",
-            TickerSymbols = new List<string> { "AAPL", "MSFT" }
-        };
+        (
+            "",
+            new List<string> { "AAPL", "MSFT" }
+        );
         
         // Act
         await Assert.ThrowsAsync<PortfolioNameMissingException>(
-            () => useCase.Handle(cmd)
+            () => useCase.Handle(cmd, CancellationToken.None)
         );
     }
     
@@ -118,11 +119,11 @@ public class CreatePortfolioTests
         userContextMock.Setup(x => x.GetCurrentUserIdAsync()).ReturnsAsync(userId);
         
         // mock portfolio repository to return that the portfolio name does exist (true)
-        portfolioRepoMock.Setup(r => r.PortfolioNameExistsAsync(userId, It.IsAny<string>()))
+        portfolioRepoMock.Setup(r => r.PortfolioNameExistsAsync(userId, It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
         
         // return 1 on portfolio creation
-        portfolioRepoMock.Setup(r => r.CreatePortfolioAsync(It.IsAny<Portfolio>(), It.IsAny<IList<string>>()))
+        portfolioRepoMock.Setup(r => r.CreatePortfolioAsync(It.IsAny<Portfolio>(), It.IsAny<IList<string>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
         
         // assume we already have one portfolio, so that the set default checks will be skipped
@@ -132,14 +133,14 @@ public class CreatePortfolioTests
         var useCase = new CreatePortfolioHandler(userContextMock.Object, portfolioRepoMock.Object, userSettingRepoMock.Object);
         
         var cmd = new CreatePortfolioCommand
-        {
-            PortfolioName = "Test Portfolio",
-            TickerSymbols = new List<string> { "AAPL", "MSFT" }
-        };
+        (
+            "Test Portfolio",
+            new List<string> { "AAPL", "MSFT" }
+        );
         
         // Act
         await Assert.ThrowsAsync<PortfolioNameAlreadyExistsException>(
-            () => useCase.Handle(cmd)
+            () => useCase.Handle(cmd, CancellationToken.None)
         );
     }
     
@@ -157,11 +158,11 @@ public class CreatePortfolioTests
         userContextMock.Setup(x => x.GetCurrentUserIdAsync()).ReturnsAsync(userId);
         
         // mock portfolio repository to return that the portfolio name does not exist (false)
-        portfolioRepoMock.Setup(r => r.PortfolioNameExistsAsync(userId, It.IsAny<string>()))
+        portfolioRepoMock.Setup(r => r.PortfolioNameExistsAsync(userId, It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
         
         // return 1 on portfolio creation
-        portfolioRepoMock.Setup(r => r.CreatePortfolioAsync(It.IsAny<Portfolio>(), It.IsAny<IList<string>>()))
+        portfolioRepoMock.Setup(r => r.CreatePortfolioAsync(It.IsAny<Portfolio>(), It.IsAny<IList<string>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
         
         // this is the first portfolio, so the setting as default logic will be triggered
@@ -175,13 +176,13 @@ public class CreatePortfolioTests
         var useCase = new CreatePortfolioHandler(userContextMock.Object, portfolioRepoMock.Object, userSettingRepoMock.Object);
         
         var cmd = new CreatePortfolioCommand
-        {
-            PortfolioName = "Test Portfolio",
-            TickerSymbols = new List<string> { "AAPL", "MSFT" }
-        };
+        (
+            "Test Portfolio",
+            new List<string> { "AAPL", "MSFT" }
+        );
         
         // Act
-        var result = await useCase.Handle(cmd);
+        var result = await useCase.Handle(cmd, CancellationToken.None);
         
         // Assert
         userSettingRepoMock.Verify(r => r.SetPortfolioAsDefaultAsync(userId, It.IsAny<Guid>()), Times.Once);
@@ -195,7 +196,8 @@ public class CreatePortfolioTests
                     It.Is<List<string>>(l =>
                         l.Contains("AAPL") &&
                         l.Contains("MSFT")
-                    )
+                    ),
+                    It.IsAny<CancellationToken>()
                 ),
             Times.Once);
         
@@ -218,11 +220,11 @@ public class CreatePortfolioTests
         userContextMock.Setup(x => x.GetCurrentUserIdAsync()).ReturnsAsync(userId);
         
         // mock portfolio repository to return that the portfolio name does not exist (false)
-        portfolioRepoMock.Setup(r => r.PortfolioNameExistsAsync(userId, It.IsAny<string>()))
+        portfolioRepoMock.Setup(r => r.PortfolioNameExistsAsync(userId, It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
         
         // return 1 on portfolio creation
-        portfolioRepoMock.Setup(r => r.CreatePortfolioAsync(It.IsAny<Portfolio>(), It.IsAny<IList<string>>()))
+        portfolioRepoMock.Setup(r => r.CreatePortfolioAsync(It.IsAny<Portfolio>(), It.IsAny<IList<string>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
         
         // this is the first portfolio, so the setting as default logic will be triggered
@@ -236,13 +238,13 @@ public class CreatePortfolioTests
         var useCase = new CreatePortfolioHandler(userContextMock.Object, portfolioRepoMock.Object, userSettingRepoMock.Object);
         
         var cmd = new CreatePortfolioCommand
-        {
-            PortfolioName = "Test Portfolio",
-            TickerSymbols = new List<string> { "AAPL", "MSFT" }
-        };
+        (
+            "Test Portfolio",
+            new List<string> { "AAPL", "MSFT" }
+        );
         
         // Act
-        await Assert.ThrowsAsync<PortfolioCreationFailedException>(() => useCase.Handle(cmd));
+        await Assert.ThrowsAsync<PortfolioCreationFailedException>(() => useCase.Handle(cmd, CancellationToken.None));
     }
     
     [Fact]
@@ -259,11 +261,11 @@ public class CreatePortfolioTests
         userContextMock.Setup(x => x.GetCurrentUserIdAsync()).ReturnsAsync(userId);
         
         // mock portfolio repository to return that the portfolio name does not exist (false)
-        portfolioRepoMock.Setup(r => r.PortfolioNameExistsAsync(userId, It.IsAny<string>()))
+        portfolioRepoMock.Setup(r => r.PortfolioNameExistsAsync(userId, It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
         
         // return 0 on portfolio creation (fail)
-        portfolioRepoMock.Setup(r => r.CreatePortfolioAsync(It.IsAny<Portfolio>(), It.IsAny<IList<string>>()))
+        portfolioRepoMock.Setup(r => r.CreatePortfolioAsync(It.IsAny<Portfolio>(), It.IsAny<IList<string>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(0);
         
         // this is the first portfolio, so the setting as default logic will be triggered
@@ -277,12 +279,12 @@ public class CreatePortfolioTests
         var useCase = new CreatePortfolioHandler(userContextMock.Object, portfolioRepoMock.Object, userSettingRepoMock.Object);
         
         var cmd = new CreatePortfolioCommand
-        {
-            PortfolioName = "Test Portfolio",
-            TickerSymbols = new List<string> { "AAPL", "MSFT" }
-        };
+        (
+            "Test Portfolio",
+            new List<string> { "AAPL", "MSFT" }
+        );
         
         // Act
-        await Assert.ThrowsAsync<PortfolioCreationFailedException>(() => useCase.Handle(cmd));
+        await Assert.ThrowsAsync<PortfolioCreationFailedException>(() => useCase.Handle(cmd, CancellationToken.None));
     }
 }

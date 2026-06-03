@@ -23,31 +23,31 @@ public class PortfolioController : Controller
 
     [HttpGet]
     [Authorize(Roles = "Admin,Manager")]
-    public async Task<IActionResult> GetAllPortfolios()
+    public async Task<IActionResult> GetAllPortfolios(CancellationToken cancellationToken = default)
     {
-        var portfolios = await _portfolioFacade.GetAllPortfolioStockViewModelsAsync();
+        var portfolios = await _portfolioFacade.GetAllPortfolioStockViewModelsAsync(cancellationToken);
         return Ok(portfolios);
     }
 
     [HttpGet]
     [Route("me")]
-    public async Task<IActionResult> GetCurrentUserPortfolios()
+    public async Task<IActionResult> GetCurrentUserPortfolios(CancellationToken cancellationToken = default)
     {
-        var portfolios = await _portfolioFacade.GetPortfoliosByUserIdAsync();
+        var portfolios = await _portfolioFacade.GetPortfoliosByUserIdAsync(cancellationToken);
         return Ok(portfolios);
     }
 
     [HttpDelete]
     [Route("{portfolioId:guid}")]
-    public async Task<IActionResult> DeletePortfolio(Guid portfolioId)
+    public async Task<IActionResult> DeletePortfolio(Guid portfolioId, CancellationToken cancellationToken = default)
     {
-        await _portfolioFacade.DeletePortfolioAsync(portfolioId);
+        await _portfolioFacade.DeletePortfolioAsync(portfolioId, cancellationToken);
         return NoContent();
     }
 
     [HttpPut]
     [Route("{portfolioId:guid}")]
-    public async Task<IActionResult> EditPortfolio(Guid portfolioId, EditPortfolioRequest request)
+    public async Task<IActionResult> EditPortfolio(Guid portfolioId, EditPortfolioRequest request, CancellationToken cancellationToken = default)
     {
         var cmd = new EditPortfolioCommand
         {
@@ -56,34 +56,31 @@ public class PortfolioController : Controller
             TickerSymbols = request.TickerSymbols
         };
         
-        var editedPortfolio = await _portfolioFacade.EditPortfolioAsync(cmd);
+        var editedPortfolio = await _portfolioFacade.EditPortfolioAsync(cmd, cancellationToken);
         return Ok(editedPortfolio);
     }
     
     [HttpGet]
     [Route("{portfolioId:guid}")]
-    public async Task<IActionResult> GetPortfolioById(Guid portfolioId)
+    public async Task<IActionResult> GetPortfolioById(Guid portfolioId, CancellationToken cancellationToken = default)
     {
-        var query = new GetPortfolioByIdQuery
-        {
-            PortfolioId = portfolioId
-        };
+        var query = new GetPortfolioByIdQuery(portfolioId);
         
-        var portfolio = await _portfolioFacade.GetPortfolioStockByIdAsync(query);
+        var portfolio = await _portfolioFacade.GetPortfolioStockByIdAsync(query, cancellationToken);
         
         return Ok(portfolio);
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreatePortfolio(CreatePortfolioRequest request)
+    public async Task<IActionResult> CreatePortfolio(CreatePortfolioRequest request, CancellationToken cancellationToken = default)
     {
         var cmd = new CreatePortfolioCommand
-        {
-            PortfolioName = request.PortfolioName,
-            TickerSymbols = request.TickerSymbols
-        };
+        (
+            request.PortfolioName,
+            request.TickerSymbols
+        );
 
-        var portfolio = await _portfolioFacade.CreatePortfolioAsync(cmd);
+        var portfolio = await _portfolioFacade.CreatePortfolioAsync(cmd, cancellationToken);
         
         return CreatedAtAction(
             nameof(GetPortfolioById),

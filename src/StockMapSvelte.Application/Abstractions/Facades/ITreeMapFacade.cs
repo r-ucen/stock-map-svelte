@@ -4,5 +4,5 @@ namespace StockMapSvelte.Application.Abstractions.Facades;
 
 public interface ITreeMapFacade
 {
-    Task<TreemapDataDto> GetTreemapDataViewModelByIdAsync(Guid portfolioId);
+    Task<TreemapDataDto> GetTreemapDataViewModelByIdAsync(Guid portfolioId, CancellationToken cancellationToken);
 }

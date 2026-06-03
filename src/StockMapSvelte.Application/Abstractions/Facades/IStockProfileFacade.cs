@@ -4,5 +4,5 @@ namespace StockMapSvelte.Application.Abstractions.Facades;
 
 public interface IStockProfileFacade
 {
-    Task<IReadOnlyList<StockStockProfileDto>> GetAllStockProfilesAsync();
+    Task<IReadOnlyList<StockStockProfileDto>> GetAllStockProfilesAsync(CancellationToken cancellationToken);
 }

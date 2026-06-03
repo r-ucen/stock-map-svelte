@@ -9,22 +9,20 @@ namespace StockMapSvelte.Infrastructure.Repositories;
 public class UserRepository : IUserRepository
 {
     private readonly UserManager<ApplicationUser> _userManager;
-    private readonly RoleManager<Role> _roleManager;
 
-    public UserRepository(UserManager<ApplicationUser> userManager, RoleManager<Role> roleManager)
+    public UserRepository(UserManager<ApplicationUser> userManager)
     {
         _userManager = userManager;
-        _roleManager = roleManager;
     }
 
-    public async Task<bool> DeleteAsync(string userId)
+    public async Task<bool> DeleteAsync(string userId, CancellationToken cancellationToken)
     {
         if (userId == null)
         {
             throw new ArgumentNullException(userId);
         }
 
-        var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == userId);
+        var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
 
         if (user == null)
         {
@@ -35,41 +33,41 @@ public class UserRepository : IUserRepository
         return result.Succeeded;
     }
 
-    public async Task<List<UserDto>> GetAllAsync()
+    public async Task<List<UserDto>> GetAllAsync(CancellationToken cancellationToken)
     {
-        var users = await _userManager.Users.ToArrayAsync();
+        var users = await _userManager.Users.ToArrayAsync(cancellationToken);
         var userViewModels = new List<UserDto>();
 
         foreach (var user in users)
         {
             userViewModels.Add(new UserDto
-            {
-                Id = user.Id,
-                UserName = user.UserName ?? string.Empty,
-                Email = user.Email ?? string.Empty,
-                Roles = await _userManager.GetRolesAsync(user)
-            });
+            (
+                user.Id,
+                user.UserName ?? string.Empty,
+                user.Email ?? string.Empty,
+                await _userManager.GetRolesAsync(user)
+            ));
         }
 
         return userViewModels;
     }
 
-    public async Task<UserDto> GetByIdAsync(string id)
+    public async Task<UserDto> GetByIdAsync(string id, CancellationToken cancellationToken)
     {
-        var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == id);
+        var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
 
         if (user == null)
         {
-            return new UserDto();
+            return new UserDto(string.Empty, string.Empty, string.Empty, []);
         }
 
         var vm = new UserDto
-        {
-            Id = user.Id,
-            UserName = user.UserName ?? string.Empty,
-            Email = user.Email ?? string.Empty,
-            Roles = await _userManager.GetRolesAsync(user)
-        };
+        (
+            user.Id,
+            user.UserName ?? string.Empty,
+            user.Email ?? string.Empty,
+            await _userManager.GetRolesAsync(user)
+        );
 
         return vm;
     }

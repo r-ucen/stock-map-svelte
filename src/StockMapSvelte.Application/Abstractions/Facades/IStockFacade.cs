@@ -6,10 +6,10 @@ namespace StockMapSvelte.Application.Abstractions.Facades;
 
 public interface IStockFacade
 {
-    Task<IReadOnlyList<StockDto>> GetAllStocksAsync();
-    Task<StockDto> GetStockViewModelByIdAsync(Guid stockId);
-    Task<StockDto> CreateStockAsync(CreateStockCommand cmd);
-    Task DeleteStockAsync(DeleteStockCommand cmd);
-    Task EditStockAsync(EditStockCommand cmd);
-    Task<IReadOnlyList<StockDto>> GetPossibleToAddStocksAsync(GetPossibleToAddStocksQuery query);
+    Task<IReadOnlyList<StockDto>> GetAllStocksAsync(CancellationToken cancellationToken);
+    Task<StockDto> GetStockViewModelByIdAsync(Guid stockId, CancellationToken cancellationToken);
+    Task<StockDto> CreateStockAsync(CreateStockCommand cmd, CancellationToken cancellationToken);
+    Task DeleteStockAsync(DeleteStockCommand cmd, CancellationToken cancellationToken);
+    Task EditStockAsync(EditStockCommand cmd, CancellationToken cancellationToken);
+    Task<IReadOnlyList<StockDto>> GetPossibleToAddStocksAsync(GetPossibleToAddStocksQuery query, CancellationToken cancellationToken);
 }

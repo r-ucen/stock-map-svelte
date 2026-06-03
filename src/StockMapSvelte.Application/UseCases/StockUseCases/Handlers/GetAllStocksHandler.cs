@@ -16,8 +16,8 @@ public class GetAllStocksHandler
         _userContext = userContext;
     }
     
-    public async Task<IReadOnlyList<StockDto>> Handle()
+    public async Task<IReadOnlyList<StockDto>> Handle(CancellationToken cancellationToken)
     {
-        return await _stockRepository.GetAllStocksAsync() ?? new List<StockDto>();
+        return await _stockRepository.GetAllStocksAsync(cancellationToken) ?? new List<StockDto>();
     }
 }

@@ -22,34 +22,31 @@ public class UserController : Controller
     
     [HttpGet]
     [Authorize(Roles = "Admin,Manager")]
-    public async Task<IActionResult> GetAllUsers()
+    public async Task<IActionResult> GetAllUsers(CancellationToken cancellationToken = default)
     {
-        var users = await _userFacade.GetAllUsersAsync();
+        var users = await _userFacade.GetAllUsersAsync(cancellationToken);
         return Ok(users);
     }
 
     [HttpGet]
     [Authorize(Roles = "Admin,Manager")]
     [Route("{userId}")]
-    public async Task<IActionResult> GetUser(string userId)
+    public async Task<IActionResult> GetUser(string userId, CancellationToken cancellationToken = default)
     {
-        var query = new GetUserQuery
-        {
-            UserId = userId
-        };
+        var query = new GetUserQuery(userId);
         
-        var user = await _userFacade.GetUserAsync(query);
+        var user = await _userFacade.GetUserAsync(query, cancellationToken);
         return Ok(user);
     }
 
     [HttpDelete]
     [Authorize(Roles = "Admin")]
     [Route("{userId}")]
-    public async Task<IActionResult> DeleteUser(string userId)
+    public async Task<IActionResult> DeleteUser(string userId, CancellationToken cancellationToken)
     {
-        var cmd = new DeleteUserCommand { UserId = userId };
+        var cmd = new DeleteUserCommand(userId);
         
-        await _userFacade.DeleteUserAsync(cmd);
+        await _userFacade.DeleteUserAsync(cmd, cancellationToken);
         return NoContent();
     }
 }
