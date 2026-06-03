@@ -1,6 +1,6 @@
 namespace StockMapSvelte.Application.DTOs;
 
-public class PortfolioStockDto
+public record PortfolioStockDto
 {
     public Guid PortfolioId { get; set; }
     public string UserId { get; set; } = null!;

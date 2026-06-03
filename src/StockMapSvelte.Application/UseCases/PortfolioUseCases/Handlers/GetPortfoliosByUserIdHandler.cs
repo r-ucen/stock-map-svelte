@@ -14,9 +14,9 @@ public class GetPortfoliosByUserIdHandler
         _portfolioRepository = portfolioRepository;
     }
 
-    public async Task<IReadOnlyList<PortfolioStockDto>> Handle(GetPortfoliosByUserIdQuery query)
+    public async Task<IReadOnlyList<PortfolioStockDto>> Handle(GetPortfoliosByUserIdQuery query, CancellationToken cancellationToken)
     {
-        return await _portfolioRepository.GetPortfoliosByUserIdAsync(query.UserId!) ?? new List<PortfolioStockDto>();
+        return await _portfolioRepository.GetPortfoliosByUserIdAsync(query.UserId!, cancellationToken) ?? new List<PortfolioStockDto>();
     }
     
 }

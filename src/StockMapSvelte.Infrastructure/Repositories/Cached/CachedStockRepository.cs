@@ -18,11 +18,11 @@ public class CachedStockRepository : IStockRepository
     
     // getting
     
-    public async Task<StockDto?> GetStockViewModelByIdAsync(Guid stockId)
-        => await _decorated.GetStockViewModelByIdAsync(stockId);
+    public async Task<StockDto?> GetStockViewModelByIdAsync(Guid stockId, CancellationToken cancellationToken)
+        => await _decorated.GetStockViewModelByIdAsync(stockId, cancellationToken);
     
-    public async Task<IReadOnlyList<StockDto>?> GetAllStocksAsync()
-        =>  await _decorated.GetAllStocksAsync();
+    public async Task<IReadOnlyList<StockDto>?> GetAllStocksAsync(CancellationToken cancellationToken)
+        =>  await _decorated.GetAllStocksAsync(cancellationToken);
     
     public async Task<IReadOnlyList<StockDto>> GetPossibleToAddStocksAsync(string filter, IList<string> stocksInPortfolio, CancellationToken cancellationToken = default)
     {
@@ -53,17 +53,17 @@ public class CachedStockRepository : IStockRepository
     public Task<int> CreateStockAsync(Stock stock)
         => _decorated.CreateStockAsync(stock);
 
-    public Task<int> DeleteStockAsync(Guid stockId)
-        => _decorated.DeleteStockAsync(stockId);
+    public Task<int> DeleteStockAsync(Guid stockId, CancellationToken cancellationToken)
+        => _decorated.DeleteStockAsync(stockId, cancellationToken);
 
-    public Task<int> EditStockAsync(Guid stockId, string ticker)
-        => _decorated.EditStockAsync(stockId, ticker);
+    public Task<int> EditStockAsync(Guid stockId, string ticker, CancellationToken cancellationToken)
+        => _decorated.EditStockAsync(stockId, ticker, cancellationToken);
     
     // helpers
     
-    public Task<bool> StockExistsAsync(string ticker)
-        => _decorated.StockExistsAsync(ticker);
+    public Task<bool> StockExistsAsync(string ticker, CancellationToken cancellationToken)
+        => _decorated.StockExistsAsync(ticker, cancellationToken);
 
-    public Task<bool> StockExistsAsync(Guid stockId)
-        => _decorated.StockExistsAsync(stockId);
+    public Task<bool> StockExistsAsync(Guid stockId, CancellationToken cancellationToken)
+        => _decorated.StockExistsAsync(stockId, cancellationToken);
 }

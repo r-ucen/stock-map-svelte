@@ -14,10 +14,10 @@ public class GetDefaultPortfolioIdHandler
         _userContext = userContext;
     }
     
-    public async Task<Guid> Handle()
+    public async Task<Guid> Handle(CancellationToken cancellationToken)
     {
         var currentUserId = await _userContext.GetCurrentUserIdAsync();
         
-        return await _userSettingRepository.GetDefaultPortfolioIdAsync(currentUserId) ?? Guid.Empty;
+        return await _userSettingRepository.GetDefaultPortfolioIdAsync(currentUserId, cancellationToken) ?? Guid.Empty;
     }
 }

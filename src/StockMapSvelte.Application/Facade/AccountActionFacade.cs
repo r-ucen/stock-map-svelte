@@ -4,7 +4,6 @@ using StockMapSvelte.Application.DTOs;
 using StockMapSvelte.Application.UseCases.AccountActionUseCases.Commands;
 using StockMapSvelte.Application.UseCases.AccountActionUseCases.Handlers;
 using StockMapSvelte.Application.UseCases.AccountActionUseCases.Queries;
-using StockMapSvelte.Application.UseCases.PortfolioUseCases.Handlers;
 
 namespace StockMapSvelte.Application.Facade;
 
@@ -34,11 +33,8 @@ public class AccountActionFacade : IAccountActionFacade
     public async Task<AccountInfoDto> GetAccountInfoAsync()
     {
         var currentUserId = await _userContext.GetCurrentUserIdAsync();
-        
-        var query = new GetAccountInfoQuery
-        {
-            UserId = currentUserId
-        };
+
+        var query = new GetAccountInfoQuery(currentUserId);
         
         return await _getAccountInfoHandler.Handle(query);
     }
@@ -47,10 +43,7 @@ public class AccountActionFacade : IAccountActionFacade
     {
         var currentUserId = await _userContext.GetCurrentUserIdAsync();
 
-        var query = new DeleteAccountCommand()
-        {
-            UserId = currentUserId
-        };
+        var query = new DeleteAccountCommand(currentUserId);
         
         await _deleteAccountHandler.Handle(query);
     }
@@ -59,11 +52,7 @@ public class AccountActionFacade : IAccountActionFacade
     {
         var currentUserId = await _userContext.GetCurrentUserIdAsync();
 
-        var command = new SetPasswordCommand
-        {
-            UserId = currentUserId,
-            NewPassword = newPassword
-        };
+        var command = new SetPasswordCommand(currentUserId, newPassword);
         
         await _setPasswordHandler.Handle(command);
     }
@@ -72,10 +61,7 @@ public class AccountActionFacade : IAccountActionFacade
     {
         var currentUserId = await _userContext.GetCurrentUserIdAsync();
 
-        var command = new RemoveGoogleExternalLoginCommand
-        {
-            UserId = currentUserId
-        };
+        var command = new RemoveGoogleExternalLoginCommand(currentUserId);
         
         await _removeGoogleExternalLoginHandler.Handle(command);
     }

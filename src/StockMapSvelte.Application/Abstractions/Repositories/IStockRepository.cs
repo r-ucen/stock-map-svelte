@@ -5,12 +5,12 @@ namespace StockMapSvelte.Application.Abstractions.Repositories;
 
 public interface IStockRepository
 {
-    Task<IReadOnlyList<StockDto>?> GetAllStocksAsync();
-    Task<bool> StockExistsAsync(string ticker);
-    Task<bool> StockExistsAsync(Guid stockId);
+    Task<IReadOnlyList<StockDto>?> GetAllStocksAsync(CancellationToken cancellationToken);
+    Task<bool> StockExistsAsync(string ticker, CancellationToken cancellationToken);
+    Task<bool> StockExistsAsync(Guid stockId, CancellationToken cancellationToken);
     Task<int> CreateStockAsync(Stock stock);
-    Task<int> DeleteStockAsync(Guid stockId);
-    Task<StockDto?> GetStockViewModelByIdAsync(Guid stockId);
-    Task<int> EditStockAsync(Guid stockId, string ticker);
+    Task<int> DeleteStockAsync(Guid stockId, CancellationToken cancellationToken);
+    Task<StockDto?> GetStockViewModelByIdAsync(Guid stockId, CancellationToken cancellationToken);
+    Task<int> EditStockAsync(Guid stockId, string ticker, CancellationToken cancellationToken);
     Task<IReadOnlyList<StockDto>> GetPossibleToAddStocksAsync(string filter, IList<string> stocksInPortfolio, CancellationToken cancellationToken);
 }

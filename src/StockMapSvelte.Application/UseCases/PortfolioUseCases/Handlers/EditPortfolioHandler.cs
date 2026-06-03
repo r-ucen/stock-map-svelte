@@ -17,7 +17,7 @@ public class EditPortfolioHandler
         _portfolioRepository = portfolioRepository;
     }
     
-    public async Task<PortfolioStockDto> Handle(EditPortfolioCommand cmd)
+    public async Task<PortfolioStockDto> Handle(EditPortfolioCommand cmd, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(cmd.PortfolioName))
         {
@@ -26,7 +26,7 @@ public class EditPortfolioHandler
         
         var currentUserId = await _userContext.GetCurrentUserIdAsync();
 
-        var existing = await _portfolioRepository.GetPortfolioByIdAsync(cmd.PortfolioId);
+        var existing = await _portfolioRepository.GetPortfolioByIdAsync(cmd.PortfolioId, cancellationToken);
         if (existing == null)
         {
             throw new PortfolioNotFoundException("Portfolio not found.");
@@ -42,13 +42,13 @@ public class EditPortfolioHandler
             throw new UnauthorizedAccessException($"User {currentUserId} does not have permission to edit portfolio with id {cmd.PortfolioId}.");
         }
         
-        var nameExists = await _portfolioRepository.PortfolioNameExistsAsync(currentUserId, cmd.PortfolioId, cmd.PortfolioName);
+        var nameExists = await _portfolioRepository.PortfolioNameExistsAsync(currentUserId, cmd.PortfolioId, cmd.PortfolioName, cancellationToken);
         if (nameExists)
         {
             throw new PortfolioNameAlreadyExistsException(cmd.PortfolioName);
         }
 
-        var result = await _portfolioRepository.EditPortfolioAsync(cmd.PortfolioId, cmd.PortfolioName.Trim(), cmd.TickerSymbols);
+        var result = await _portfolioRepository.EditPortfolioAsync(cmd.PortfolioId, cmd.PortfolioName.Trim(), cmd.TickerSymbols, cancellationToken);
         
         var portfolioDto = new PortfolioStockDto
         {

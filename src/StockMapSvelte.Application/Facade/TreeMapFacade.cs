@@ -1,4 +1,4 @@
-using StockMapBlazor.Application.UseCases.TreeMapUseCases.Handlers;
+using StockMapSvelte.Application.UseCases.TreeMapUseCases.Handlers;
 using StockMapSvelte.Application.Abstractions.Facades;
 using StockMapSvelte.Application.DTOs;
 
@@ -13,8 +13,8 @@ public class TreeMapFacade : ITreeMapFacade
         _getTreemapDataHandler = getTreemapDataHandler;
     }
     
-    public async Task<TreemapDataDto> GetTreemapDataViewModelByIdAsync(Guid portfolioId)
+    public async Task<TreemapDataDto> GetTreemapDataViewModelByIdAsync(Guid portfolioId, CancellationToken cancellationToken)
     {
-        return await _getTreemapDataHandler.Handle(portfolioId);
+        return await _getTreemapDataHandler.Handle(portfolioId,  cancellationToken);
     }
 }

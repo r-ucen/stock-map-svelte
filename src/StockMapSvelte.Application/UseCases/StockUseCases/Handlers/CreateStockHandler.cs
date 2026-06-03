@@ -11,22 +11,19 @@ public class CreateStockHandler
 {
     private readonly IStockRepository _stockRepository;
     private readonly IStockProfileRepository _stockProfileRepository;
-    private readonly IUserContext _userContext;
     private readonly IStockClient _stockClient;
     
     public CreateStockHandler(
         IStockRepository stockRepository,
         IStockProfileRepository stockProfileRepository,
-        IUserContext userContext,
         IStockClient stockClient)
     {
         _stockRepository = stockRepository;
         _stockProfileRepository = stockProfileRepository;
-        _userContext = userContext;
         _stockClient = stockClient;
     }
 
-    public async Task<StockDto> Handle(CreateStockCommand cmd)
+    public async Task<StockDto> Handle(CreateStockCommand cmd, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(cmd.TickerSymbol))
         {
@@ -40,7 +37,7 @@ public class CreateStockHandler
             throw new InvalidTickerSymbolException($"This ticker symbol: '{ticker}' is not valid.");
         }
         
-        var exists = await _stockRepository.StockExistsAsync(ticker);
+        var exists = await _stockRepository.StockExistsAsync(ticker, cancellationToken);
         if (exists)
         {
             throw new TickerSymbolAlreadyExists($"Stock with ticker symbol '{cmd.TickerSymbol}' already exists.");
@@ -58,9 +55,9 @@ public class CreateStockHandler
             throw new CreateStockFailException("Failed to create the stock.");
         }
         
-        var stockProfiles = await _stockClient.GetStockProfilesAsync();
+        var stockProfiles = await _stockClient.GetStockProfilesAsync(cancellationToken);
 
-        var saveStockProfilesResult = await _stockProfileRepository.SaveStockProfilesAsync(stockProfiles);
+        var saveStockProfilesResult = await _stockProfileRepository.SaveStockProfilesAsync(stockProfiles, cancellationToken);
         if (saveStockProfilesResult <= 0)
         {
             throw new CreateStockFailException("Failed to create the stock.");

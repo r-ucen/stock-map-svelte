@@ -25,14 +25,14 @@ public class GetAccountInfoHandler
         
 
         return new AccountInfoDto
-        {
-            HasPasswordConfigured = hasPassword,
-            HasExternalLoginConfigured = externalLogins.Any(),
-            ExternalLogins = externalLogins.Select(x => new UserLoginInfoDto
-            {
-                LoginProvider = x.LoginProvider,
-                ProviderDisplayName = x.ProviderDisplayName
-            }).ToList()
-        };
+        (
+            hasPassword,
+            externalLogins.Any(),
+            externalLogins.Select(x => new UserLoginInfoDto
+            (
+                x.LoginProvider,
+                x.ProviderDisplayName
+            )).ToList()
+        );
     }
 }

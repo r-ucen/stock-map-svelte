@@ -14,8 +14,8 @@ public class StockProfileFacade : IStockProfileFacade
         _getAllStockProfilesHandler = getAllStockProfilesHandler;
     }
     
-    public async Task<IReadOnlyList<StockStockProfileDto>> GetAllStockProfilesAsync()
+    public async Task<IReadOnlyList<StockStockProfileDto>> GetAllStockProfilesAsync(CancellationToken cancellationToken)
     {
-        return await _getAllStockProfilesHandler.Handle();
+        return await _getAllStockProfilesHandler.Handle(cancellationToken);
     }
 }

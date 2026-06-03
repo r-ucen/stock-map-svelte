@@ -1,5 +1,4 @@
 using StockMapSvelte.Application.DTOs;
-using StockMapSvelte.Application.UseCases.AccountActionUseCases.Queries;
 
 namespace StockMapSvelte.Application.Abstractions.Facades;
 

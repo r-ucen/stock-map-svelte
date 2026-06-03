@@ -31,38 +31,35 @@ public class StockFacade : IStockFacade
         _getPossibleToAddStocksHandler = getPossibleToAddStocksHandler;
     }
     
-    public async Task<IReadOnlyList<StockDto>> GetAllStocksAsync()
+    public async Task<IReadOnlyList<StockDto>> GetAllStocksAsync(CancellationToken cancellationToken)
     {
-        return await _getAllStocksHandler.Handle();
+        return await _getAllStocksHandler.Handle(cancellationToken);
     }
 
-    public async Task<StockDto> CreateStockAsync(CreateStockCommand cmd)
+    public async Task<StockDto> CreateStockAsync(CreateStockCommand cmd, CancellationToken cancellationToken)
     {
-        return await _createStockHandler.Handle(cmd);
+        return await _createStockHandler.Handle(cmd, cancellationToken);
     }
 
-    public async Task DeleteStockAsync(DeleteStockCommand cmd)
+    public async Task DeleteStockAsync(DeleteStockCommand cmd, CancellationToken cancellationToken)
     {
-        await _deleteStockHandler.Handle(cmd);
+        await _deleteStockHandler.Handle(cmd, cancellationToken);
     }
 
-    public async Task EditStockAsync(EditStockCommand cmd)
+    public async Task EditStockAsync(EditStockCommand cmd, CancellationToken cancellationToken)
     {
-        await _editStockHandler.Handle(cmd);
+        await _editStockHandler.Handle(cmd, cancellationToken);
     }
 
-    public async Task<StockDto> GetStockViewModelByIdAsync(Guid stockId)
+    public async Task<StockDto> GetStockViewModelByIdAsync(Guid stockId, CancellationToken cancellationToken)
     {
-        var query = new GetStockQuery
-        {
-            StockId = stockId
-        };
+        var query = new GetStockQuery(stockId);
         
-        return await _getStockHandler.Handle(query);
+        return await _getStockHandler.Handle(query, cancellationToken);
     }
     
-    public async Task<IReadOnlyList<StockDto>> GetPossibleToAddStocksAsync(GetPossibleToAddStocksQuery query)
+    public async Task<IReadOnlyList<StockDto>> GetPossibleToAddStocksAsync(GetPossibleToAddStocksQuery query, CancellationToken cancellationToken)
     {
-        return await _getPossibleToAddStocksHandler.Handle(query);
+        return await _getPossibleToAddStocksHandler.Handle(query, cancellationToken);
     }
 }

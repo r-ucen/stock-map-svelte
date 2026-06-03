@@ -6,10 +6,10 @@ namespace StockMapSvelte.Application.Abstractions.Facades;
 
 public interface IPortfolioFacade
 {
-    Task<IReadOnlyList<PortfolioStockDto>> GetAllPortfolioStockViewModelsAsync();
-    Task<PortfolioStockDto> CreatePortfolioAsync(CreatePortfolioCommand cmd);
-    Task<IReadOnlyList<PortfolioStockDto>> GetPortfoliosByUserIdAsync();
-    Task<PortfolioStockDto> EditPortfolioAsync(EditPortfolioCommand cmd);
-    Task DeletePortfolioAsync(Guid portfolioId);
-    Task<PortfolioStockDto> GetPortfolioStockByIdAsync(GetPortfolioByIdQuery query);
+    Task<IReadOnlyList<PortfolioStockDto>> GetAllPortfolioStockViewModelsAsync(CancellationToken cancellationToken);
+    Task<PortfolioStockDto> CreatePortfolioAsync(CreatePortfolioCommand cmd, CancellationToken cancellationToken);
+    Task<IReadOnlyList<PortfolioStockDto>> GetPortfoliosByUserIdAsync(CancellationToken cancellationToken);
+    Task<PortfolioStockDto> EditPortfolioAsync(EditPortfolioCommand cmd, CancellationToken cancellationToken);
+    Task DeletePortfolioAsync(Guid portfolioId, CancellationToken cancellationToken);
+    Task<PortfolioStockDto> GetPortfolioStockByIdAsync(GetPortfolioByIdQuery query, CancellationToken cancellationToken);
 }

@@ -2,5 +2,5 @@ namespace StockMapSvelte.Application.Abstractions;
 
 public interface IStockUpdateService
 {
-    Task UpdateAsync();
+    Task UpdateAsync(CancellationToken cancellationToken);
 }

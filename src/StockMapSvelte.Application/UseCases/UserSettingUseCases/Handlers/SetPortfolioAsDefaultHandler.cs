@@ -18,9 +18,9 @@ public class SetPortfolioAsDefaultHandler
         _portfolioRepository = portfolioRepository;
     }
     
-    public async Task Handle(SetPortfolioAsDefaultCommand cmd)
+    public async Task Handle(SetPortfolioAsDefaultCommand cmd, CancellationToken cancellationToken)
     {
-        var existing = await _portfolioRepository.GetPortfolioByIdAsync(cmd.PortfolioId);
+        var existing = await _portfolioRepository.GetPortfolioByIdAsync(cmd.PortfolioId, cancellationToken);
         if (existing == null)
         {
             throw new PortfolioNotFoundException("Portfolio not found.");

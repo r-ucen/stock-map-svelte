@@ -16,8 +16,8 @@ public class GetPossibleToAddStocksHandler
         _userContext = userContext;
     }
     
-    public async Task<IReadOnlyList<StockDto>> Handle(GetPossibleToAddStocksQuery query)
+    public async Task<IReadOnlyList<StockDto>> Handle(GetPossibleToAddStocksQuery query, CancellationToken cancellationToken)
     {
-        return await _stockRepository.GetPossibleToAddStocksAsync(query.Filter.ToUpper(), query.StocksInPortfolio, query.CancellationToken);
+        return await _stockRepository.GetPossibleToAddStocksAsync(query.Filter.ToUpper(), query.StocksInPortfolio, cancellationToken);
     }
 }

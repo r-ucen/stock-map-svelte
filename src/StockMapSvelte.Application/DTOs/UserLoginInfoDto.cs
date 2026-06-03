@@ -1,7 +1,3 @@
 namespace StockMapSvelte.Application.DTOs;
 
-public class UserLoginInfoDto
-{
-    public string? LoginProvider { get; set; }
-    public string? ProviderDisplayName { get; set; }
-}
+public record UserLoginInfoDto(string? LoginProvider, string? ProviderDisplayName);
