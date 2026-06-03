@@ -19,9 +19,9 @@ public class TreemapDataController : Controller
 
     [EnableRateLimiting("TreeMapDataPolicy")]
     [HttpGet("{portfolioId:guid}")]
-    public async Task<IActionResult> GetTreemapDataByPortfolioId(Guid portfolioId)
+    public async Task<IActionResult> GetTreemapDataByPortfolioId(Guid portfolioId, CancellationToken cancellationToken = default)
     {
-        var treemapData = await _treeMapFacade.GetTreemapDataViewModelByIdAsync(portfolioId);
+        var treemapData = await _treeMapFacade.GetTreemapDataViewModelByIdAsync(portfolioId, cancellationToken);
         return  Ok(treemapData);
     }
 }

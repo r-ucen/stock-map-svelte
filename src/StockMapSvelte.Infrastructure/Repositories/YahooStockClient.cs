@@ -44,20 +44,20 @@ public class YahooStockClient : IStockClient
         return false;
     }
 
-    public async Task<IReadOnlyList<StockProfile>> GetStockProfilesAsync()
+    public async Task<IReadOnlyList<StockProfile>> GetStockProfilesAsync(CancellationToken cancellationToken)
     {
-        await using var _dbContext = await _contextFactory.CreateDbContextAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
 
-        var stocksByTicker = await _dbContext.Stocks
+        var stocksByTicker = await context.Stocks
             .AsNoTracking()
-            .ToDictionaryAsync(s => s.TickerSymbol!, s => s);
+            .ToDictionaryAsync(s => s.TickerSymbol, s => s, cancellationToken);
 
         if (stocksByTicker.Count == 0)
         {
             return [];
         }
 
-        var snapshots = await _yahooQuotes.GetSnapshotAsync(stocksByTicker.Keys);
+        var snapshots = await _yahooQuotes.GetSnapshotAsync(stocksByTicker.Keys, cancellationToken);
 
         var result = new List<StockProfile>();
         var now = DateTimeOffset.UtcNow;
@@ -111,7 +111,7 @@ public class YahooStockClient : IStockClient
                     RevenueGrowth = null
                 };
 
-                var modules = await _yahooQuotes.GetModulesAsync(snapshot.Key, ["assetProfile", "summaryDetail", "defaultKeyStatistics", "financialData"]);
+                var modules = await _yahooQuotes.GetModulesAsync(snapshot.Key, ["assetProfile", "summaryDetail", "defaultKeyStatistics", "financialData"], cancellationToken);
 
                 if (!modules.HasError && modules.Value.Length > 0)
                 {

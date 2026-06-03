@@ -17,11 +17,11 @@ public class GetPortfolioByIdHandler
         _userContext = userContext;
     }
     
-    public async Task<PortfolioStockDto> Handle(GetPortfolioByIdQuery query)
+    public async Task<PortfolioStockDto> Handle(GetPortfolioByIdQuery query, CancellationToken cancellationToken)
     {
         var currentUserId = await _userContext.GetCurrentUserIdAsync();
         
-        var portfolio = await _portfolioRepository.GetPortfolioByIdForUserAsync(currentUserId, query.PortfolioId);
+        var portfolio = await _portfolioRepository.GetPortfolioByIdForUserAsync(currentUserId, query.PortfolioId, cancellationToken);
         
         if (portfolio == null)
         {

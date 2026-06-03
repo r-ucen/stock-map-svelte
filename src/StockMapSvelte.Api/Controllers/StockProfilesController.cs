@@ -20,9 +20,9 @@ public class StockProfilesController : Controller
 
     [HttpGet]
     [Authorize(Roles = "Admin,Manager")]
-    public async Task<IActionResult> GetAllStockProfiles()
+    public async Task<IActionResult> GetAllStockProfiles(CancellationToken cancellationToken = default)
     {
-        var stockProfiles = await _stockProfileFacade.GetAllStockProfilesAsync();
+        var stockProfiles = await _stockProfileFacade.GetAllStockProfilesAsync(cancellationToken);
         return Ok(stockProfiles);
     }
 }

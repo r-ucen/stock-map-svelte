@@ -16,11 +16,11 @@ public class DeletePortfolioHandler
         _portfolioRepository = portfolioRepository;
     }
     
-    public async Task Handle(DeletePortfolioCommand cmd)
+    public async Task Handle(DeletePortfolioCommand cmd, CancellationToken cancellationToken)
     {
         var currentUserId = await _userContext.GetCurrentUserIdAsync();
 
-        var existing = await _portfolioRepository.GetPortfolioByIdAsync(cmd.PortfolioId);
+        var existing = await _portfolioRepository.GetPortfolioByIdAsync(cmd.PortfolioId, cancellationToken);
         if (existing == null)
         {
             throw new PortfolioNotFoundException("Portfolio not found.");
@@ -31,7 +31,7 @@ public class DeletePortfolioHandler
             throw new UnauthorizedAccessException($"User {currentUserId} does not have permission to delete portfolio with id {cmd.PortfolioId}.");
         }
         
-        var result = await _portfolioRepository.DeletePortfolioAsync(existing.Id);
+        var result = await _portfolioRepository.DeletePortfolioAsync(existing.Id, cancellationToken);
         
         if (result <= 0)
         {

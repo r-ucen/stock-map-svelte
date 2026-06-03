@@ -12,8 +12,8 @@ public class GetAllUsersHandler
         _userRepository = userRepository;
     }
     
-    public async Task<List<UserDto>> HandleAsync()
+    public async Task<List<UserDto>> HandleAsync(CancellationToken cancellationToken)
     {
-        return await _userRepository.GetAllAsync();
+        return await _userRepository.GetAllAsync(cancellationToken);
     }
 }

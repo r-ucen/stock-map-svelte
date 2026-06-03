@@ -23,69 +23,57 @@ public class StockController : Controller
     [HttpGet]
     [Authorize(Roles = "Admin, Manager")]
     [Route("{stockId:guid}")]
-    public async Task<IActionResult> GetStock(Guid stockId)
+    public async Task<IActionResult> GetStock(Guid stockId, CancellationToken cancellationToken = default)
     {
-        var stock = await _stockFacade.GetStockViewModelByIdAsync(stockId);
+        var stock = await _stockFacade.GetStockViewModelByIdAsync(stockId, cancellationToken);
         return Ok(stock);
     }
     
     [HttpGet]
     [Route("possible-to-add")]
-    public async Task<IActionResult> GetPossibleToAddStocks([FromQuery] string filter, [FromQuery] IList<string> stocksInPortfolio, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetPossibleToAddStocks([FromQuery] string filter, [FromQuery] IList<string> stocksInPortfolio, CancellationToken cancellationToken = default)
     {
-        var query = new GetPossibleToAddStocksQuery
-        {
-            Filter = filter,
-            StocksInPortfolio = stocksInPortfolio,
-            CancellationToken = cancellationToken
-        };
+        var query = new GetPossibleToAddStocksQuery(filter, stocksInPortfolio);
         
-        var stocks = await _stockFacade.GetPossibleToAddStocksAsync(query);
+        var stocks = await _stockFacade.GetPossibleToAddStocksAsync(query, cancellationToken);
         return Ok(stocks);
     }
 
     [HttpGet]
     [Authorize(Roles = "Admin,Manager")]
-    public async Task<IActionResult> GetAllStocks()
+    public async Task<IActionResult> GetAllStocks(CancellationToken cancellationToken = default)
     {
-        var stocks = await _stockFacade.GetAllStocksAsync();
+        var stocks = await _stockFacade.GetAllStocksAsync(cancellationToken);
         return Ok(stocks);
     }
 
     [HttpPut]
     [Authorize(Roles = "Admin,Manager")]
     [Route("{stockId:guid}")]
-    public async Task<IActionResult> EditStock(Guid stockId, string ticker)
+    public async Task<IActionResult> EditStock(Guid stockId, string ticker, CancellationToken cancellationToken = default)
     {
-        var cmd = new EditStockCommand()
-        {
-            Id = stockId,
-            TickerSymbol = ticker
-        };
+        var cmd = new EditStockCommand(stockId, ticker);
         
-        await _stockFacade.EditStockAsync(cmd);
+        await _stockFacade.EditStockAsync(cmd, cancellationToken);
         return NoContent();
     }
 
     [HttpDelete]
     [Authorize(Roles = "Admin,Manager")]
     [Route("{stockId:guid}")]
-    public async Task<IActionResult> DeleteStock(Guid stockId)
+    public async Task<IActionResult> DeleteStock(Guid stockId, CancellationToken cancellationToken = default)
     {
-        var cmd = new DeleteStockCommand
-        {
-            StockId = stockId
-        };
+        var cmd = new DeleteStockCommand(stockId);
         
-        await _stockFacade.DeleteStockAsync(cmd);
+        await _stockFacade.DeleteStockAsync(cmd, cancellationToken);
         return NoContent();
     }
 
     [HttpPost]
     [Authorize(Roles = "Admin,Manager")]
-    public async Task<IActionResult> CreateStock([FromBody] CreateStockCommand cmd)
+    public async Task<IActionResult> CreateStock([FromBody] CreateStockCommand cmd, CancellationToken cancellationToken = default)
     {
-        var createdStock = await _stockFacade.CreateStockAsync(cmd);
+        var createdStock = await _stockFacade.CreateStockAsync(cmd, cancellationToken);
         
         return CreatedAtAction(
             nameof(GetStock),

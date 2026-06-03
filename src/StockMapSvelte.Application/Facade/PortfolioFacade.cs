@@ -38,45 +38,39 @@ public class PortfolioFacade : IPortfolioFacade
         _getPortfolioByIdHandler = getPortfolioByIdHandler;
     }
     
-    public async Task<PortfolioStockDto> CreatePortfolioAsync(CreatePortfolioCommand cmd)
+    public async Task<PortfolioStockDto> CreatePortfolioAsync(CreatePortfolioCommand cmd, CancellationToken cancellationToken)
     {
-        return await _createPortfolioHandler.Handle(cmd);
+        return await _createPortfolioHandler.Handle(cmd, cancellationToken);
     }
 
-    public async Task<IReadOnlyList<PortfolioStockDto>> GetAllPortfolioStockViewModelsAsync()
+    public async Task<IReadOnlyList<PortfolioStockDto>> GetAllPortfolioStockViewModelsAsync(CancellationToken cancellationToken)
     {
-        return await _getAllPortfoliosHandler.Handle();
+        return await _getAllPortfoliosHandler.Handle(cancellationToken);
     }
 
-    public async Task<IReadOnlyList<PortfolioStockDto>> GetPortfoliosByUserIdAsync()
+    public async Task<IReadOnlyList<PortfolioStockDto>> GetPortfoliosByUserIdAsync(CancellationToken cancellationToken)
     {
         var currentUserId = await _userContext.GetCurrentUserIdAsync();
+
+        var query = new GetPortfoliosByUserIdQuery(currentUserId);
         
-        var query = new GetPortfoliosByUserIdQuery
-        {
-            UserId = currentUserId
-        };
-        
-        return await _getPortfoliosByUserIdHandler.Handle(query);
+        return await _getPortfoliosByUserIdHandler.Handle(query, cancellationToken);
     }
 
-    public async Task<PortfolioStockDto> EditPortfolioAsync(EditPortfolioCommand cmd)
+    public async Task<PortfolioStockDto> EditPortfolioAsync(EditPortfolioCommand cmd, CancellationToken cancellationToken)
     {
-        return await _editPortfolioHandler.Handle(cmd);
+        return await _editPortfolioHandler.Handle(cmd, cancellationToken);
     }
 
-    public async Task DeletePortfolioAsync(Guid portfolioId)
+    public async Task DeletePortfolioAsync(Guid portfolioId, CancellationToken cancellationToken)
     {
-        var cmd = new DeletePortfolioCommand
-        {
-            PortfolioId = portfolioId
-        };
+        var cmd = new DeletePortfolioCommand(portfolioId);
 
-        await _deletePortfolioHandler.Handle(cmd);
+        await _deletePortfolioHandler.Handle(cmd, cancellationToken);
     }
 
-    public async Task<PortfolioStockDto> GetPortfolioStockByIdAsync(GetPortfolioByIdQuery query)
+    public async Task<PortfolioStockDto> GetPortfolioStockByIdAsync(GetPortfolioByIdQuery query, CancellationToken cancellationToken)
     {
-        return await _getPortfolioByIdHandler.Handle(query);
+        return await _getPortfolioByIdHandler.Handle(query, cancellationToken);
     }
 }

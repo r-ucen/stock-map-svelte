@@ -20,16 +20,16 @@ public class UserSettingController : Controller
     }
 
     [HttpGet("default-portfolio")]
-    public async Task<IActionResult> GetDefaultPortfolioId()
+    public async Task<IActionResult> GetDefaultPortfolioId(CancellationToken cancellationToken = default)
     {
-        var defaultPortfolioId = await _userSettingFacade.GetDefaultPortfolioIdAsync();
+        var defaultPortfolioId = await _userSettingFacade.GetDefaultPortfolioIdAsync(cancellationToken);
         return Ok(defaultPortfolioId);
     }
 
     [HttpPut("default-portfolio")]
-    public async Task<IActionResult> SetDefaultPortfolio([FromBody] SetPortfolioAsDefaultCommand command)
+    public async Task<IActionResult> SetDefaultPortfolio([FromBody] SetPortfolioAsDefaultCommand command, CancellationToken cancellationToken = default)
     {
-        await _userSettingFacade.SetPortfolioAsDefaultAsync(command);
+        await _userSettingFacade.SetPortfolioAsDefaultAsync(command, cancellationToken);
         return NoContent();
     }
 

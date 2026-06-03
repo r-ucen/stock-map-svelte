@@ -31,18 +31,18 @@ public class UserFacade : IUserFacade
          await _identityService.LogOutAsync();
     }
     
-    public async Task DeleteUserAsync(DeleteUserCommand cmd)
+    public async Task DeleteUserAsync(DeleteUserCommand cmd, CancellationToken cancellationToken)
     {
-        await _deleteUserHandler.Handle(cmd);
+        await _deleteUserHandler.Handle(cmd, cancellationToken);
     }
     
-    public async Task<List<UserDto>> GetAllUsersAsync()
+    public async Task<List<UserDto>> GetAllUsersAsync(CancellationToken cancellationToken)
     {
-        return await _getAllUsersHandler.HandleAsync();
+        return await _getAllUsersHandler.HandleAsync(cancellationToken);
     }
     
-    public async Task<UserDto> GetUserAsync(GetUserQuery query)
+    public async Task<UserDto> GetUserAsync(GetUserQuery query, CancellationToken cancellationToken)
     {
-        return await _getUserHandler.HandleAsync(query);
+        return await _getUserHandler.HandleAsync(query, cancellationToken);
     }
 }

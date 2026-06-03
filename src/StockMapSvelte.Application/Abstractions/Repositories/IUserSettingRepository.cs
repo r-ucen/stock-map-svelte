@@ -3,7 +3,7 @@ namespace StockMapSvelte.Application.Abstractions.Repositories;
 public interface IUserSettingRepository
 {
     Task<int> SetPortfolioAsDefaultAsync(string userId, Guid portfolioId);
-    Task<Guid?> GetDefaultPortfolioIdAsync(string userId);
+    Task<Guid?> GetDefaultPortfolioIdAsync(string userId, CancellationToken cancellationToken);
     Task<int> SetToastAutoHideValueAsync(string userId, bool autoHide);
     Task<bool?> GetToastAutoHideValueAsync(string userId);
     Task<int?> GetToastAutoHideDelayMs(string userId);

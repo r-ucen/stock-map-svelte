@@ -13,8 +13,8 @@ public class GetAllPortfoliosHandler
         _portfolioRepository = portfolioRepository;
     }
     
-    public async Task<IReadOnlyList<PortfolioStockDto>> Handle()
+    public async Task<IReadOnlyList<PortfolioStockDto>> Handle(CancellationToken cancellationToken)
     {
-        return await _portfolioRepository.GetAllPortfolioStockViewModelsAsync() ?? new List<PortfolioStockDto>();
+        return await _portfolioRepository.GetAllPortfolioStockViewModelsAsync(cancellationToken) ?? new List<PortfolioStockDto>();
     }
 }

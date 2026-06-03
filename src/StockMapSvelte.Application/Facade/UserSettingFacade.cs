@@ -1,4 +1,3 @@
-using StockMapSvelte.Application.Abstractions;
 using StockMapSvelte.Application.Abstractions.Facades;
 using StockMapSvelte.Application.UseCases.UserSettingUseCases.Commands;
 using StockMapSvelte.Application.UseCases.UserSettingUseCases.Handlers;
@@ -31,14 +30,14 @@ public class UserSettingFacade : IUserSettingFacade
         _setToastAutoHideDelayMs = setToastAutoHideDelayMsHandler;
     }
     
-    public async Task SetPortfolioAsDefaultAsync(SetPortfolioAsDefaultCommand cmd)
+    public async Task SetPortfolioAsDefaultAsync(SetPortfolioAsDefaultCommand cmd, CancellationToken cancellationToken)
     {
-        await _setPortfolioAsDefaultHandler.Handle(cmd);
+        await _setPortfolioAsDefaultHandler.Handle(cmd, cancellationToken);
     }
     
-    public async Task<Guid> GetDefaultPortfolioIdAsync()
+    public async Task<Guid> GetDefaultPortfolioIdAsync(CancellationToken cancellationToken)
     {
-        return await _getDefaultPortfolioIdHandler.Handle();
+        return await _getDefaultPortfolioIdHandler.Handle(cancellationToken);
     }
     
     public async Task SetToastAutoHideValueAsync(SetToastAutoHideValueCommand cmd)
