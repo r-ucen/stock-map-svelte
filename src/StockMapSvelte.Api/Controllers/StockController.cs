@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using StockMapSvelte.Application.Abstractions.Facades;
+using StockMapSvelte.Application.DTOs.Common;
 using StockMapSvelte.Application.UseCases.StockUseCases.Commands;
 using StockMapSvelte.Application.UseCases.StockUseCases.Queries;
 
@@ -44,6 +45,15 @@ public class StockController : Controller
     public async Task<IActionResult> GetAllStocks(CancellationToken cancellationToken = default)
     {
         var stocks = await _stockFacade.GetAllStocksAsync(cancellationToken);
+        return Ok(stocks);
+    }
+    
+    [HttpGet]
+    [Authorize(Roles = "Admin,Manager")]
+    [Route("queried")]
+    public async Task<IActionResult> GetAllStocksQueried([FromQuery] QueryFilter filter, CancellationToken cancellationToken = default)
+    {
+        var stocks = await _stockFacade.GetAllStocksQueriedAsync(filter, cancellationToken);
         return Ok(stocks);
     }
 

@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Caching.Hybrid;
 using StockMapSvelte.Application.Abstractions.Repositories;
 using StockMapSvelte.Application.DTOs;
+using StockMapSvelte.Application.DTOs.Common;
 using StockMapSvelte.Domain.Entities;
 
 namespace StockMapSvelte.Infrastructure.Repositories.Cached;
@@ -23,7 +24,10 @@ public class CachedStockRepository : IStockRepository
     
     public async Task<IReadOnlyList<StockDto>?> GetAllStocksAsync(CancellationToken cancellationToken)
         =>  await _decorated.GetAllStocksAsync(cancellationToken);
-    
+
+    public async Task<PagedResponse<StockDto>> GetAllStocksAsyncQueried(QueryFilter filter, CancellationToken cancellationToken)
+        => await _decorated.GetAllStocksAsyncQueried(filter, cancellationToken);
+
     public async Task<IReadOnlyList<StockDto>> GetPossibleToAddStocksAsync(string filter, IList<string> stocksInPortfolio, CancellationToken cancellationToken = default)
     {
         var portfolioStocksSortedString = string.Join(",", stocksInPortfolio
