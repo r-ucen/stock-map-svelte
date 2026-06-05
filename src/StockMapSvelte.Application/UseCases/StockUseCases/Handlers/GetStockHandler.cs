@@ -16,6 +16,6 @@ public class GetStockHandler
 
     public async Task<StockDto> Handle(GetStockQuery query, CancellationToken cancellationToken)
     {
-        return await _stockRepository.GetStockViewModelByIdAsync(query.StockId, cancellationToken) ?? new StockDto();
+        return await _stockRepository.GetStockViewModelByIdAsync(query.StockId, cancellationToken) ?? new StockDto(Guid.Empty, string.Empty);
     }
 }
