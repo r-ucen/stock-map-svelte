@@ -63,10 +63,9 @@ public class CreateStockHandler
             throw new CreateStockFailException("Failed to create the stock.");
         }
 
-        return new StockDto()
-        {
-            Id = entity.Id,
-            TickerSymbol = entity.TickerSymbol
-        };
+        return new StockDto(
+            entity.Id,
+            entity.TickerSymbol
+        );
     }
 }

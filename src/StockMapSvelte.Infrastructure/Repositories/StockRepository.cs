@@ -1,9 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using StockMapSvelte.Application.Abstractions.Repositories;
 using StockMapSvelte.Application.DTOs;
+using StockMapSvelte.Application.DTOs.Common;
 using StockMapSvelte.Application.Exceptions.Stock;
 using StockMapSvelte.Domain.Entities;
 using StockMapSvelte.Infrastructure.Database;
+using StockMapSvelte.Infrastructure.Extensions;
+using StockMapSvelte.Infrastructure.Extensions.Stock;
 
 namespace StockMapSvelte.Infrastructure.Repositories;
 
@@ -87,6 +90,41 @@ public class StockRepository : IStockRepository
             s.Id,
             s.TickerSymbol
         )).ToList();
+    }
+    
+    public async Task<PagedResponse<StockDto>> GetAllStocksAsyncQueried(QueryFilter filter, CancellationToken cancellationToken)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        
+        var pageNumber = Math.Max(1, filter.PageNumber);
+        var pageSize = Math.Clamp(filter.PageSize, 1, 50);
+
+        var query = context.Stocks.AsNoTracking().AsQueryable();
+        
+        // apply search filter
+        query = query.ApplySearch(filter.Search);
+
+        // count total records AFTER filtering, BEFORE pagination
+        var totalRecords = await query.CountAsync(cancellationToken);
+
+        // apply sorting (default to TickerSymbol if not specified)
+        query = query.ApplySort(
+            string.IsNullOrWhiteSpace(filter.SortBy) ? "TickerSymbol" : filter.SortBy);
+
+        // apply pagination and project to DTOs
+        var stocks = await query
+            .ApplyPagination(pageNumber, pageSize)
+            .Select(m => new StockDto(m.Id, m.TickerSymbol))
+            .ToListAsync(cancellationToken);
+
+        return new PagedResponse<StockDto>
+        {
+            Data = stocks,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalRecords = totalRecords,
+            TotalPages = (int)Math.Ceiling(totalRecords / (double)pageSize)
+        };
     }
     
     public async Task<IReadOnlyList<StockDto>> GetPossibleToAddStocksAsync(string filter, IList<string> stocksInPortfolio, CancellationToken cancellationToken)

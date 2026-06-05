@@ -1,4 +1,5 @@
 using StockMapSvelte.Application.DTOs;
+using StockMapSvelte.Application.DTOs.Common;
 using StockMapSvelte.Domain.Entities;
 
 namespace StockMapSvelte.Application.Abstractions.Repositories;
@@ -6,6 +7,7 @@ namespace StockMapSvelte.Application.Abstractions.Repositories;
 public interface IStockRepository
 {
     Task<IReadOnlyList<StockDto>?> GetAllStocksAsync(CancellationToken cancellationToken);
+    Task<PagedResponse<StockDto>> GetAllStocksAsyncQueried(QueryFilter filter, CancellationToken cancellationToken);
     Task<bool> StockExistsAsync(string ticker, CancellationToken cancellationToken);
     Task<bool> StockExistsAsync(Guid stockId, CancellationToken cancellationToken);
     Task<int> CreateStockAsync(Stock stock);
