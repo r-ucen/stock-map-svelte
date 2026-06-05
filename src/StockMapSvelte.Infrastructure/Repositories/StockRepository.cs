@@ -117,14 +117,6 @@ public class StockRepository : IStockRepository
         await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
         
         var stock = await context.Stocks.AsNoTracking().FirstOrDefaultAsync(s => s.Id == stockId, cancellationToken);
-        if (stock == null)
-        {
-            return null;
-        }
-        return new StockDto
-        (
-            stockId,
-            stock.TickerSymbol
-        );
+        return stock == null ? null : new StockDto(stockId, stock.TickerSymbol);
     }
 }
