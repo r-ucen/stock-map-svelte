@@ -83,10 +83,10 @@ public class StockRepository : IStockRepository
         var stocks = await context.Stocks.AsNoTracking().OrderBy(s => s.TickerSymbol).ToListAsync(cancellationToken);
         
         return stocks.Select(s => new StockDto
-        {
-            Id = s.Id,
-            TickerSymbol = s.TickerSymbol
-        }).ToList();
+        (
+            s.Id,
+            s.TickerSymbol
+        )).ToList();
     }
     
     public async Task<IReadOnlyList<StockDto>> GetPossibleToAddStocksAsync(string filter, IList<string> stocksInPortfolio, CancellationToken cancellationToken)
@@ -105,10 +105,10 @@ public class StockRepository : IStockRepository
             .OrderBy(s => s.TickerSymbol)
             .Take(20)
             .Select(s => new StockDto
-            {
-                Id = s.Id,
-                TickerSymbol = s.TickerSymbol
-            })
+            (
+                s.Id,
+                s.TickerSymbol
+            ))
             .ToListAsync(cancellationToken);
     }
 
@@ -122,9 +122,9 @@ public class StockRepository : IStockRepository
             return null;
         }
         return new StockDto
-        {
-            Id = stockId,
-            TickerSymbol = stock.TickerSymbol
-        };
+        (
+            stockId,
+            stock.TickerSymbol
+        );
     }
 }
