@@ -2,7 +2,6 @@ import { apiFetch } from '$lib/apiFetch';
 import type { IStock } from '$lib/Abstractions/IStock';
 import type { IAdminState } from '$lib/Abstractions/IAdminState';
 
-
 export async function deleteStock(state: IAdminState, id: string) {
 	const res = await apiFetch(`/stocks/${id}`, {
 		method: 'DELETE'
@@ -23,13 +22,12 @@ function deleteStockInState(state: IAdminState, id: string) {
 }
 
 function addStockToState(state: IAdminState, newStock: IStock) {
-	state.stocks = [newStock, ...state.stocks].sort((a, b) => a.tickerSymbol.localeCompare(b.tickerSymbol));
+	state.stocks = [newStock, ...state.stocks].sort((a, b) =>
+		a.tickerSymbol.localeCompare(b.tickerSymbol)
+	);
 }
 
-export async function createStock(
-	state: IAdminState,
-	p_tickerSymbol: string
-) {
+export async function createStock(state: IAdminState, p_tickerSymbol: string) {
 	const res = await apiFetch(`/stocks`, {
 		method: 'POST',
 		headers: {
@@ -42,8 +40,8 @@ export async function createStock(
 
 	if (res.ok) {
 		const newStock = await res.json();
-		console.log("Newly created stock from API:", newStock);
-		addStockToState(state, newStock);
+		console.log('Newly created stock from API:', newStock);
+		// addStockToState(state, newStock);
 		return { success: true };
 	} else {
 		const errorData = await res.json().catch(() => ({}));
@@ -57,7 +55,7 @@ export async function editStock(state: IAdminState, id: string, p_tickerSymbol: 
 		method: 'PUT',
 		headers: {
 			'Content-Type': 'application/json',
-			'Accept': '*/*'
+			Accept: '*/*'
 		}
 	});
 
@@ -71,11 +69,7 @@ export async function editStock(state: IAdminState, id: string, p_tickerSymbol: 
 	}
 }
 
-function editStockInState(
-	state: IAdminState,
-	id: string,
-	p_tickerSymbol: string
-) {
+function editStockInState(state: IAdminState, id: string, p_tickerSymbol: string) {
 	state.stocks = state.stocks.map((s) => {
 		if (s.id === id) {
 			return {
@@ -87,6 +81,6 @@ function editStockInState(
 	});
 }
 
-export function getStockById(stocks: IStock[], id: string) : IStock | undefined {
+export function getStockById(stocks: IStock[], id: string): IStock | undefined {
 	return stocks.find((p) => p.id === id);
 }
