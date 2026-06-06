@@ -39,18 +39,9 @@ public class StockController : Controller
         var stocks = await _stockFacade.GetPossibleToAddStocksAsync(query, cancellationToken);
         return Ok(stocks);
     }
-
-    [HttpGet]
-    [Authorize(Roles = "Admin,Manager")]
-    public async Task<IActionResult> GetAllStocks(CancellationToken cancellationToken = default)
-    {
-        var stocks = await _stockFacade.GetAllStocksAsync(cancellationToken);
-        return Ok(stocks);
-    }
     
     [HttpGet]
     [Authorize(Roles = "Admin,Manager")]
-    [Route("queried")]
     public async Task<IActionResult> GetAllStocksQueried([FromQuery] QueryFilter filter, CancellationToken cancellationToken = default)
     {
         var stocks = await _stockFacade.GetAllStocksQueriedAsync(filter, cancellationToken);
