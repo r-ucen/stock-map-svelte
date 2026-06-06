@@ -1,7 +1,7 @@
 import { apiFetch } from '$lib/apiFetch';
 
 export const load = async (event) => {
-	const res = await apiFetch('/stocks/queried?PageNumber=1&PageSize=10', { event });
+	const res = await apiFetch('/stocks?PageNumber=1&PageSize=10', { event });
 
 	if (!res.ok) {
 		return {

@@ -41,7 +41,7 @@
 					PageSize: pageSize.toString()
 				});
 
-				const res = await apiFetch(`/stocks/queried?${params.toString()}`);
+				const res = await apiFetch(`/stocks?${params.toString()}`);
 
 				if (res.ok) {
 					const result = await res.json();
