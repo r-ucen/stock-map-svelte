@@ -2,8 +2,6 @@
 	import {
 		type ColumnDef,
 		getCoreRowModel,
-		type PaginationState,
-		getPaginationRowModel,
 		getSortedRowModel,
 		type SortingState,
 	} from '@tanstack/table-core';
@@ -12,7 +10,6 @@
 		FlexRender,
 	} from "$lib/components/ui/data-table/index.js";
 	import * as Table from "$lib/components/ui/table/index.js";
-	import { Button } from "$lib/components/ui/button/index.js";
 	import type { IStock } from '$lib/Abstractions/IStock';
 
 	type DataTableProps<IStock, TValue> = {
@@ -22,7 +19,6 @@
 
 	let { data, columns }: DataTableProps<IStock, TValue> = $props();
 
-	let pagination = $state<PaginationState>({ pageIndex: 0, pageSize: 10 });
 	let sorting = $state<SortingState>([]);
 
 	const table = createSvelteTable({
@@ -31,19 +27,9 @@
 		},
 		columns,
 		state: {
-			get pagination() {
-				return pagination;
-			},
 			get sorting() {
 				return sorting;
 			},
-		},
-		onPaginationChange: (updater) => {
-			if (typeof updater === "function") {
-				pagination = updater(pagination);
-			} else {
-				pagination = updater;
-			}
 		},
 		getCoreRowModel: getCoreRowModel(),
 		getSortedRowModel: getSortedRowModel(),
@@ -54,7 +40,6 @@
 				sorting = updater;
 			}
 		},
-		getPaginationRowModel: getPaginationRowModel(),
 	});
 </script>
 
@@ -98,23 +83,5 @@
 				{/each}
 			</Table.Body>
 		</Table.Root>
-	</div>
-	<div class="flex items-center justify-end space-x-2 py-4">
-		<Button
-			variant="outline"
-			size="sm"
-			onclick={() => table.previousPage()}
-			disabled={!table.getCanPreviousPage()}
-		>
-			Previous
-		</Button>
-		<Button
-			variant="outline"
-			size="sm"
-			onclick={() => table.nextPage()}
-			disabled={!table.getCanNextPage()}
-		>
-			Next
-		</Button>
 	</div>
 </div>
