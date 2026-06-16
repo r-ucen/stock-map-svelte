@@ -186,6 +186,9 @@ namespace StockMapSvelte.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<bool>("IsInitialized")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("TickerSymbol")
                         .IsRequired()
                         .HasColumnType("text");
@@ -198,31 +201,37 @@ namespace StockMapSvelte.Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("9a480000-0389-c018-9dbd-08de40aae72b"),
+                            IsInitialized = false,
                             TickerSymbol = "AAPL"
                         },
                         new
                         {
                             Id = new Guid("9a480000-0389-c018-a702-08de40aae72b"),
+                            IsInitialized = false,
                             TickerSymbol = "MSFT"
                         },
                         new
                         {
                             Id = new Guid("9a480000-0389-c018-a70b-08de40aae72b"),
+                            IsInitialized = false,
                             TickerSymbol = "GOOGL"
                         },
                         new
                         {
                             Id = new Guid("9a480000-0389-c018-a70e-08de40aae72b"),
+                            IsInitialized = false,
                             TickerSymbol = "AVGO"
                         },
                         new
                         {
                             Id = new Guid("9a480000-0389-c018-a712-08de40aae72b"),
+                            IsInitialized = false,
                             TickerSymbol = "RKLB"
                         },
                         new
                         {
                             Id = new Guid("9a480000-0389-c018-a7c2-08de40aae72b"),
+                            IsInitialized = false,
                             TickerSymbol = "TSLA"
                         });
                 });
