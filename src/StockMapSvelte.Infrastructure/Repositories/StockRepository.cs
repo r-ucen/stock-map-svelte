@@ -138,6 +138,7 @@ public class StockRepository : IStockRepository
 
         return await context.Stocks
             .AsNoTracking()
+            .Where(s => s.IsInitialized == true)
             .Where(s => !upperTickersInPortfolio.Contains(s.TickerSymbol))
             .Where(s => s.TickerSymbol.Contains(filter))
             .OrderBy(s => s.TickerSymbol)
@@ -156,5 +157,28 @@ public class StockRepository : IStockRepository
         
         var stock = await context.Stocks.AsNoTracking().FirstOrDefaultAsync(s => s.Id == stockId, cancellationToken);
         return stock == null ? null : new StockDto(stockId, stock.TickerSymbol);
+    }
+
+    public async Task<IReadOnlyList<Stock>> GetUninitializedStocksAsync(CancellationToken cancellationToken)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        
+        return await context.Stocks
+            .AsNoTracking()
+            .Where(s => s.IsInitialized == false)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<int> MarkStocksAsInitializedAsync(IEnumerable<Guid> stockIds, CancellationToken cancellationToken)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+
+        var uninitializedStocks =  context.Stocks
+            .Where(s => stockIds.Contains(s.Id));
+
+        return await uninitializedStocks
+            .ExecuteUpdateAsync(x => x.SetProperty(
+                s => s.IsInitialized, true
+                ), cancellationToken);
     }
 }

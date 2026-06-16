@@ -15,4 +15,6 @@ public interface IStockRepository
     Task<StockDto?> GetStockViewModelByIdAsync(Guid stockId, CancellationToken cancellationToken);
     Task<int> EditStockAsync(Guid stockId, string ticker, CancellationToken cancellationToken);
     Task<IReadOnlyList<StockDto>> GetPossibleToAddStocksAsync(string filter, IList<string> stocksInPortfolio, CancellationToken cancellationToken);
+    Task<IReadOnlyList<Stock>> GetUninitializedStocksAsync(CancellationToken cancellationToken);
+    Task<int> MarkStocksAsInitializedAsync(IEnumerable<Guid> stockIds, CancellationToken cancellationToken);
 }

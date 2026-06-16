@@ -6,6 +6,7 @@ namespace StockMapSvelte.Domain.Entities;
 public class Stock : Entity<Guid>
 {
     public required string TickerSymbol { get; set; }
+    public bool IsInitialized { get; set; }
 
     // Navigation properties
     public StockProfile StockProfile { get; set; } = null!;

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using StockMapSvelte.Application.Abstractions.Repositories;
 using StockMapSvelte.Application.DTOs;
+using StockMapSvelte.Application.Exceptions.Stock;
 using StockMapSvelte.Domain.Entities;
 using StockMapSvelte.Infrastructure.Database;
 
@@ -65,6 +66,17 @@ public class PortfolioRepository : IPortfolioRepository
             .Where(t => !string.IsNullOrWhiteSpace(t))
             .Select(t => t.Trim().ToUpperInvariant())
             .ToList();
+        
+        var uninitializedStocksInRequest = await context.Stocks
+            .Where(s => upperTickerSymbols.Contains(s.TickerSymbol))
+            .Where(s => s.IsInitialized == false)
+            .Select(s => s.TickerSymbol)
+            .ToListAsync(cancellationToken);
+
+        if (uninitializedStocksInRequest.Count != 0)
+        {
+            throw new StocksNotInitializedException(uninitializedStocksInRequest);
+        }
 
         var stocks =  await context.Stocks
             .Where(s => upperTickerSymbols.Contains(s.TickerSymbol))
@@ -163,6 +175,17 @@ public class PortfolioRepository : IPortfolioRepository
             .Where(ts => !string.IsNullOrWhiteSpace(ts))
             .Select(ts => ts.Trim())
             .ToList();
+        
+        var uninitializedStocksInRequest = await context.Stocks
+            .Where(s => tickers.Contains(s.TickerSymbol))
+            .Where(s => s.IsInitialized == false)
+            .Select(s => s.TickerSymbol)
+            .ToListAsync(cancellationToken);
+
+        if (uninitializedStocksInRequest.Count != 0)
+        {
+            throw new StocksNotInitializedException(uninitializedStocksInRequest);
+        }
         
         var stocks = await context.Stocks
             .Where(s => tickers.Contains(s.TickerSymbol))
