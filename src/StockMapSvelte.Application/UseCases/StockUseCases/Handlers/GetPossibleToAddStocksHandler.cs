@@ -8,12 +8,10 @@ namespace StockMapSvelte.Application.UseCases.StockUseCases.Handlers;
 public class GetPossibleToAddStocksHandler
 {
     private readonly IStockRepository _stockRepository;
-    private readonly IUserContext _userContext;
     
-    public GetPossibleToAddStocksHandler(IStockRepository stockRepository, IUserContext userContext)
+    public GetPossibleToAddStocksHandler(IStockRepository stockRepository)
     {
         _stockRepository = stockRepository;
-        _userContext = userContext;
     }
     
     public async Task<IReadOnlyList<StockDto>> Handle(GetPossibleToAddStocksQuery query, CancellationToken cancellationToken)
