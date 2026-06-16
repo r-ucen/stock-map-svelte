@@ -9,16 +9,13 @@ namespace StockMapSvelte.Application.UseCases.StockUseCases.Handlers;
 public class CreateStocksHandler
 {
     private readonly IStockRepository _stockRepository;
-    private readonly IStockProfileRepository _stockProfileRepository;
     private readonly IStockClient _stockClient;
     
     public CreateStocksHandler(
         IStockRepository stockRepository,
-        IStockProfileRepository stockProfileRepository,
         IStockClient stockClient)
     {
         _stockRepository = stockRepository;
-        _stockProfileRepository = stockProfileRepository;
         _stockClient = stockClient;
     }
 
@@ -73,12 +70,6 @@ public class CreateStocksHandler
             }
             
             created.Add(ticker);
-        }
-
-        if (created.Count > 0)
-        {
-            var stockProfiles = await _stockClient.GetStockProfilesAsync(cancellationToken);
-            await _stockProfileRepository.SaveStockProfilesAsync(stockProfiles, cancellationToken);
         }
         
         return new CreateStocksResponse(created.ToArray(), failed.ToArray());
