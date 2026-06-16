@@ -51,7 +51,13 @@ public class CachedStockRepository : IStockRepository
             cancellationToken: cancellationToken
         );
     }
-    
+
+    public Task<IReadOnlyList<Stock>> GetUninitializedStocksAsync(CancellationToken cancellationToken)
+        => _decorated.GetUninitializedStocksAsync(cancellationToken);
+
+    public Task<int> MarkStocksAsInitializedAsync(IEnumerable<Guid> stockIds, CancellationToken cancellationToken)
+        => _decorated.MarkStocksAsInitializedAsync(stockIds, cancellationToken);
+
     // modifying
 
     public Task<int> CreateStockAsync(Stock stock)
