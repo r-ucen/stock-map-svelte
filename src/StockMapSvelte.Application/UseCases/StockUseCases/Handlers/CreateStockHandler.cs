@@ -10,16 +10,13 @@ namespace StockMapSvelte.Application.UseCases.StockUseCases.Handlers;
 public class CreateStockHandler
 {
     private readonly IStockRepository _stockRepository;
-    private readonly IStockProfileRepository _stockProfileRepository;
     private readonly IStockClient _stockClient;
     
     public CreateStockHandler(
         IStockRepository stockRepository,
-        IStockProfileRepository stockProfileRepository,
         IStockClient stockClient)
     {
         _stockRepository = stockRepository;
-        _stockProfileRepository = stockProfileRepository;
         _stockClient = stockClient;
     }
 
@@ -53,14 +50,6 @@ public class CreateStockHandler
         if (createStockResult <= 0)
         {
             throw new CreateStockFailException("Failed to create the stock.");
-        }
-        
-        var stockProfiles = await _stockClient.GetStockProfilesAsync(cancellationToken);
-
-        var saveStockProfilesResult = await _stockProfileRepository.SaveStockProfilesAsync(stockProfiles, cancellationToken);
-        if (saveStockProfilesResult <= 0)
-        {
-            throw new CreateStockFailException("Failed to update the additional stock data");
         }
 
         return new StockDto(
