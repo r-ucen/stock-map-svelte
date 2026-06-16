@@ -42,6 +42,7 @@ public static class DependencyInjection
         services.AddScoped<GetAllStocksHandler>();
         services.AddScoped<GetAllStocksQueriedHandler>();
         services.AddScoped<CreateStockHandler>();
+        services.AddScoped<CreateStocksHandler>();
         services.AddScoped<DeleteStockHandler>();
         services.AddScoped<EditStockHandler>();
         services.AddScoped<GetStockHandler>();
