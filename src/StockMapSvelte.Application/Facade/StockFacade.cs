@@ -12,6 +12,7 @@ public class StockFacade : IStockFacade
     private readonly GetAllStocksHandler _getAllStocksHandler;
     private readonly GetAllStocksQueriedHandler _getAllStocksQueriedHandler;
     private readonly CreateStockHandler _createStockHandler;
+    private readonly CreateStocksHandler _createStocksHandler;
     private readonly DeleteStockHandler _deleteStockHandler;
     private readonly EditStockHandler _editStockHandler;
     private readonly GetStockHandler _getStockHandler;
@@ -21,6 +22,7 @@ public class StockFacade : IStockFacade
         GetAllStocksHandler getAllStocksHandler,
         GetAllStocksQueriedHandler getAllStocksQueriedHandler,
         CreateStockHandler createStockHandler,
+        CreateStocksHandler createStocksHandler,
         DeleteStockHandler deleteStockHandler,
         EditStockHandler editStockHandler,
         GetStockHandler getStockHandler,
@@ -29,6 +31,7 @@ public class StockFacade : IStockFacade
         _getAllStocksHandler = getAllStocksHandler;
         _getAllStocksQueriedHandler = getAllStocksQueriedHandler;
         _createStockHandler = createStockHandler;
+        _createStocksHandler = createStocksHandler;
         _deleteStockHandler = deleteStockHandler;
         _editStockHandler = editStockHandler;
         _getStockHandler = getStockHandler;
@@ -48,6 +51,11 @@ public class StockFacade : IStockFacade
     public async Task<StockDto> CreateStockAsync(CreateStockCommand cmd, CancellationToken cancellationToken)
     {
         return await _createStockHandler.Handle(cmd, cancellationToken);
+    }
+
+    public async Task<CreateStocksResponse> CreateStocksAsync(CreateStocksCommand cmd, CancellationToken cancellationToken)
+    {
+        return await _createStocksHandler.Handle(cmd, cancellationToken);
     }
 
     public async Task DeleteStockAsync(DeleteStockCommand cmd, CancellationToken cancellationToken)

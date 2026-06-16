@@ -60,7 +60,7 @@ public class CreateStockHandler
         var saveStockProfilesResult = await _stockProfileRepository.SaveStockProfilesAsync(stockProfiles, cancellationToken);
         if (saveStockProfilesResult <= 0)
         {
-            throw new CreateStockFailException("Failed to create the stock.");
+            throw new CreateStockFailException("Failed to update the additional stock data");
         }
 
         return new StockDto(

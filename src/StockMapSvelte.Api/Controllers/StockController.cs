@@ -81,4 +81,13 @@ public class StockController : Controller
             new { stockId = createdStock.Id },
             createdStock);
     }
+    
+    [HttpPost]
+    [Authorize(Roles = "Admin,Manager")]
+    [Route("batch")]
+    public async Task<IActionResult> CreateStocksBatch([FromBody] CreateStocksCommand cmd, CancellationToken cancellationToken = default)
+    {
+        var createdStocks = await _stockFacade.CreateStocksAsync(cmd, cancellationToken);
+        return Ok(createdStocks);
+    }
 }
