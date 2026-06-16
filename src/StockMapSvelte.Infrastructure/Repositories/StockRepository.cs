@@ -138,6 +138,7 @@ public class StockRepository : IStockRepository
 
         return await context.Stocks
             .AsNoTracking()
+            .Where(s => s.IsInitialized == true)
             .Where(s => !upperTickersInPortfolio.Contains(s.TickerSymbol))
             .Where(s => s.TickerSymbol.Contains(filter))
             .OrderBy(s => s.TickerSymbol)
