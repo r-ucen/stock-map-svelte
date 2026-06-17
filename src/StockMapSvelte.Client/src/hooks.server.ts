@@ -12,29 +12,22 @@ const authHandle: Handle = async ({ event, resolve }) => {
 	}
 
 	try {
-		const [infoRes, accountInfo, adminRes, managerRes, customerRes] = await Promise.all([
-			apiFetch('/manage/info', { event }),
-			apiFetch('/account/info', { event }),
-			apiFetch('/roles/is-admin', { event }),
-			apiFetch('/roles/is-manager', { event }),
-			apiFetch('/roles/is-customer', { event })
-		]);
+		const response = await apiFetch('/account/info', { event });
 
-		if (infoRes.ok && accountInfo.ok) {
-			const info = await infoRes.json();
-			const aInfo = await accountInfo.json();
+		if (response.ok) {
+			const data = await response.json();
 
 			event.locals.user = {
-				email: info.email,
+				email: data.email,
 				isAuthenticated: true,
 				roles: {
-					admin: adminRes.status === 204,
-					manager: managerRes.status === 204,
-					customer: customerRes.status === 204
+					admin: data.isAdmin,
+					manager: data.isManager,
+					customer: data.isCustomer
 				},
-				hasPasswordConfigured: aInfo.hasPasswordConfigured,
-				hasExternalLoginConfigured: aInfo.hasExternalLoginConfigured,
-				externalLogins: aInfo.externalLogins
+				hasPasswordConfigured: data.hasPasswordConfigured,
+				hasExternalLoginConfigured: data.hasExternalLoginConfigured,
+				externalLogins: data.externalLogins
 			};
 		} else {
 			event.locals.user = undefined;
