@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using StockMapSvelte.Application.Abstractions;
 using StockMapSvelte.Application.DTOs;
@@ -10,11 +11,19 @@ public class IdentityService : IIdentityService
 {
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IUserClaimsPrincipalFactory<ApplicationUser> _principalFactory;
+    private readonly IAuthorizationService _authorizationService;
 
-    public IdentityService(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager)
+    public IdentityService(
+        SignInManager<ApplicationUser> signInManager,
+        UserManager<ApplicationUser> userManager,
+        IUserClaimsPrincipalFactory<ApplicationUser> principalFactory,
+        IAuthorizationService authorizationService)
     {
         _signInManager = signInManager;
         _userManager = userManager;
+        _principalFactory = principalFactory;
+        _authorizationService = authorizationService;
     }
     
     public async Task LogOutAsync()
@@ -228,5 +237,47 @@ public class IdentityService : IIdentityService
         await _signInManager.SignOutAsync();
         return true;
 
+    }
+
+    public async Task<bool> IsUserInRoleAsync(string userId, string role)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+        {
+            return false;
+        }
+        return await _userManager.IsInRoleAsync(user, role);
+    }
+
+    public async Task<bool> DoesUserComplyWithPolicyAsync(string userId, string policyName)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+        {
+            return false;
+        }
+        var principal = await _principalFactory.CreateAsync(user);
+        var authorizationResult = await _authorizationService.AuthorizeAsync(principal, policyName);
+        return authorizationResult.Succeeded;
+    }
+
+    public async Task<string?> GetUserEmailAsync(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+        {
+            return null;
+        }
+        return await _userManager.GetEmailAsync(user);
+    }
+
+    public async Task<bool> IsEmailConfirmedAsync(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+        {
+            return false;
+        }
+        return await _userManager.IsEmailConfirmedAsync(user);
     }
 }
