@@ -27,6 +27,36 @@ function addStockToState(state: IAdminState, newStock: IStock) {
 	);
 }
 
+export async function createMultipleStocks(state: IAdminState, p_tickerSymbols: string[]) {
+	const res = await apiFetch(`/stocks/batch`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({
+			tickerSymbols: p_tickerSymbols
+		})
+	});
+
+	const data = await res.json().catch(() => null);
+
+	console.log('API RESPONSE:', data);
+
+	if (res.ok) {
+		return {
+			success: true,
+			data
+		};
+	}
+
+	return {
+		success: false,
+		status: res.status,
+		data,
+		error: data?.message ?? data?.failedToCreateStocks?.[0]?.error ?? 'Failed to create stocks'
+	};
+}
+
 export async function createStock(state: IAdminState, p_tickerSymbol: string) {
 	const res = await apiFetch(`/stocks`, {
 		method: 'POST',
