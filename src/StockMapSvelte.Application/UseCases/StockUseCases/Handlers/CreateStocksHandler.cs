@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using StockMapSvelte.Application.Abstractions;
 using StockMapSvelte.Application.Abstractions.Repositories;
 using StockMapSvelte.Application.DTOs;
@@ -10,13 +11,16 @@ public class CreateStocksHandler
 {
     private readonly IStockRepository _stockRepository;
     private readonly IStockClient _stockClient;
+    private readonly ILogger<CreateStocksHandler> _logger;
     
     public CreateStocksHandler(
         IStockRepository stockRepository,
-        IStockClient stockClient)
+        IStockClient stockClient,
+        ILogger<CreateStocksHandler> logger)
     {
         _stockRepository = stockRepository;
         _stockClient = stockClient;
+        _logger = logger;
     }
 
     public async Task<CreateStocksResponse> Handle(CreateStocksCommand cmd, CancellationToken cancellationToken)
@@ -24,6 +28,7 @@ public class CreateStocksHandler
         var tickers = cmd.TickerSymbols?
             .Where(s => !string.IsNullOrWhiteSpace(s))
             .Select(s => s.Trim().ToUpperInvariant())
+            .Where(s => s.Length > 0 && char.IsLetterOrDigit(s[0]))
             .ToArray() ?? Array.Empty<string>();
 
         if (tickers.Length == 0)
@@ -42,10 +47,18 @@ public class CreateStocksHandler
             }
             
             var ticker = tickerSymbol.Trim().ToUpperInvariant();
-            
-            if (!await _stockClient.TickerExists(ticker))
+            try 
             {
-                failed.Add(new StockCreationFailure(ticker, "Not a valid ticker symbol"));
+                if (!await _stockClient.TickerExists(ticker))
+                {
+                    failed.Add(new StockCreationFailure(ticker, "Not a valid ticker symbol"));
+                    continue;
+                }
+            }
+            catch (ArgumentException ex)
+            {
+                failed.Add(new StockCreationFailure(ticker, $"Malformed symbol format"));
+                _logger.LogWarning(ex, "Malformed symbol format: {msg}",  ex.Message);
                 continue;
             }
             
