@@ -14,6 +14,7 @@
 	import { apiFetch } from '$lib/apiFetch';
 	import PaginationControls from '$lib/components/PaginationControls.svelte';
 	import { Spinner } from "$lib/components/ui/spinner/index.js";
+	import * as InputGroup from "$lib/components/ui/input-group/index.js";
 
 	let s = getContext<IAdminState>('stateAdmin');
 	let { items, initialTotal }: {items: IStock[], initialTotal: number} = $props();
@@ -37,13 +38,17 @@
 	let multipleOpen = $state(false);
 	let isMultipleBeingProcessed = $state(false);
 	let stockTickersBeingCreated = $state("");
+	
+	let stockSearch = "";
+	let stockSearchState = $state("");
 
 	$effect(() => {
 		async function fetchPagedStocks() {
 			try {
 				const params = new URLSearchParams({
 					PageNumber: pageNumber.toString(),
-					PageSize: pageSize.toString()
+					PageSize: pageSize.toString(),
+					Search: stockSearchState
 				});
 
 				const res = await apiFetch(`/stocks?${params.toString()}`);
@@ -59,7 +64,7 @@
 				console.error("Error fetching stocks:", error);
 			}
 		}
-
+		
 		fetchPagedStocks();
 	});
 
@@ -131,7 +136,7 @@
 	}
 </script>
 
-<div class="mb-4 flex gap-2">
+<div class="flex gap-2">
 	<Button variant="outline" size="sm" onclick={() => open = true}>
 		<Plus /> Create Stock
 	</Button>
@@ -140,6 +145,13 @@
 		<Plus /> Create Multiple Stocks
 	</Button>
 </div>
+
+<InputGroup.Root>
+	<InputGroup.Input placeholder="Type to search..." bind:value={stockSearch} />
+	<InputGroup.Addon align="inline-end">
+		<InputGroup.Button variant="secondary" onclick={() => stockSearchState = stockSearch}>Search</InputGroup.Button>
+	</InputGroup.Addon>
+</InputGroup.Root>
 
 <Dialog.Root bind:open>
 	<Dialog.Content class="sm:max-w-[425px]" onInteractOutside={() => resetCreateForm()}>
