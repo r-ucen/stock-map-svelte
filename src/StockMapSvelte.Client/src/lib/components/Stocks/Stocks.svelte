@@ -165,7 +165,13 @@
 				<Button
 					type="submit"
 					disabled={isBeingProcessed}
-				>Submit</Button>
+				>{#if isBeingProcessed}
+					<Spinner />
+					Submitting...
+				{:else}
+					Submit
+				{/if}
+				</Button>
 			</Dialog.Footer>
 		</form>
 	</Dialog.Content>
