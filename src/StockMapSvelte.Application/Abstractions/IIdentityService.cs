@@ -13,4 +13,8 @@ public interface IIdentityService
     public Task<IList<UserLoginInfo>> GetExternalLoginsAsync(string userId);
     public Task<RemoveGoogleExternalLoginStatus> RemoveGoogleExternalLoginAsync(string userId);
     public Task<bool> DeleteAccountAsync(string userId);
+    public Task<bool> IsUserInRoleAsync(string userId, string role);
+    public Task<bool> DoesUserComplyWithPolicyAsync(string userId, string policyName);
+    public Task<string?> GetUserEmailAsync(string userId);
+    public Task<bool> IsEmailConfirmedAsync(string userId);
 }
