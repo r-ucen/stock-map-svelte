@@ -43,7 +43,6 @@
 		} else {
 			resetCreateForm();
 			open = false;
-			await fetchTreemapData(s);
 			toast.success("Successfully created portfolio");
 		}
 		isBeingProcessed = false;
