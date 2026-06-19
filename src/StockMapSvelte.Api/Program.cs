@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.HttpOverrides;
 using Scalar.AspNetCore;
 using StockMapSvelte.Api;
+using StockMapSvelte.Api.Controllers;
 using StockMapSvelte.Api.Middleware;
 using StockMapSvelte.Application;
 using StockMapSvelte.Infrastructure;
@@ -45,6 +46,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapIdentityApi<ApplicationUser>().RequireRateLimiting("IdentityPolicy");
+
+app.MapPortfolioStreamEndpoints();
 app.MapControllers();
 
 app.Run();
