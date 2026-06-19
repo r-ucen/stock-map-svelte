@@ -1,6 +1,8 @@
+using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using StockMapSvelte.Application.Abstractions;
 using StockMapSvelte.Infrastructure.Services;
 
 namespace StockMapSvelte.Infrastructure.BackgroundServices;
@@ -10,13 +12,19 @@ public class StockDataUpdateTimedService : BackgroundService
     private readonly ILogger<StockDataUpdateTimedService> _logger;
     private readonly IServiceScopeFactory _scopeFactory;
     private int _executionCount;
+    private readonly ITreeMapUpdateNotifier _treeMapUpdateNotifier;
+    private readonly HybridCache _cache;
 
     public StockDataUpdateTimedService(
         ILogger<StockDataUpdateTimedService> logger,
-        IServiceScopeFactory scopeFactory)
+        IServiceScopeFactory scopeFactory,
+        ITreeMapUpdateNotifier treeMapUpdateNotifier,
+        HybridCache cache)
     {
         _logger = logger;
         _scopeFactory = scopeFactory;
+        _treeMapUpdateNotifier = treeMapUpdateNotifier;
+        _cache = cache;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -57,6 +65,10 @@ public class StockDataUpdateTimedService : BackgroundService
         var stockUpdateService = scope.ServiceProvider.GetRequiredService<Application.Abstractions.IStockUpdateService>();
         _logger.LogInformation("Starting stock update...");
         await stockUpdateService.UpdateAsync(cancellationToken);
+        
+        await _cache.RemoveByTagAsync("tag-all-portfolios-treemap-data", cancellationToken);
+        _treeMapUpdateNotifier.Publish();
+        
         _logger.LogInformation("StockDataUpdateTimedService finished. Run total of: {Count} times", count);
     }
 }
