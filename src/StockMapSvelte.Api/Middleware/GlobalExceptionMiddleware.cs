@@ -34,6 +34,10 @@ public class GlobalExceptionMiddleware
             context.Response.StatusCode = StatusCodes.Status403Forbidden;
             await context.Response.WriteAsJsonAsync(new { message = ex.Message });
         }
+        catch (OperationCanceledException)
+        {
+            // cancelling SSE etc.
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "An unhandled exception occurred while processing request {Path}", context.Request.Path);
