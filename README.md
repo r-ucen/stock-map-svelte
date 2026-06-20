@@ -126,11 +126,11 @@ Since the app is recommended to be hosted separately, meaning the frontend and b
 - Seeding__AdminPasswordHash - password hash for the default admin user created when seeding the database
 - Seeding__ManagerPasswordHash - password hash for the default manager user created when seeding the database
 - AllowedOrigins__0 - allowed origin for CORS policy, should be set to the URL of the frontend app
-- AllowedOrigins__1 - allowed origin for CORS policy, should be set to the URL of the backend (API) app
+- AllowedOrigins__1 - allowed origin for CORS policy, should be set to the www. version of the frontend URL
 
 #### Configuration of the environment variables for use in local development:
 
-AllowedOrigins can be configured in the appsettings.Development.json file:
+AllowedOrigins can be configured for development in the appsettings.Development.json file:
 
 ```
 {
@@ -147,7 +147,7 @@ AllowedOrigins can be configured in the appsettings.Development.json file:
 }
 ```
 
-The PUBLIC_API_BASE_URL variable can be configured in the .env file in the root of the StockMapSvelte.Client project:
+The PUBLIC_API_BASE_URL variable can be configured for development in the .env file in the root of the StockMapSvelte.Client project:
 
 ```
 PUBLIC_API_BASE_URL=https://localhost:7086
@@ -187,91 +187,180 @@ rest of the environment variables should be stored in .NET user secrets configur
 
 ## Endpoints
 
-StockMapSvelte.Api - auto generated identity endpoints
+### StockMapSvelte.Api - auto generated identity endpoints and other mapped endpoints
 
+```
+get /treemap-data/{portfolioId}/stream
+```
+- SSE stream endpoint what streams treemap data for a certain portfolio on stock data change
 ```
 post /register
+```
+- Registers a new user, an email sender automatically sends a code to the email - /confirmEmail is used to confirm this email
+```
 post /login
+```
+- Authenticates a user with email and password. Returns an access token and refresh token
+```
 post /refresh
+```
+- Returns a new access and refresh token when a refresh token is provided
+```
 get /confirmEmail
+```
+- Sets the users email as verified in the database based on the passed token that has been sent to the user's email address (setting the email as verified is required)
+```
 post /resendConfirmationEmail
+```
+- Send the confirmation token to the desired email address (if the user didn't receive the token on the first try)
+```
 post /forgotPassword
+```
+- Sends a password reset link to the provided email address
+```
 post /resetPassword
+```
+- Resets the password for a provided email address if a valid reset token is passed
+```
 post /manage/2fa
+```
+- Enables, disables, or configures two-factor authentication for the authenticated user
+```
 get /manage/info
+```
+- Get the email of the user and whether the email is confirmed 
+```
 post /manage/info
 ```
-
-Account
+- Updates the current authenticated user's account info
+### Account
 ```
 get /account/info
+```
+- Returns info about the current authenticated user's account - HasPasswordConfigured, HasExternalLoginConfigured, ExternalLogins, IsAdmin, IsManager, IsCustomer, Email, IsEmailConfirmed
+```
 delete /account/me
+```
+- Deletes the whole account for the authenticated user
+```
 post /account/set-password
+```
+- Used for adding a password to passwordless account
+```
 delete /account/remove-google-external-login
 ```
+- Removes google external login if the account has password set
 
-OAuth
+### OAuth
 ```
 get /oauth/google-login
+```
+- Initiates the Google OAuth2 authentication flow by redirecting to Google's consent screen
+```
 get /oauth/google-response
+```
+- Callback endpoint that handles the response from Google after the user authenticates
+```
 post /oauth/link-oauth-confirm
 ```
+- Links a Google OAuth account to an existing local user account
 
-Portfolio
+### Portfolio
 ```
 get /portfolios
+```
+- ...
+```
 post /portfolios
+```
+- ...
+```
 get /portfolios/me
+```
+- Get all portfolios for the current user
+```
 delete /portfolios/{portfolioId}
+```
+- ...
+```
 put /portfolios/{portfolioId}
+```
+- ... 
+```
 get /portfolios/{portfolioId}
 ```
+- ...
 
-Role
+### Role
 ```
+[DEPRECATED]
 get /roles/is-admin
 get /roles/is-manager
 get /roles/is-customer
 ```
-
-Stock
+### Stock
 ```
 get /stocks/{stockId}
-put /stocks/{stockId}
-delete /stocks/{stockId}
-get /stocks/possible-to-add
-get /stocks
-post /stocks
-get /stocks/queried
 ```
+- ...
+```
+put /stocks/{stockId}
+```
+- ...
+```
+delete /stocks/{stockId}
+```
+- ...
+```
+get /stocks/possible-to-add
+```
+- Get stocks that are possible to be added to a given portfolio based on searching them against a filter
+```
+get /stocks
+```
+- ...
+```
+post /stocks
+```
+- ...
 
-StockProfiles
+### StockProfiles
 ```
 get /stock-profiles
 ```
-
-TreemapData
+- ...
+### TreemapData
 ```
 get /treemap-data/{portfolioId}
 ```
-
-UserAction
+- DEPRECATED - use the stream version
+### UserAction
 ```
 post /logout
 ```
-
-User
+- ...
+### User
 ```
 get /users
+```
+- ...
+```
 get /users/{userId}
+```
+- ...
+```
 delete /users/{userId}
 ```
-
-UserSettings
+- ...
+### UserSettings
 ```
 get /user-settings/default-portfolio
+```
+- ...
+```
 put /user-settings/default-portfolio
 ```
+- ...
 The following four enpoints are deprecated:
 ```
 get /user-settings/toast-delay
@@ -324,9 +413,15 @@ These entities are supposed to be extended with methods to prevent anemic domain
 # Infrastructure layer
 This layer contains implementation of various external services used in the app such as the database, client for fetching stock data, email sender
 
+### User roles
+
+Admin - explicit role
+Manager - explicit role
+Customer - explicit role (DEPRECATED - IsCustomer policy is used instead for now - every authenticated user is a customer) 
+
 ---
 - BackgroundServices - StockDataUpdateTimedService implementing the BackgroundService class used to orchestrate running periodic fetching of the stock data from an external provider
-It makes use of StockUpdateJitter which tells the service whether to run the current round of fetching and the delay until next attempt.
+It makes use of StockUpdateJitter which tells the service whether to run the current round of fetching and the delay until next attempt. If an update is made, the service publishes a message alerting all subscribers to TreeMapUpdateNotifier (treemap data stream endpoint)
 - Database contains seeding logic and ApplicationDbContext.cs where seeding and mapping of relationships between entities is done. The project is set up to use the PostgreSQL database
 - Extentions folder contains logic for pagination, sorting, search designed to be translated into EntityFramework/database queries
 - Identity defines the roles, application user entity, role entity and service that uses Identity API (SignInManager, UserManager)
@@ -342,4 +437,3 @@ This folder contains integration and unit tests for the backend (and possibly fr
 
 # TODO Features:
 - Introduce limit on the number of portfolios the user can have at one moment & limit on the number of stocks in one portfolio - this can be then upraded based on the user's role (tiers)
-- Enable pagination, sort, search for get endpoints where possible & enable this feature on the client
