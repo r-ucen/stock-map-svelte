@@ -1,0 +1,65 @@
+using Microsoft.Extensions.Caching.Hybrid;
+using StockMapSvelte.Application.Abstractions.Repositories;
+using StockMapSvelte.Application.DTOs;
+using StockMapSvelte.Domain.Entities;
+
+namespace StockMapSvelte.Infrastructure.Repositories.Cached;
+
+public class CachedPortfolioRepository : IPortfolioRepository
+{
+    private readonly IPortfolioRepository _decorated;
+    private readonly HybridCache _cache;
+
+    public CachedPortfolioRepository(IPortfolioRepository decorated, HybridCache cache)
+    {
+        _decorated = decorated;
+        _cache = cache;
+    }
+    
+    // getting
+    
+    public Task<IReadOnlyList<PortfolioStockDto>?> GetAllPortfolioStockViewModelsAsync(CancellationToken cancellationToken)
+    => _decorated.GetAllPortfolioStockViewModelsAsync(cancellationToken);
+
+    public Task<int> CreatePortfolioAsync(Portfolio portfolio, IList<string> tickerSymbols, CancellationToken cancellationToken)
+    => _decorated.CreatePortfolioAsync(portfolio, tickerSymbols, cancellationToken);
+
+    public Task<IReadOnlyList<PortfolioStockDto>?> GetPortfoliosByUserIdAsync(string userId, CancellationToken cancellationToken)
+    => _decorated.GetPortfoliosByUserIdAsync(userId, cancellationToken);
+    
+    public Task<Portfolio?> GetPortfolioByIdAsync(Guid portfolioId, CancellationToken cancellationToken)
+        => _decorated.GetPortfolioByIdAsync(portfolioId, cancellationToken);
+    
+    public Task<PortfolioStockDto?> GetPortfolioByIdForUserAsync(string userId, Guid portfolioId, CancellationToken cancellationToken)
+        => _decorated.GetPortfolioByIdForUserAsync(userId, portfolioId, cancellationToken);
+    
+    public Task<IReadOnlyList<Portfolio>> GetAllPortfoliosAsync()
+        => _decorated.GetAllPortfoliosAsync();
+    
+    public Task<int> GetPortfolioCountByUserIdAsync(string userId)
+        => _decorated.GetPortfolioCountByUserIdAsync(userId);
+    
+    // helpers
+    
+    public Task<bool> PortfolioNameExistsAsync(string userId, string portfolioName, CancellationToken cancellationToken)
+        => _decorated.PortfolioNameExistsAsync(userId, portfolioName, cancellationToken);
+
+    public Task<bool> PortfolioNameExistsAsync(string userId, Guid portfolioId, string portfolioName,
+        CancellationToken cancellationToken)
+    => _decorated.PortfolioNameExistsAsync(userId, portfolioId, portfolioName, cancellationToken);
+    
+    // modifying
+
+    public async Task<Portfolio> EditPortfolioAsync(Guid portfolioId, string portfolioName, IList<string> tickerSymbols,
+        CancellationToken cancellationToken)
+    {
+        var result = await _decorated.EditPortfolioAsync(portfolioId, portfolioName, tickerSymbols, cancellationToken);
+        
+        await _cache.RemoveAsync($"treemap-data:portfolio:{portfolioId}", cancellationToken);
+        
+        return result;
+    }
+
+    public Task<int> DeletePortfolioAsync(Guid portfolioId, CancellationToken cancellationToken)
+    => _decorated.DeletePortfolioAsync(portfolioId, cancellationToken);
+}

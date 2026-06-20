@@ -15,9 +15,9 @@ public class TreeMapRepository : ITreeMapRepository
         _contextFactory = contextFactory;
     }
     
-    public async Task<TreemapDataDto?> GetTreemapDataViewModelByIdAsync(Guid portfolioId)
+    public async Task<TreemapDataDto?> GetTreemapDataViewModelByIdAsync(Guid portfolioId, CancellationToken cancellationToken)
         {
-            await using var context = await _contextFactory.CreateDbContextAsync();
+            await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
             
             if (portfolioId == Guid.Empty)
             {
@@ -27,7 +27,7 @@ public class TreeMapRepository : ITreeMapRepository
             var portfolio = await context.Portfolios
                 .Include(p => p.Stocks)
                     .ThenInclude(s => s.StockProfile)
-                .FirstOrDefaultAsync(p => p.Id == portfolioId);
+                .FirstOrDefaultAsync(p => p.Id == portfolioId, cancellationToken);
 
             if (portfolio == null)
             {

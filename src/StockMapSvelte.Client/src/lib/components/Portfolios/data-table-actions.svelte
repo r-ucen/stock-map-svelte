@@ -41,7 +41,6 @@
 		if (!result.success) {
 			toast.error(result.error ?? "An error occurred while editing the portfolio");
 		} else {
-			await fetchTreemapData(s);
 			toast.success("Successfully edited portfolio");
 		}
 		isBeingProcessed = false;
@@ -65,7 +64,6 @@
 		if (!result.success) {
 			toast.error(result.error ?? "An error occurred while deleting the portfolio");
 		} else {
-			await fetchTreemapData(s);
 			toast.success("Portfolio deleted successfully");
 			deleteOpen = false;
 		}
@@ -95,7 +93,6 @@
 		const portfolio = getPortfolioById(s.portfolios, id);
 		if (portfolio) {
 			s.selectedPortfolioId = id;
-			await fetchTreemapData(s);
 			toast.success(`Set ${portfolio.portfolioName} as default portfolio`);
 		}
 		

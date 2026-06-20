@@ -36,6 +36,6 @@ public class GetTreemapDataHandler
             throw new UnauthorizedAccessException($"You do not have permission to view portfolio with id {portfolioId}.");
         }
         
-        return await _treeMapRepository.GetTreemapDataViewModelByIdAsync(portfolioId) ?? new TreemapDataDto();
+        return await _treeMapRepository.GetTreemapDataViewModelByIdAsync(portfolioId, cancellationToken) ?? new TreemapDataDto();
     }
 }

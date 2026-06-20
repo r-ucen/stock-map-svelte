@@ -44,6 +44,7 @@ public static class DependencyInjection
         // DI
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddScoped<IStockUpdateService, StockUpdateService>();
+        
         services.AddScoped<StockRepository>();
         services.AddScoped<IStockRepository>(
             provider => new CachedStockRepository(
@@ -51,15 +52,33 @@ public static class DependencyInjection
                 provider.GetRequiredService<HybridCache>()
             )
         );
+        
         services.AddScoped<IStockClient, YahooStockClient>();
-        services.AddScoped<IPortfolioRepository, PortfolioRepository>();
+        
+        services.AddScoped<PortfolioRepository>();
+        services.AddScoped<IPortfolioRepository>(
+            provider => new CachedPortfolioRepository(
+                provider.GetRequiredService<PortfolioRepository>(),
+                provider.GetRequiredService<HybridCache>()
+            )
+        );
+        
         services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<ITreeMapRepository, TreeMapRepository>();
+        
+        services.AddScoped<TreeMapRepository>();
+        services.AddScoped<ITreeMapRepository>(
+            provider => new CachedTreeMapRepository(
+                provider.GetRequiredService<TreeMapRepository>(),
+                provider.GetRequiredService<HybridCache>()
+            )
+        );
+        
         services.AddScoped<IStockProfileRepository, StockProfileRepository>();
         services.AddScoped<IUserSettingRepository, UserSettingRepository>();
         
         services.AddHostedService<StockDataUpdateTimedService>();
         services.AddSingleton<YahooQuotes>(new YahooQuotesBuilder().Build());
+        services.AddSingleton<ITreeMapUpdateNotifier, TreeMapUpdateNotifier>();
         
         // Authorization policies
         services.AddAuthorizationBuilder()
