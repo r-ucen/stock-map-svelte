@@ -43,6 +43,8 @@
 	let stockSearchState = $state("");
 
 	$effect(() => {
+		// eslint-disable-next-line @typescript-eslint/no-unused-expressions
+		s.refreshStocks;
 		async function fetchPagedStocks() {
 			try {
 				const params = new URLSearchParams({
@@ -82,7 +84,7 @@
 			resetCreateForm();
 			open = false;
 			toast.success("Successfully created stock");
-			pageNumber = 1;
+			s.refreshStocks++;
 		}
 		isBeingProcessed = false;
 	}
@@ -114,7 +116,6 @@
 
 			resetCreateMultipleForm();
 			multipleOpen = false;
-			pageNumber = 1;
 
 			if (failed.length === 0) {
 				toast.success(`Successfully created ${createdCount} stocks`);
@@ -131,7 +132,7 @@
 				);
 			}
 		}
-		
+		s.refreshStocks++;
 		isMultipleBeingProcessed = false;
 	}
 </script>
