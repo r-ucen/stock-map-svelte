@@ -40,8 +40,6 @@ export async function createMultipleStocks(state: IAdminState, p_tickerSymbols: 
 
 	const data = await res.json().catch(() => null);
 
-	console.log('API RESPONSE:', data);
-
 	if (res.ok) {
 		return {
 			success: true,
