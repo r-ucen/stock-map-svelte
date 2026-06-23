@@ -5,7 +5,7 @@ export const load = async (event) => {
 
 	if (!res.ok) {
 		return {
-			items: [],
+			stocks: [],
 			initialTotal: 0
 		};
 	}
@@ -13,7 +13,7 @@ export const load = async (event) => {
 	const result = await res.json();
 
 	return {
-		items: result.data,
+		stocks: result.data,
 		initialTotal: result.totalRecords
 	};
 };
