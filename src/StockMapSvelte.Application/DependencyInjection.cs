@@ -49,7 +49,7 @@ public static class DependencyInjection
         services.AddScoped<GetAllStockProfilesHandler>();
         services.AddScoped<GetPossibleToAddStocksHandler>();
         services.AddScoped<DeleteUserHandler>();
-        services.AddScoped<GetAllUsersHandler>();
+        services.AddScoped<GetAllUsersQueriedHandler>();
         services.AddScoped<GetUserHandler>();
         services.AddScoped<SetPortfolioAsDefaultHandler>();
         services.AddScoped<GetDefaultPortfolioIdHandler>();
