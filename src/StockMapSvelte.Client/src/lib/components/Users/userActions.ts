@@ -30,6 +30,7 @@ export async function deleteUser(state: IAdminState, id: string) {
 	});
 
 	if (res.ok) {
+		state.refreshUsers++;
 		return { success: true };
 	} else {
 		const errorData = await res.json().catch(() => ({}));
