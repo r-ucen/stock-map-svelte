@@ -1,6 +1,7 @@
 using StockMapSvelte.Application.Abstractions;
 using StockMapSvelte.Application.Abstractions.Facades;
 using StockMapSvelte.Application.DTOs;
+using StockMapSvelte.Application.DTOs.Common;
 using StockMapSvelte.Application.UseCases.UserUseCases.Commands;
 using StockMapSvelte.Application.UseCases.UserUseCases.Handlers;
 using StockMapSvelte.Application.UseCases.UserUseCases.Queries;
@@ -10,20 +11,20 @@ namespace StockMapSvelte.Application.Facade;
 public class UserFacade : IUserFacade
 {
     private readonly DeleteUserHandler _deleteUserHandler;
-    private readonly GetAllUsersHandler _getAllUsersHandler;
+    private readonly GetAllUsersQueriedHandler _getAllUsersQueriedHandler;
     private readonly GetUserHandler _getUserHandler;
     private readonly  IIdentityService _identityService;
     private readonly UpdateRolesHandler _updateRolesHandler;
     
     public UserFacade(
         DeleteUserHandler deleteUserHandler,
-        GetAllUsersHandler handler,
+        GetAllUsersQueriedHandler getAllUsersQueriedHandler,
         GetUserHandler getUserHandler,
         IIdentityService identityService,
         UpdateRolesHandler updateRolesHandler)
     {
         _deleteUserHandler = deleteUserHandler;
-        _getAllUsersHandler = handler;
+        _getAllUsersQueriedHandler = getAllUsersQueriedHandler;
         _getUserHandler = getUserHandler;
         _identityService = identityService;
         _updateRolesHandler = updateRolesHandler;
@@ -44,9 +45,9 @@ public class UserFacade : IUserFacade
         await _deleteUserHandler.Handle(cmd, cancellationToken);
     }
     
-    public async Task<List<UserDto>> GetAllUsersAsync(CancellationToken cancellationToken)
+    public async Task<PagedResponse<UserDto>> GetAllUsersQueriedAsync(QueryFilter filter, CancellationToken cancellationToken)
     {
-        return await _getAllUsersHandler.HandleAsync(cancellationToken);
+        return await _getAllUsersQueriedHandler.HandleAsync(filter, cancellationToken);
     }
     
     public async Task<UserDto> GetUserAsync(GetUserQuery query, CancellationToken cancellationToken)
