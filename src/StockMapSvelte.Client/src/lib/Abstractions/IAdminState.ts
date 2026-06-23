@@ -9,4 +9,5 @@ export interface IAdminState {
 	portfolios: IPortfolio[];
 	users: IUser[];
 	refreshStocks: number;
+	refreshUsers: number;
 }
