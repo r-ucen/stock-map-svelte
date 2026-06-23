@@ -12,19 +12,20 @@ export const columns: ColumnDef<IUser>[] = [
 				onclick: column.getToggleSortingHandler()
 			})
 	},
-    {
-        accessorKey: 'userName',
-        header: 'Username'
-    },
-    {
-        accessorKey: 'roles',
-        header: 'Roles',
-        cell: ({ getValue }) => {
-            const roles = getValue() as string[] | undefined;
-            if (!roles || roles.length === 0) return 'User';
-            return roles.join(', ');
-        }
-    },
+	{
+		accessorKey: 'userName',
+		header: 'Username'
+	},
+	{
+		accessorKey: 'roles',
+		header: 'Roles',
+		cell: ({ getValue }) => {
+			const roles = getValue() as string[] | undefined;
+			// all authenticated users are customers
+			if (!roles || roles.length === 0) return 'Customer';
+			return roles.join(', ');
+		}
+	},
 	{
 		accessorKey: 'id',
 		header: 'Id'
@@ -32,8 +33,7 @@ export const columns: ColumnDef<IUser>[] = [
 	{
 		id: 'actions',
 		cell: ({ row }) => {
-			return renderComponent(DataTableActions, { id: row.original.id });
+			return renderComponent(DataTableActions, { id: row.original.id, roles: row.original.roles });
 		}
 	}
 ];
-

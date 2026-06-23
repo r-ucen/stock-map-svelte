@@ -2,7 +2,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using StockMapSvelte.Application.Abstractions.Repositories;
 using StockMapSvelte.Application.DTOs;
+using StockMapSvelte.Application.DTOs.Common;
 using StockMapSvelte.Infrastructure.Identity;
+using StockMapSvelte.Infrastructure.Extensions;
+using StockMapSvelte.Infrastructure.Extensions.User;
 
 namespace StockMapSvelte.Infrastructure.Repositories;
 
@@ -33,23 +36,46 @@ public class UserRepository : IUserRepository
         return result.Succeeded;
     }
 
-    public async Task<List<UserDto>> GetAllAsync(CancellationToken cancellationToken)
+    public async Task<PagedResponse<UserDto>> GetAllAsyncQueried(QueryFilter filter, CancellationToken cancellationToken)
     {
-        var users = await _userManager.Users.ToArrayAsync(cancellationToken);
-        var userViewModels = new List<UserDto>();
-
-        foreach (var user in users)
+        var pageNumber = Math.Max(1, filter.PageNumber);
+        var pageSize = Math.Clamp(filter.PageSize, 1, 50);
+        
+        var query = _userManager.Users.AsNoTracking().AsQueryable();
+        
+        query = query.ApplySearch(filter.Search);
+        
+        var totalRecords = await query.CountAsync(cancellationToken);
+        
+        query = query.ApplySort(
+            string.IsNullOrWhiteSpace(filter.SortBy) ? "Email" : filter.SortBy);
+        
+        var usersList = await query
+            .ApplyPagination(pageNumber, pageSize)
+            .ToListAsync(cancellationToken);
+        
+        var users = new List<UserDto>();
+        
+        foreach (var u in usersList)
         {
-            userViewModels.Add(new UserDto
-            (
-                user.Id,
-                user.UserName ?? string.Empty,
-                user.Email ?? string.Empty,
-                await _userManager.GetRolesAsync(user)
+            var roles = await _userManager.GetRolesAsync(u);
+    
+            users.Add(new UserDto(
+                u.Id, 
+                u.Email ?? string.Empty,  
+                u.UserName ?? string.Empty, 
+                roles
             ));
         }
-
-        return userViewModels;
+        
+        return new PagedResponse<UserDto>
+        {
+            Data = users,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalRecords = totalRecords,
+            TotalPages = (int)Math.Ceiling(totalRecords / (double)pageSize)
+        };
     }
 
     public async Task<UserDto> GetByIdAsync(string id, CancellationToken cancellationToken)

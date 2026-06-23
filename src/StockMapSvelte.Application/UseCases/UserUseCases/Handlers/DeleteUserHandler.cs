@@ -9,15 +9,23 @@ public class DeleteUserHandler
 {
     private readonly IUserRepository _userRepository;
     private readonly IUserContext _userContext;
+    private readonly IIdentityService  _identityService;
 
-    public DeleteUserHandler(IUserRepository userRepository, IUserContext userContext)
+    public DeleteUserHandler(IUserRepository userRepository, IUserContext userContext, IIdentityService identityService)
     {
         _userRepository = userRepository;
         _userContext = userContext;
+        _identityService = identityService;
     }
     
     public async Task Handle(DeleteUserCommand cmd, CancellationToken cancellationToken)
     {
+        // add check that prevents deleting the last admin in case delete permissions change in the future
+        if (await _identityService.IsUserTheLastAdminAsync(cmd.UserId))
+        {
+            throw new DeleteUserFailException("Cannot delete the last admin");
+        }
+        
         var currentUserId = await _userContext.GetCurrentUserIdAsync();
         if (currentUserId == cmd.UserId)
         {
