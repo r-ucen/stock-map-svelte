@@ -43,7 +43,7 @@ public class UserRepository : IUserRepository
         
         var query = _userManager.Users.AsNoTracking().AsQueryable();
         
-        query = query.ApplySearch(filter.Search);
+        query = query.ApplySearch(filter.Search, filter.SearchBy);
         
         var totalRecords = await query.CountAsync(cancellationToken);
         
