@@ -10,4 +10,5 @@ public interface IUserFacade
     Task<List<UserDto>> GetAllUsersAsync(CancellationToken cancellationToken);
     Task<UserDto> GetUserAsync(GetUserQuery query, CancellationToken cancellationToken);
     Task LogOutAsync();
+    Task UpdateRolesAsync(UpdateRolesCommand request);
 }
