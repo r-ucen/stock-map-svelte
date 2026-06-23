@@ -49,4 +49,13 @@ public class UserController : Controller
         await _userFacade.DeleteUserAsync(cmd, cancellationToken);
         return NoContent();
     }
+
+    [HttpPut]
+    [Authorize(Roles = "Admin")]
+    [Route("roles")]
+    public async Task<IActionResult> UpdateRoles([FromBody] UpdateRolesCommand request)
+    {
+        await _userFacade.UpdateRolesAsync(request);
+        return NoContent();
+    }
 }

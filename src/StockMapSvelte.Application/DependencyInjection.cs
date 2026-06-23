@@ -62,6 +62,7 @@ public static class DependencyInjection
         services.AddScoped<DeleteAccountHandler>();
         services.AddScoped<SetPasswordHandler>();
         services.AddScoped<RemoveGoogleExternalLoginHandler>();
+        services.AddScoped<UpdateRolesHandler>();
         
         return services;
     }

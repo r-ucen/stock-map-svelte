@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using StockMapSvelte.Application.Abstractions;
 using StockMapSvelte.Application.DTOs;
 using StockMapSvelte.Application.Enums;
+using StockMapSvelte.Application.Exceptions.User;
 
 namespace StockMapSvelte.Infrastructure.Identity;
 
@@ -279,5 +280,77 @@ public class IdentityService : IIdentityService
             return false;
         }
         return await _userManager.IsEmailConfirmedAsync(user);
+    }
+
+    public async Task<bool> UpdateUserRoles(string userId, string[] roles)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+        {
+            return false;
+        }
+
+        var existingUserRoles = await _userManager.GetRolesAsync(user);
+        var existingUserRolesNormalized = existingUserRoles.Where(r => r != "Customer");
+        
+        var rolesToRemove = existingUserRolesNormalized
+            .Where(r => r is "Admin" or "Manager")
+            .Except(roles)
+            .ToArray();
+        
+        var rolesToAdd = roles
+            .Except(existingUserRolesNormalized)
+            .Where(r => r is "Admin" or "Manager")
+            .ToArray();
+        
+        if (rolesToRemove.Length != 0)
+        {
+            // can be moved into the handler in the future (last admin check)
+            if (rolesToRemove.Contains("Admin") && await GetUserCountInRoleAsync("Admin") <= 1)
+            {
+                throw new UnableToSetRoleException("Cannot remove the last admin");
+            }
+            
+            var removeResult = await _userManager.RemoveFromRolesAsync(user, rolesToRemove);
+            if (!removeResult.Succeeded)
+            {
+                return false;
+            }
+        }
+
+        if (rolesToAdd.Length != 0)
+        {
+            var addResult = await _userManager.AddToRolesAsync(user, rolesToAdd);
+            if (!addResult.Succeeded)
+            {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+
+    private async Task<int> GetUserCountInRoleAsync(string roleName)
+    {
+        var usersInRole = await _userManager.GetUsersInRoleAsync(roleName);
+        return usersInRole.Count;
+    }
+
+    public async Task<bool> IsUserTheLastAdminAsync(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+        {
+            return false;
+        }
+        var isUserAdmin = await _userManager.IsInRoleAsync(user, "Admin");
+        var adminsCount = await GetUserCountInRoleAsync("Admin");
+
+        if (isUserAdmin && (adminsCount <= 1))
+        {
+            return true;
+        }
+
+        return false;
     }
 }

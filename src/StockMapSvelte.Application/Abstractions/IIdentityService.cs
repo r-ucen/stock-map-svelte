@@ -17,4 +17,6 @@ public interface IIdentityService
     public Task<bool> DoesUserComplyWithPolicyAsync(string userId, string policyName);
     public Task<string?> GetUserEmailAsync(string userId);
     public Task<bool> IsEmailConfirmedAsync(string userId);
+    public Task<bool> UpdateUserRoles(string userId, string[] roles);
+    public Task<bool> IsUserTheLastAdminAsync(string userId);
 }

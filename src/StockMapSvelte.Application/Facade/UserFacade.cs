@@ -13,24 +13,32 @@ public class UserFacade : IUserFacade
     private readonly GetAllUsersHandler _getAllUsersHandler;
     private readonly GetUserHandler _getUserHandler;
     private readonly  IIdentityService _identityService;
+    private readonly UpdateRolesHandler _updateRolesHandler;
     
     public UserFacade(
         DeleteUserHandler deleteUserHandler,
         GetAllUsersHandler handler,
         GetUserHandler getUserHandler,
-        IIdentityService identityService)
+        IIdentityService identityService,
+        UpdateRolesHandler updateRolesHandler)
     {
         _deleteUserHandler = deleteUserHandler;
         _getAllUsersHandler = handler;
         _getUserHandler = getUserHandler;
         _identityService = identityService;
+        _updateRolesHandler = updateRolesHandler;
     }
 
     public async Task LogOutAsync()
     {
          await _identityService.LogOutAsync();
     }
-    
+
+    public async Task UpdateRolesAsync(UpdateRolesCommand request)
+    {
+        await _updateRolesHandler.HandleAsync(request);
+    }
+
     public async Task DeleteUserAsync(DeleteUserCommand cmd, CancellationToken cancellationToken)
     {
         await _deleteUserHandler.Handle(cmd, cancellationToken);
