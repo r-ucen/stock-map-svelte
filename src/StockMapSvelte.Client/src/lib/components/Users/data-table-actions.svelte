@@ -4,22 +4,28 @@
 	import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
 	import {
 		deleteUser,
-		getUserById,
+		getUserById, updateUserRoles
 	} from '$lib/components/Users/userActions';
 	import { getContext } from 'svelte';
 	import * as AlertDialog from "$lib/components/ui/alert-dialog";
 	import { toast } from "svelte-sonner";
 	import type { IAdminState } from '$lib/Abstractions/IAdminState';
+	import Trash2 from '@lucide/svelte/icons/trash-2';
+	import UserKey  from '@lucide/svelte/icons/user-key';
 
-	let { id }: { id: string } = $props();
+	let { id, roles }: { id: string, roles: string[] } = $props();
 	let deleteOpen = $state(false);
 
 	const s = getContext<IAdminState>('stateAdmin');
 
 	let isBeingProcessed = $state(false);
+	let isRoleUpdating = $state(false);
 
 	let userIdBeingDeleted = $state("");
 	let userEmailBeingDeleted = $state("");
+
+	let hasAdminRole = $derived(roles.includes('Admin'));
+	let hasManagerRole = $derived(roles.includes('Manager'));
 
 	async function handleDeleteSubmit() {
 		isBeingProcessed = true;
@@ -32,6 +38,8 @@
 			toast.success("User deleted successfully");
 			deleteOpen = false;
 		}
+		userEmailBeingDeleted = ""
+		userIdBeingDeleted = ""
 		isBeingProcessed = false;
 	}
 
@@ -42,6 +50,25 @@
 			userEmailBeingDeleted = user.email;
 		}
 		deleteOpen = true;
+	}
+
+	async function handleRoleToggle(roleName: string, shouldHaveRole: boolean) {
+		if (isRoleUpdating) { return; }
+		isRoleUpdating = true;
+
+		const newRoles = shouldHaveRole
+			? [...roles, roleName]
+			: roles.filter(r => r !== roleName);
+
+		const result = await updateUserRoles(s, id, newRoles);
+
+		if (!result.success) {
+			toast.error(result.error ?? `Failed to update ${roleName} role`);
+		} else {
+			toast.success(`User roles updated successfully`);
+		}
+		isRoleUpdating = false;
+		s.refreshUsers++;
 	}
 </script>
 
@@ -62,12 +89,32 @@
 	<DropdownMenu.Content>
 		<DropdownMenu.Group>
 			<DropdownMenu.Label>Actions</DropdownMenu.Label>
-			<DropdownMenu.Item onclick={() => navigator.clipboard.writeText(id)}>
-				Copy user ID
-			</DropdownMenu.Item>
 		</DropdownMenu.Group>
 		<DropdownMenu.Separator />
-		<DropdownMenu.Item onclick={() => onDeleteClick(id)}>Delete</DropdownMenu.Item>
+
+		<DropdownMenu.Sub>
+
+			<DropdownMenu.SubTrigger>
+				<UserKey />
+				Roles
+			</DropdownMenu.SubTrigger>
+
+			<DropdownMenu.SubContent>
+				<DropdownMenu.Group>
+					<DropdownMenu.CheckboxItem bind:checked={hasAdminRole} onCheckedChange={(isNowChecked) => handleRoleToggle("Admin", isNowChecked)}>
+						Admin
+					</DropdownMenu.CheckboxItem>
+					<DropdownMenu.CheckboxItem bind:checked={hasManagerRole} onCheckedChange={(isNowChecked) => handleRoleToggle("Manager", isNowChecked)}>
+						Manager
+					</DropdownMenu.CheckboxItem>
+				</DropdownMenu.Group>
+			</DropdownMenu.SubContent>
+		</DropdownMenu.Sub>
+		
+		<DropdownMenu.Item class="text-destructive" onclick={() => onDeleteClick(id)}>
+			<Trash2 class="text-destructive" />
+			Delete
+		</DropdownMenu.Item>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>
 
