@@ -14,6 +14,8 @@
 	import * as AlertDialog from "$lib/components/ui/alert-dialog";
 	import { toast } from "svelte-sonner";
 	import type { IAdminState } from '$lib/Abstractions/IAdminState';
+	import Trash2 from "@lucide/svelte/icons/trash-2";
+	import Pen from "@lucide/svelte/icons/pen";
 
 	let { id }: { id: string } = $props();
 	let open = $state(false);
@@ -93,13 +95,16 @@
 		<DropdownMenu.Content>
 			<DropdownMenu.Group>
 				<DropdownMenu.Label>Actions</DropdownMenu.Label>
-				<DropdownMenu.Item onclick={() => navigator.clipboard.writeText(id)}>
-					Copy stock ID
-				</DropdownMenu.Item>
 			</DropdownMenu.Group>
 			<DropdownMenu.Separator />
-			<DropdownMenu.Item onclick={() => onEditClick(id)}>Edit</DropdownMenu.Item>
-			<DropdownMenu.Item onclick={() => onDeleteClick(id)}>Delete</DropdownMenu.Item>
+			<DropdownMenu.Item onclick={() => onEditClick(id)}>
+				<Pen />
+				Edit
+			</DropdownMenu.Item>
+			<DropdownMenu.Item class="text-destructive" onclick={() => onDeleteClick(id)}>
+				<Trash2 class="text-destructive" />
+				Delete
+			</DropdownMenu.Item>
 		</DropdownMenu.Content>
 	</DropdownMenu.Root>
 

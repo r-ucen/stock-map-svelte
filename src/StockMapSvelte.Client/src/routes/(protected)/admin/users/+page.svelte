@@ -5,9 +5,10 @@
 	let { data }: {
 		data: {
 			users: IUser[];
+			initialTotal: number;
 		};
 	} = $props();
 </script>
 
-<Users items={data.users} />
+<Users items={data.users} initialTotal={data.initialTotal}/>
 

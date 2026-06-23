@@ -1,16 +1,19 @@
 import { apiFetch } from '$lib/apiFetch';
 
 export const load = async (event) => {
-	const res = await apiFetch('/users', { event });
-	
+	const res = await apiFetch('/users?PageNumber=1&PageSize=10', { event });
+
 	if (!res.ok) {
 		return {
-			users: []
+			users: [],
+			initialTotal: 0
 		};
 	}
 
+	const result = await res.json();
+
 	return {
-		users: await res.json()
+		users: result.data,
+		initialTotal: result.totalRecords
 	};
 };
-

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using StockMapSvelte.Application.Abstractions.Facades;
+using StockMapSvelte.Application.DTOs.Common;
 using StockMapSvelte.Application.UseCases.UserUseCases.Commands;
 using StockMapSvelte.Application.UseCases.UserUseCases.Queries;
 
@@ -22,9 +23,9 @@ public class UserController : Controller
     
     [HttpGet]
     [Authorize(Roles = "Admin,Manager")]
-    public async Task<IActionResult> GetAllUsers(CancellationToken cancellationToken = default)
+    public async Task<IActionResult> GetAllUsersQueried([FromQuery] QueryFilter filter, CancellationToken cancellationToken = default)
     {
-        var users = await _userFacade.GetAllUsersAsync(cancellationToken);
+        var users = await _userFacade.GetAllUsersQueriedAsync(filter, cancellationToken);
         return Ok(users);
     }
 
@@ -47,6 +48,15 @@ public class UserController : Controller
         var cmd = new DeleteUserCommand(userId);
         
         await _userFacade.DeleteUserAsync(cmd, cancellationToken);
+        return NoContent();
+    }
+
+    [HttpPut]
+    [Authorize(Roles = "Admin")]
+    [Route("roles")]
+    public async Task<IActionResult> UpdateRoles([FromBody] UpdateRolesCommand request)
+    {
+        await _userFacade.UpdateRolesAsync(request);
         return NoContent();
     }
 }

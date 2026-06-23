@@ -6,7 +6,9 @@
 		stocks: [],
 		stockProfiles: [],
 		portfolios: [],
-		users: []
+		users: [],
+		refreshStocks: 0,
+		refreshUsers: 0
 	})
 	setContext('stateAdmin', adminState);
 

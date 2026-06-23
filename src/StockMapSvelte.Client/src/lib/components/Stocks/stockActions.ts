@@ -8,7 +8,7 @@ export async function deleteStock(state: IAdminState, id: string) {
 	});
 
 	if (res.ok) {
-		deleteStockInState(state, id);
+		state.refreshStocks++;
 		return { success: true };
 	} else {
 		const errorData = await res.json().catch(() => ({}));
@@ -40,8 +40,6 @@ export async function createMultipleStocks(state: IAdminState, p_tickerSymbols: 
 
 	const data = await res.json().catch(() => null);
 
-	console.log('API RESPONSE:', data);
-
 	if (res.ok) {
 		return {
 			success: true,
@@ -71,7 +69,6 @@ export async function createStock(state: IAdminState, p_tickerSymbol: string) {
 	if (res.ok) {
 		const newStock = await res.json();
 		console.log('Newly created stock from API:', newStock);
-		// addStockToState(state, newStock);
 		return { success: true };
 	} else {
 		const errorData = await res.json().catch(() => ({}));
@@ -90,7 +87,7 @@ export async function editStock(state: IAdminState, id: string, p_tickerSymbol: 
 	});
 
 	if (res.ok) {
-		editStockInState(state, id, p_tickerSymbol);
+		state.refreshStocks++;
 		return { success: true };
 	} else {
 		const errorData = await res.json().catch(() => ({}));
