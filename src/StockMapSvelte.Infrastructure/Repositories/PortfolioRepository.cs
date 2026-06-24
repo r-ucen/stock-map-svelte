@@ -1,9 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using StockMapSvelte.Application.Abstractions.Repositories;
 using StockMapSvelte.Application.DTOs;
+using StockMapSvelte.Application.DTOs.Common;
 using StockMapSvelte.Application.Exceptions.Stock;
 using StockMapSvelte.Domain.Entities;
 using StockMapSvelte.Infrastructure.Database;
+using StockMapSvelte.Infrastructure.Extensions;
+using StockMapSvelte.Infrastructure.Extensions.Portfolio;
 
 namespace StockMapSvelte.Infrastructure.Repositories;
 
@@ -16,22 +19,45 @@ public class PortfolioRepository : IPortfolioRepository
         _contextFactory = contextFactory;
     }
 
-    public async Task<IReadOnlyList<PortfolioStockDto>?> GetAllPortfolioStockViewModelsAsync(CancellationToken cancellationToken)
+    public async Task<PagedResponse<PortfolioStockDto>> GetAllPortfolioStockViewModelsAsync(QueryFilter filter, CancellationToken cancellationToken)
     {
         await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
         
-        var portfolios = await context.Portfolios
-            .Include(p => p.Stocks)
-            .ToListAsync(cancellationToken);
+        var pageNumber = Math.Max(1, filter.PageNumber);
+        var pageSize = Math.Clamp(filter.PageSize, 1, 50);
 
-        return portfolios
+        var query = context.Portfolios
+            .Include(p => p.Stocks)
+            .AsNoTracking()
+            .AsQueryable();
+
+        query = query.ApplySearch(filter.Search, filter.SearchBy);
+        
+        var totalRecords = await query.CountAsync(cancellationToken);
+        
+        query = query.ApplySort(
+            string.IsNullOrWhiteSpace(filter.SortBy) ? "Name" : filter.SortBy);
+        
+        var portfolios = await query
+            .ApplyPagination(pageNumber, pageSize)
             .Select(p => new PortfolioStockDto
             {
                 PortfolioId = p.Id,
                 UserId = p.UserId,
                 PortfolioName = p.Name ?? "",
                 TickerSymbols = p.Stocks.Select(s => s.TickerSymbol).ToList()
-            }).ToList();
+                
+            })
+            .ToListAsync(cancellationToken);
+        
+        return new PagedResponse<PortfolioStockDto>
+        {
+            Data = portfolios,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalRecords = totalRecords,
+            TotalPages = (int)Math.Ceiling(totalRecords / (double)pageSize)
+        };
     }
     
     public async Task<IReadOnlyList<Portfolio>> GetAllPortfoliosAsync()

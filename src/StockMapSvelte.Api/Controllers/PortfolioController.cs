@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using StockMapSvelte.Api.Requests;
 using StockMapSvelte.Application.Abstractions.Facades;
+using StockMapSvelte.Application.DTOs.Common;
 using StockMapSvelte.Application.UseCases.PortfolioUseCases.Commands;
 using StockMapSvelte.Application.UseCases.PortfolioUseCases.Queries;
 
@@ -23,9 +24,9 @@ public class PortfolioController : Controller
 
     [HttpGet]
     [Authorize(Roles = "Admin,Manager")]
-    public async Task<IActionResult> GetAllPortfolios(CancellationToken cancellationToken = default)
+    public async Task<IActionResult> GetAllPortfoliosQueried([FromQuery] QueryFilter filter, CancellationToken cancellationToken = default)
     {
-        var portfolios = await _portfolioFacade.GetAllPortfolioStockViewModelsAsync(cancellationToken);
+        var portfolios = await _portfolioFacade.GetAllPortfolioStockViewModelsQueriedAsync(filter, cancellationToken);
         return Ok(portfolios);
     }
 
