@@ -1,6 +1,7 @@
 using StockMapSvelte.Application.Abstractions;
 using StockMapSvelte.Application.Abstractions.Repositories;
 using StockMapSvelte.Application.DTOs;
+using StockMapSvelte.Application.DTOs.Common;
 
 namespace StockMapSvelte.Application.UseCases.PortfolioUseCases.Handlers;
 
@@ -13,8 +14,8 @@ public class GetAllPortfoliosHandler
         _portfolioRepository = portfolioRepository;
     }
     
-    public async Task<IReadOnlyList<PortfolioStockDto>> Handle(CancellationToken cancellationToken)
+    public async Task<PagedResponse<PortfolioStockDto>> Handle(QueryFilter filter, CancellationToken cancellationToken)
     {
-        return await _portfolioRepository.GetAllPortfolioStockViewModelsAsync(cancellationToken) ?? new List<PortfolioStockDto>();
+        return await _portfolioRepository.GetAllPortfolioStockViewModelsAsync(filter, cancellationToken);
     }
 }
