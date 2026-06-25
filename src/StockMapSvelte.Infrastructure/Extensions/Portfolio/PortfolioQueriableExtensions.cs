@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace StockMapSvelte.Infrastructure.Extensions.Portfolio;
 
-public static class PortfolioQueriableExtensions
+public static class PortfolioQueryableExtensions
 {
     public static IQueryable<Domain.Entities.Portfolio> ApplySearch(this IQueryable<Domain.Entities.Portfolio> query,
         string? search, string? searchBy)
