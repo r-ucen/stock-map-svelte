@@ -1,8 +1,9 @@
 using StockMapSvelte.Application.DTOs;
+using StockMapSvelte.Application.DTOs.Common;
 
 namespace StockMapSvelte.Application.Abstractions.Facades;
 
 public interface IStockProfileFacade
 {
-    Task<IReadOnlyList<StockStockProfileDto>> GetAllStockProfilesAsync(CancellationToken cancellationToken);
+    Task<PagedResponse<StockStockProfileDto>> GetAllStockProfilesQueriedAsync(QueryFilter filter, CancellationToken cancellationToken);
 }

@@ -1,6 +1,7 @@
 using StockMapSvelte.Application.Abstractions;
 using StockMapSvelte.Application.Abstractions.Facades;
 using StockMapSvelte.Application.DTOs;
+using StockMapSvelte.Application.DTOs.Common;
 using StockMapSvelte.Application.UseCases.PortfolioUseCases.Commands;
 using StockMapSvelte.Application.UseCases.PortfolioUseCases.Handlers;
 using StockMapSvelte.Application.UseCases.PortfolioUseCases.Queries;
@@ -43,9 +44,9 @@ public class PortfolioFacade : IPortfolioFacade
         return await _createPortfolioHandler.Handle(cmd, cancellationToken);
     }
 
-    public async Task<IReadOnlyList<PortfolioStockDto>> GetAllPortfolioStockViewModelsAsync(CancellationToken cancellationToken)
+    public async Task<PagedResponse<PortfolioStockDto>> GetAllPortfolioStockViewModelsQueriedAsync(QueryFilter filter, CancellationToken cancellationToken)
     {
-        return await _getAllPortfoliosHandler.Handle(cancellationToken);
+        return await _getAllPortfoliosHandler.Handle(filter, cancellationToken);
     }
 
     public async Task<IReadOnlyList<PortfolioStockDto>> GetPortfoliosByUserIdAsync(CancellationToken cancellationToken)
