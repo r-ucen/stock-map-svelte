@@ -1,25 +1,23 @@
 using StockMapSvelte.Application.Abstractions;
 using StockMapSvelte.Application.Abstractions.Repositories;
 using StockMapSvelte.Application.DTOs;
+using StockMapSvelte.Application.DTOs.Common;
 
 namespace StockMapSvelte.Application.UseCases.StockProfileUseCases.Handlers;
 
 public class GetAllStockProfilesHandler
 {
     private readonly IStockProfileRepository _stockProfileRepository;
-    private readonly IUserContext _userContext;
     
     public GetAllStockProfilesHandler(
-        IStockProfileRepository stockProfileRepository,
-        IUserContext userContext)
+        IStockProfileRepository stockProfileRepository)
     {
         _stockProfileRepository = stockProfileRepository;
-        _userContext = userContext;
     }
     
-    public async Task<IReadOnlyList<StockStockProfileDto>> Handle(CancellationToken cancellationToken)
+    public async Task<PagedResponse<StockStockProfileDto>> Handle(QueryFilter filter, CancellationToken cancellationToken)
     {
-        return await _stockProfileRepository.GetAllStockProfilesAsync(cancellationToken);
+        return await _stockProfileRepository.GetAllStockProfilesAsync(filter, cancellationToken);
     }
         
 }

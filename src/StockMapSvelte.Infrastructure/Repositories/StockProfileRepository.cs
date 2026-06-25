@@ -1,8 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using StockMapSvelte.Application.Abstractions.Repositories;
 using StockMapSvelte.Application.DTOs;
+using StockMapSvelte.Application.DTOs.Common;
 using StockMapSvelte.Domain.Entities;
 using StockMapSvelte.Infrastructure.Database;
+using StockMapSvelte.Infrastructure.Extensions;
+using StockMapSvelte.Infrastructure.Extensions.StockProfile;
 
 namespace StockMapSvelte.Infrastructure.Repositories;
 
@@ -15,51 +18,73 @@ public class StockProfileRepository : IStockProfileRepository
         _contextFactory = contextFactory;
     }
     
-    public async Task<IReadOnlyList<StockStockProfileDto>> GetAllStockProfilesAsync(CancellationToken cancellationToken)
+    public async Task<PagedResponse<StockStockProfileDto>> GetAllStockProfilesAsync(QueryFilter filter, CancellationToken cancellationToken)
+    {
+        await using var dbContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        
+        var pageNumber = Math.Max(1, filter.PageNumber);
+        var pageSize = Math.Clamp(filter.PageSize, 1, 50);
+
+        var query = dbContext.Stocks
+            .Include(s => s.StockProfile)
+            .AsNoTracking()
+            .AsQueryable();
+
+        query = query.ApplySearch(filter.Search, filter.SearchBy);
+        
+        var totalRecords = await query.CountAsync(cancellationToken);
+        
+        query = query.ApplySort(
+            string.IsNullOrWhiteSpace(filter.SortBy) ? "TickerSymbol" : filter.SortBy);
+
+        var stockProfiles = await query
+            .ApplyPagination(pageNumber, pageSize)
+            .Select(s => new StockStockProfileDto
+            {
+                TickerSymbol = s.TickerSymbol,
+                Date = s.StockProfile.Date,
+                FullName = s.StockProfile.FullName,
+                Sector = s.StockProfile.Sector,
+                Currency = s.StockProfile.Currency,
+                RegularMarketChangePercent = s.StockProfile.RegularMarketChangePercent,
+                RegularMarketPrice = s.StockProfile.RegularMarketPrice,
+                EarningsDate = s.StockProfile.EarningsDate,
+                DividendDate = s.StockProfile.DividendDate,
+                ExDividendDate = s.StockProfile.ExDividendDate,
+                DividendYield = s.StockProfile.DividendYield,
+                Beta = s.StockProfile.Beta,
+                Pe = s.StockProfile.Pe,
+                ForwardPe = s.StockProfile.ForwardPe,
+                ShortRatio = s.StockProfile.ShortRatio,
+                AnalystRecommendationMean = s.StockProfile.AnalystRecommendationMean,
+                AnalystRecommendationKey = s.StockProfile.AnalystRecommendationKey,
+                Volume = s.StockProfile.Volume,
+                ProfitMargins = s.StockProfile.ProfitMargins,
+                EarningsQuarterlyGrowth = s.StockProfile.EarningsQuarterlyGrowth,
+                TrailingEps = s.StockProfile.TrailingEps,
+                ForwardEps = s.StockProfile.ForwardEps,
+                PegRatio = s.StockProfile.PegRatio,
+                OneYearChange = s.StockProfile.OneYearChange,
+                TargetHighPrice = s.StockProfile.TargetHighPrice,
+                TargetLowPrice = s.StockProfile.TargetLowPrice,
+                TargetMeanPrice = s.StockProfile.TargetMeanPrice,
+                TargetMedianPrice = s.StockProfile.TargetMedianPrice,
+                TotalDebt = s.StockProfile.TotalDebt,
+                FreeCashflow = s.StockProfile.FreeCashflow,
+                EarningsGrowth = s.StockProfile.EarningsGrowth,
+                RevenueGrowth = s.StockProfile.RevenueGrowth
+            })
+            .ToListAsync(cancellationToken);
+        
+        return new PagedResponse<StockStockProfileDto>
         {
-            await using var dbContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
-            
-            return await dbContext.Stocks
-                .AsNoTracking()
-                .Include(s => s.StockProfile)
-                .OrderBy(s => s.TickerSymbol)
-                .Select(s => new StockStockProfileDto
-                {
-                    TickerSymbol = s.TickerSymbol,
-                    Date = s.StockProfile.Date,
-                    FullName = s.StockProfile.FullName,
-                    Sector = s.StockProfile.Sector,
-                    Currency = s.StockProfile.Currency,
-                    RegularMarketChangePercent = s.StockProfile.RegularMarketChangePercent,
-                    RegularMarketPrice = s.StockProfile.RegularMarketPrice,
-                    EarningsDate = s.StockProfile.EarningsDate,
-                    DividendDate = s.StockProfile.DividendDate,
-                    ExDividendDate = s.StockProfile.ExDividendDate,
-                    DividendYield = s.StockProfile.DividendYield,
-                    Beta = s.StockProfile.Beta,
-                    Pe = s.StockProfile.Pe,
-                    ForwardPe = s.StockProfile.ForwardPe,
-                    ShortRatio = s.StockProfile.ShortRatio,
-                    AnalystRecommendationMean = s.StockProfile.AnalystRecommendationMean,
-                    AnalystRecommendationKey = s.StockProfile.AnalystRecommendationKey,
-                    Volume = s.StockProfile.Volume,
-                    ProfitMargins = s.StockProfile.ProfitMargins,
-                    EarningsQuarterlyGrowth = s.StockProfile.EarningsQuarterlyGrowth,
-                    TrailingEps = s.StockProfile.TrailingEps,
-                    ForwardEps = s.StockProfile.ForwardEps,
-                    PegRatio = s.StockProfile.PegRatio,
-                    OneYearChange = s.StockProfile.OneYearChange,
-                    TargetHighPrice = s.StockProfile.TargetHighPrice,
-                    TargetLowPrice = s.StockProfile.TargetLowPrice,
-                    TargetMeanPrice = s.StockProfile.TargetMeanPrice,
-                    TargetMedianPrice = s.StockProfile.TargetMedianPrice,
-                    TotalDebt = s.StockProfile.TotalDebt,
-                    FreeCashflow = s.StockProfile.FreeCashflow,
-                    EarningsGrowth = s.StockProfile.EarningsGrowth,
-                    RevenueGrowth = s.StockProfile.RevenueGrowth
-                })
-                .ToListAsync(cancellationToken);
-        }
+            Data = stockProfiles,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalRecords = totalRecords,
+            TotalPages = (int)Math.Ceiling(totalRecords / (double)pageSize)
+        };
+    }
     
     public async Task<int> SaveStockProfilesAsync(IEnumerable<StockProfile> profiles, CancellationToken cancellationToken)
     {

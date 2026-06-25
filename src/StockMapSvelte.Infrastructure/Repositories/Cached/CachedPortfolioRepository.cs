@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Caching.Hybrid;
 using StockMapSvelte.Application.Abstractions.Repositories;
 using StockMapSvelte.Application.DTOs;
+using StockMapSvelte.Application.DTOs.Common;
 using StockMapSvelte.Domain.Entities;
 
 namespace StockMapSvelte.Infrastructure.Repositories.Cached;
@@ -18,8 +19,8 @@ public class CachedPortfolioRepository : IPortfolioRepository
     
     // getting
     
-    public Task<IReadOnlyList<PortfolioStockDto>?> GetAllPortfolioStockViewModelsAsync(CancellationToken cancellationToken)
-    => _decorated.GetAllPortfolioStockViewModelsAsync(cancellationToken);
+    public Task<PagedResponse<PortfolioStockDto>> GetAllPortfolioStockViewModelsAsync(QueryFilter filter, CancellationToken cancellationToken)
+    => _decorated.GetAllPortfolioStockViewModelsAsync(filter, cancellationToken);
 
     public Task<int> CreatePortfolioAsync(Portfolio portfolio, IList<string> tickerSymbols, CancellationToken cancellationToken)
     => _decorated.CreatePortfolioAsync(portfolio, tickerSymbols, cancellationToken);
