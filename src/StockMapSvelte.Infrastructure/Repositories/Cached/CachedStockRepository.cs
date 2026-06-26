@@ -21,9 +21,6 @@ public class CachedStockRepository : IStockRepository
     
     public async Task<StockDto?> GetStockViewModelByIdAsync(Guid stockId, CancellationToken cancellationToken)
         => await _decorated.GetStockViewModelByIdAsync(stockId, cancellationToken);
-    
-    public async Task<IReadOnlyList<StockDto>?> GetAllStocksAsync(CancellationToken cancellationToken)
-        =>  await _decorated.GetAllStocksAsync(cancellationToken);
 
     public async Task<PagedResponse<StockDto>> GetAllStocksAsyncQueried(QueryFilter filter, CancellationToken cancellationToken)
         => await _decorated.GetAllStocksAsyncQueried(filter, cancellationToken);

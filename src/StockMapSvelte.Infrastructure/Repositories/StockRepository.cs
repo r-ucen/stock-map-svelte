@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using StockMapSvelte.Application.Abstractions.Repositories;
 using StockMapSvelte.Application.DTOs;
 using StockMapSvelte.Application.DTOs.Common;
-using StockMapSvelte.Application.Exceptions.Stock;
 using StockMapSvelte.Domain.Entities;
 using StockMapSvelte.Infrastructure.Database;
 using StockMapSvelte.Infrastructure.Extensions;
@@ -67,19 +66,6 @@ public class StockRepository : IStockRepository
         existingStock.Update(ticker);
 
         return await context.SaveChangesAsync(cancellationToken);
-    }
-
-    public async Task<IReadOnlyList<StockDto>?> GetAllStocksAsync(CancellationToken cancellationToken)
-    {
-        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
-        
-        var stocks = await context.Stocks.AsNoTracking().OrderBy(s => s.TickerSymbol).ToListAsync(cancellationToken);
-        
-        return stocks.Select(s => new StockDto
-        (
-            s.Id,
-            s.TickerSymbol
-        )).ToList();
     }
     
     public async Task<PagedResponse<StockDto>> GetAllStocksAsyncQueried(QueryFilter filter, CancellationToken cancellationToken)
