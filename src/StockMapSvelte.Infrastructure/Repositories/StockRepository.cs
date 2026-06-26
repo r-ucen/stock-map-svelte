@@ -49,19 +49,9 @@ public class StockRepository : IStockRepository
     {
         await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
 
-        if (stockId == Guid.Empty)
-        {
-            throw new InvalidStockIdException("Invalid stock id.", stockId);
-        }
-
-        var stock = await context.Stocks.FindAsync([stockId], cancellationToken);
-        if (stock is null)
-        {
-            throw new InvalidOperationException($"Stock with id {stockId} not found");
-        }
-
-        context.Stocks.Remove(stock);
-        return await context.SaveChangesAsync(cancellationToken);
+        return await context.Stocks
+            .Where(s => s.Id == stockId)
+            .ExecuteDeleteAsync(cancellationToken);
     }
 
     public async Task<int> EditStockAsync(Guid stockId, string ticker, CancellationToken cancellationToken)
