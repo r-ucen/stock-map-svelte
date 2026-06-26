@@ -64,8 +64,7 @@ public class StockRepository : IStockRepository
             throw new InvalidOperationException($"Stock with id: '{stockId}' was not found.");
         }
         
-        existingStock.TickerSymbol = ticker;
-        existingStock.IsInitialized = false;
+        existingStock.Update(ticker);
 
         return await context.SaveChangesAsync(cancellationToken);
     }
