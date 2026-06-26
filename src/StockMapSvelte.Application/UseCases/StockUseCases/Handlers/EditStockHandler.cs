@@ -27,14 +27,14 @@ public class EditStockHandler
         
         var normalizedTicker = cmd.TickerSymbol.Trim().ToUpperInvariant();
         
-        if (await _stockRepository.StockExistsAsync(cmd.TickerSymbol, cancellationToken))
+        if (await _stockRepository.StockExistsAsync(normalizedTicker, cancellationToken))
         {
-            throw new TickerSymbolAlreadyExists($"Stock with ticker symbol '{cmd.TickerSymbol}' already exists.");
+            throw new TickerSymbolAlreadyExists($"Stock with ticker symbol '{normalizedTicker}' already exists.");
         }
         
-        if (!await _stockClient.TickerExists(cmd.TickerSymbol))
+        if (!await _stockClient.TickerExists(normalizedTicker))
         {
-            throw new InvalidTickerSymbolException($"This ticker symbol: '{cmd.TickerSymbol}' is not valid.");
+            throw new InvalidTickerSymbolException($"This ticker symbol: '{normalizedTicker}' is not valid.");
         }
         
         var editStockResult = await _stockRepository.EditStockAsync(cmd.Id, normalizedTicker, cancellationToken);
