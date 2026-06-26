@@ -329,6 +329,97 @@ public class StockIntegrationTests : IAsyncLifetime
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
+    
+    [Fact]
+    public async Task CreateStocksBatch_WithValidTickers_ShouldReturnOkWithCreatedAndNoFailed()
+    {
+        // Arrange
+        var cmd = new CreateStocksCommand(["AAPL", "MSFT", "TSLA"]);
+
+        // Act
+        var response = await _adminClient.PostAsJsonAsync("/stocks/batch", cmd);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var result = await response.Content.ReadFromJsonAsync<CreateStocksResponse>();
+        Assert.NotNull(result);
+        Assert.Equal(3, result.CreatedStocks .Length);
+        Assert.Empty(result.FailedToCreateStocks );
+    }
+
+    [Fact]
+    public async Task CreateStocksBatch_WithInvalidTickers_ShouldReturnOkWithFailedAndNoCreated()
+    {
+        // Arrange
+        _factory.SetTickerExistsInStockClient(false);
+        var cmd = new CreateStocksCommand(["INVALID1", "INVALID2"]);
+
+        // Act
+        var response = await _adminClient.PostAsJsonAsync("/stocks/batch", cmd);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var result = await response.Content.ReadFromJsonAsync<CreateStocksResponse>();
+        Assert.NotNull(result);
+        Assert.Empty(result.CreatedStocks );
+        Assert.Equal(2, result.FailedToCreateStocks .Length);
+    }
+
+    [Fact]
+    public async Task CreateStocksBatch_WithMixedTickers_ShouldReturnOkWithSomeCreatedAndSomeFailed()
+    {
+        // Arrange
+        _factory.SetTickerExistsInStockClient(true);
+        _factory.SetTickerExistsInStockClient(false, "INVALID");
+        var cmd = new CreateStocksCommand(["AAPL", "INVALID", "MSFT"]);
+
+        // Act
+        var response = await _adminClient.PostAsJsonAsync("/stocks/batch", cmd);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var result = await response.Content.ReadFromJsonAsync<CreateStocksResponse>();
+        Assert.NotNull(result);
+        Assert.Equal(2, result.CreatedStocks .Length);
+        Assert.Single(result.FailedToCreateStocks );
+        Assert.Contains("INVALID", result.FailedToCreateStocks .Select(f => f.Ticker));
+    }
+
+    [Fact]
+    public async Task CreateStocksBatch_WithDuplicateTickers_ShouldReturnOkWithFailedForDuplicates()
+    {
+        // Arrange - create AAPL first
+        await _adminClient.PostAsJsonAsync("/stocks", new CreateStockCommand("AAPL"));
+        var cmd = new CreateStocksCommand(["AAPL", "MSFT"]);
+
+        // Act
+        var response = await _adminClient.PostAsJsonAsync("/stocks/batch", cmd);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var result = await response.Content.ReadFromJsonAsync<CreateStocksResponse>();
+        Assert.NotNull(result);
+        Assert.Single(result.CreatedStocks );
+        Assert.Single(result.FailedToCreateStocks );
+        Assert.Contains("AAPL", result.FailedToCreateStocks .Select(f => f.Ticker));
+    }
+
+    [Fact]
+    public async Task CreateStocksBatch_WithEmptyList_ShouldReturnOkWithNothingCreated()
+    {
+        // Arrange
+        var cmd = new CreateStocksCommand([]);
+
+        // Act
+        var response = await _adminClient.PostAsJsonAsync("/stocks/batch", cmd);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var result = await response.Content.ReadFromJsonAsync<CreateStocksResponse>();
+        Assert.NotNull(result);
+        Assert.Empty(result.CreatedStocks );
+        Assert.Empty(result.FailedToCreateStocks );
+    }
 
     public async Task InitializeAsync()
     {
