@@ -1,4 +1,4 @@
-namespace StockMapSvelte.Application.Exceptions.Stock;
+namespace StockMapSvelte.Domain.Exceptions.Stock;
 
 public class MissingTickerSymbolException : AppException
 {

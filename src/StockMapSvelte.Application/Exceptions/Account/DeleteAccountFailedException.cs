@@ -1,3 +1,5 @@
+using StockMapSvelte.Domain.Exceptions;
+
 namespace StockMapSvelte.Application.Exceptions.Account;
 
 public class DeleteAccountFailedException : AppException

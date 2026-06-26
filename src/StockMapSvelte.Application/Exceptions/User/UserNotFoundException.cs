@@ -1,3 +1,5 @@
+using StockMapSvelte.Domain.Exceptions;
+
 namespace StockMapSvelte.Application.Exceptions.User;
 
 public class UserNotFoundException : AppException

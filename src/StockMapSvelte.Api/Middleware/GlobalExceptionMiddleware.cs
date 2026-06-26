@@ -1,4 +1,5 @@
 using StockMapSvelte.Application.Exceptions;
+using StockMapSvelte.Domain.Exceptions;
 
 namespace StockMapSvelte.Api.Middleware;
 
