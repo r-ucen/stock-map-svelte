@@ -50,10 +50,13 @@ public class EditStockHandler
         
         var stockProfiles = await _stockClient.GetStockProfilesAsync(cancellationToken);
 
-        var saveStockProfilesResult = await _stockProfileRepository.SaveStockProfilesAsync(stockProfiles, cancellationToken);
-        if (saveStockProfilesResult <= 0)
+        if (stockProfiles.Count > 0)
         {
-            throw new CreateStockFailException("Failed to edit the stock.");
+            var saveStockProfilesResult = await _stockProfileRepository.SaveStockProfilesAsync(stockProfiles, cancellationToken);
+            if (saveStockProfilesResult <= 0)
+            {
+                throw new CreateStockFailException("Failed to edit the stock.");
+            }
         }
     }
 }
