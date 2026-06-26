@@ -25,7 +25,7 @@ public class TreeMapRepository : ITreeMapRepository
             }
             
             var portfolio = await context.Portfolios
-                .Include(p => p.Stocks)
+                .Include(p => p.Stocks.Where(s => s.IsInitialized))
                     .ThenInclude(s => s.StockProfile)
                 .FirstOrDefaultAsync(p => p.Id == portfolioId, cancellationToken);
 
