@@ -4,6 +4,7 @@ using StockMapSvelte.Application.DTOs;
 using StockMapSvelte.Application.Exceptions.Stock;
 using StockMapSvelte.Application.UseCases.StockUseCases.Commands;
 using StockMapSvelte.Domain.Entities;
+using StockMapSvelte.Domain.Exceptions.Stock;
 
 namespace StockMapSvelte.Application.UseCases.StockUseCases.Handlers;
 

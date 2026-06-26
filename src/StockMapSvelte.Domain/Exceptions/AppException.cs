@@ -1,4 +1,4 @@
-namespace StockMapSvelte.Application.Exceptions;
+namespace StockMapSvelte.Domain.Exceptions;
 
 public abstract class AppException : Exception
 {

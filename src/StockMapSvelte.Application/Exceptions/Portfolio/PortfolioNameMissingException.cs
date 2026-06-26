@@ -1,3 +1,5 @@
+using StockMapSvelte.Domain.Exceptions;
+
 namespace StockMapSvelte.Application.Exceptions.Portfolio;
 
 public class PortfolioNameMissingException : AppException
