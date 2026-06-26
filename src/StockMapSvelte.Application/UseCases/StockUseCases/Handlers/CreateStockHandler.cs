@@ -23,39 +23,25 @@ public class CreateStockHandler
 
     public async Task<StockDto> Handle(CreateStockCommand cmd, CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(cmd.TickerSymbol))
-        {
-            throw new MissingTickerSymbolException("Ticker symbol field is required.");
-        }
-        
-        var ticker = cmd.TickerSymbol.Trim().ToUpperInvariant();
+        var stock = Stock.Create(cmd.TickerSymbol);
 
-        if (!await _stockClient.TickerExists(ticker))
+        if (!await _stockClient.TickerExists(stock.TickerSymbol))
         {
-            throw new InvalidTickerSymbolException($"This ticker symbol: '{ticker}' is not valid.");
+            throw new InvalidTickerSymbolException($"This ticker symbol: '{stock.TickerSymbol}' is not valid.");
         }
         
-        var exists = await _stockRepository.StockExistsAsync(ticker, cancellationToken);
+        var exists = await _stockRepository.StockExistsAsync(stock.TickerSymbol, cancellationToken);
         if (exists)
         {
-            throw new TickerSymbolAlreadyExists($"Stock with ticker symbol '{cmd.TickerSymbol}' already exists.");
+            throw new TickerSymbolAlreadyExists($"Stock with ticker symbol '{stock.TickerSymbol}' already exists.");
         }
-
-        var entity = new Stock
-        {
-            TickerSymbol = ticker,
-            Id = Guid.NewGuid()
-        };
         
-        var createStockResult = await _stockRepository.CreateStockAsync(entity);
+        var createStockResult = await _stockRepository.CreateStockAsync(stock);
         if (createStockResult <= 0)
         {
             throw new CreateStockFailException("Failed to create the stock.");
         }
 
-        return new StockDto(
-            entity.Id,
-            entity.TickerSymbol
-        );
+        return new StockDto(stock.Id, stock.TickerSymbol);
     }
 }
