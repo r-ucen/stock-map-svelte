@@ -123,7 +123,7 @@ public class PortfolioRepository : IPortfolioRepository
         
         var portfolios = await context.Portfolios
             .Where(p => p.UserId == userId)
-            .Include(p => p.Stocks)
+            .Include(p => p.Stocks.Where(s => s.IsInitialized))
             .ToListAsync(cancellationToken);
 
         var noPortfolios = portfolios.Count == 0;
@@ -264,7 +264,7 @@ public class PortfolioRepository : IPortfolioRepository
 
         var portfolio = await context.Portfolios
             .Where(p => p.Id == portfolioId && p.UserId == userId)
-            .Include(p => p.Stocks)
+            .Include(p => p.Stocks.Where(s => s.IsInitialized))
             .Select(p => new PortfolioStockDto
             {
                 PortfolioId = p.Id,

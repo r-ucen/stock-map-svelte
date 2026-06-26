@@ -65,6 +65,7 @@ public class StockRepository : IStockRepository
         }
         
         existingStock.TickerSymbol = ticker;
+        existingStock.IsInitialized = false;
 
         return await context.SaveChangesAsync(cancellationToken);
     }
