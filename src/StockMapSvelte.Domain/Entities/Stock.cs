@@ -16,7 +16,9 @@ public class Stock : Entity<Guid>
     public static Stock Create(string tickerSymbol)
     {
         if (string.IsNullOrWhiteSpace(tickerSymbol))
+        {
             throw new MissingTickerSymbolException("Ticker symbol field is required.");
+        }
 
         return new Stock
         {
