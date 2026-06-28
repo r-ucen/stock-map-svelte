@@ -91,66 +91,14 @@ public class PortfolioRepository : IPortfolioRepository
         return await context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<IReadOnlyList<PortfolioStockDto>?> GetPortfoliosByUserIdAsync(string userId, CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<Portfolio>?> GetPortfoliosByUserIdAsync(string userId, CancellationToken cancellationToken)
     {
         await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
         
-        var userSetting = await context.UserSettings
-            .FirstOrDefaultAsync(us => us.UserId == userId, cancellationToken);
-        
-        var portfolios = await context.Portfolios
+        return await context.Portfolios
             .Where(p => p.UserId == userId)
             .Include(p => p.Stocks.Where(s => s.IsInitialized))
             .ToListAsync(cancellationToken);
-
-        var noPortfolios = portfolios.Count == 0;
-        var noUserSettings = userSetting == null;
-        
-        var defaultPortfolioId = userSetting?.DefaultPortfolioId;
-        
-        if (noPortfolios)
-        {
-            var defaultPortfolio = new Portfolio
-            {
-                Id = Guid.NewGuid(),
-                UserId = userId,
-                Name = "Default Portfolio"
-            };
-            
-            defaultPortfolioId = defaultPortfolio.Id;
-
-            var createPortfolioResult = await CreatePortfolioAsync(defaultPortfolio, [], cancellationToken);
-            if (createPortfolioResult <= 0)
-            {
-                throw new InvalidOperationException("Failed to create default portfolio.");
-            }
-        }
-
-        if (noUserSettings)
-        {
-            userSetting = new UserSetting
-            {
-                UserId = userId,
-                DefaultPortfolioId = defaultPortfolioId
-            };
-            
-            context.UserSettings.Add(userSetting);
-            var userSettingsInitResult = await context.SaveChangesAsync(cancellationToken);
-            if (userSettingsInitResult <= 0)
-            {
-                throw new InvalidOperationException("Failed to initialize user settings.");
-            }
-        }
-        
-        return portfolios
-            .Select(p => new PortfolioStockDto
-            {
-                PortfolioId = p.Id,
-                UserId = p.UserId,
-                PortfolioName = p.Name ?? "",
-                IsDefault = p.Id == defaultPortfolioId,
-                TickerSymbols = p.Stocks.Select(s => s.TickerSymbol).ToList()
-            }).ToList();
     }
     
     public async Task<bool> PortfolioNameExistsAsync(string userId, Guid portfolioId, string portfolioName, CancellationToken cancellationToken)
