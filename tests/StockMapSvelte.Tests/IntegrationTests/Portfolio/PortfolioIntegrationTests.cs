@@ -3,7 +3,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Mvc.Testing;
 using StockMapSvelte.Api.Requests;
-using StockMapSvelte.Application.UseCases.StockUseCases.Commands;
+using StockMapSvelte.Application.DTOs;
 using Xunit.Abstractions;
 
 namespace StockMapSvelte.Tests.IntegrationTests.Portfolio;
@@ -13,17 +13,15 @@ namespace StockMapSvelte.Tests.IntegrationTests.Portfolio;
 public class PortfolioIntegrationTests : IAsyncLifetime
 {
     private readonly IntegrationTestWebApplicationFactory _factory;
-    private readonly ITestOutputHelper _testOutputHelper;
 
     private readonly HttpClient _adminClient;
     private readonly HttpClient _managerClient;
     private readonly HttpClient _customerClient;
     private readonly HttpClient _anonymousClient;
     
-    public PortfolioIntegrationTests(IntegrationTestWebApplicationFactory factory, ITestOutputHelper testOutputHelper)
+    public PortfolioIntegrationTests(IntegrationTestWebApplicationFactory factory)
     {
         _factory = factory;
-        _testOutputHelper = testOutputHelper;
 
         var clientOptions = new WebApplicationFactoryClientOptions { AllowAutoRedirect = false };
         
@@ -89,6 +87,52 @@ public class PortfolioIntegrationTests : IAsyncLifetime
         
         // Assert
         Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+    }
+    
+    // DELETE
+    
+    [Fact]
+    public async Task DeletePortfolio_WithValidId_ShouldReturnNoContent()
+    {
+        // Arrange
+        await _factory.SeedStocksAsync("AAPL");
+        var portfolioToCreate = new CreatePortfolioRequest("Name", ["AAPL"]);
+        var createResponse = await _customerClient.PostAsJsonAsync("/portfolios", portfolioToCreate);
+        var createdPortfolio = await createResponse.Content.ReadFromJsonAsync<PortfolioStockDto>();
+        Assert.NotNull(createdPortfolio);
+        
+        // Act
+        var response = await _customerClient.DeleteAsync($"portfolios/{createdPortfolio.PortfolioId}");
+        
+        // Assert
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+    }
+    
+    [Fact]
+    public async Task DeletePortfolio_WithInvalidId_ShouldReturnNotFound()
+    {
+        // Act
+        var response = await _customerClient.DeleteAsync($"portfolios/{Guid.NewGuid()}");
+        
+        // Assert
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+    
+    [Fact]
+    public async Task DeletePortfolio_WithOtherUsersPortfolioId_ShouldReturnNoContent()
+    {
+        // Arrange
+        await _factory.SeedStocksAsync("AAPL");
+        var portfolioToCreate = new CreatePortfolioRequest("Name", ["AAPL"]);
+        var createResponse = await _managerClient.PostAsJsonAsync("/portfolios", portfolioToCreate);
+        var createdPortfolio = await createResponse.Content.ReadFromJsonAsync<PortfolioStockDto>();
+        Assert.NotNull(createdPortfolio);
+        
+        // Act
+        var response = await _customerClient.DeleteAsync($"portfolios/{createdPortfolio.PortfolioId}");
+        
+        // Assert
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
     }
     
     public async Task InitializeAsync()
