@@ -210,7 +210,7 @@ public class PortfolioIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task EditPortfolio_WithUnchangedData_ShouldReturnOk()
+    public async Task EditPortfolio_WithUnchangedData_ShouldReturnConflict()
     {
         // Arrange
         await _factory.SeedStocksAsync("AAPL");
@@ -224,7 +224,7 @@ public class PortfolioIntegrationTests : IAsyncLifetime
         var response = await _customerClient.PutAsJsonAsync($"/portfolios/{createdPortfolio.PortfolioId}", editRequest);
 
         // Assert
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
     }
 
     [Fact]
