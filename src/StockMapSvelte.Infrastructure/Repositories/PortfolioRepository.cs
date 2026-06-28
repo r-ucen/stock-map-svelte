@@ -214,7 +214,7 @@ public class PortfolioRepository : IPortfolioRepository
 
         var defaultPortfolioId = userSetting?.DefaultPortfolioId;
 
-        var portfolio = await context.Portfolios
+        return await context.Portfolios
             .Where(p => p.Id == portfolioId && p.UserId == userId)
             .Include(p => p.Stocks.Where(s => s.IsInitialized))
             .Select(p => new PortfolioStockDto
@@ -226,8 +226,6 @@ public class PortfolioRepository : IPortfolioRepository
                 TickerSymbols = p.Stocks.Select(s => s.TickerSymbol).ToList()
             })
             .FirstOrDefaultAsync(cancellationToken);
-
-        return portfolio;
     }
 
     public async Task<int> GetPortfolioCountByUserIdAsync(string userId)
