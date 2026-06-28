@@ -30,4 +30,12 @@ public class Portfolio : Entity<Guid>
     {
         Stocks = stocks.ToList();
     }
+    
+    public void ValidateOwnership(string userId)
+    {
+        if (UserId != userId)
+        {
+            throw new UnauthorizedAccessException($"You do not have permission to modify portfolio with id: '{Id}'.");
+        }
+    }
 }
