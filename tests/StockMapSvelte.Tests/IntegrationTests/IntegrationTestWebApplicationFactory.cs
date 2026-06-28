@@ -9,6 +9,7 @@ using Moq;
 using StockMapSvelte.Application.Abstractions;
 using StockMapSvelte.Domain.Entities;
 using StockMapSvelte.Infrastructure.Database;
+using StockMapSvelte.Infrastructure.Identity;
 using Testcontainers.PostgreSql;
 
 namespace StockMapSvelte.Tests.IntegrationTests;
@@ -77,6 +78,7 @@ public class IntegrationTestWebApplicationFactory : WebApplicationFactory<Progra
         dbContext.Portfolios.RemoveRange(dbContext.Portfolios);
         dbContext.StockProfiles.RemoveRange(dbContext.StockProfiles);
         dbContext.UserSettings.RemoveRange(dbContext.UserSettings);
+        dbContext.Users.RemoveRange(dbContext.Users);
         
         await dbContext.SaveChangesAsync();
     }
@@ -102,5 +104,40 @@ public class IntegrationTestWebApplicationFactory : WebApplicationFactory<Progra
         StockClientMock
             .Setup(x => x.GetStockProfilesAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(profiles);
+    }
+    
+    public async Task SeedStocksAsync(params string[] tickers)
+    {
+        using var scope = Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+        var stocks = tickers.Select(t => new Domain.Entities.Stock
+        {
+            Id = new Guid(),
+            TickerSymbol = t.ToUpperInvariant(),
+            IsInitialized = true,
+        });
+
+        dbContext.Stocks.AddRange(stocks);
+        await dbContext.SaveChangesAsync();
+    }
+    
+    public async Task SeedUserAsync(string userId, string role = "Customer")
+    {
+        using var scope = Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+        var user = new ApplicationUser
+        {
+            Id = userId,
+            UserName = $"{userId}@test.com",
+            NormalizedUserName = $"{userId}@test.com".ToUpperInvariant(),
+            Email = $"{userId}@test.com",
+            NormalizedEmail = $"{userId}@test.com".ToUpperInvariant(),
+            SecurityStamp = Guid.NewGuid().ToString()
+        };
+
+        dbContext.Users.Add(user);
+        await dbContext.SaveChangesAsync();
     }
 }

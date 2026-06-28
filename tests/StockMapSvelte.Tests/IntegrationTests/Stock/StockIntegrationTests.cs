@@ -11,10 +11,10 @@ using Xunit.Abstractions;
 
 namespace StockMapSvelte.Tests.IntegrationTests.Stock;
 
-[CollectionDefinition("StockIntegrationTests")]
+[CollectionDefinition("IntegrationTests")]
 public class SharedTestCollection : ICollectionFixture<IntegrationTestWebApplicationFactory> { }
 
-[Collection("StockIntegrationTests")]
+[Collection("IntegrationTests")]
 public class StockIntegrationTests : IAsyncLifetime
 {
     private readonly IntegrationTestWebApplicationFactory _factory;
