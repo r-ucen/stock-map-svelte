@@ -2,6 +2,7 @@ using StockMapSvelte.Application.Abstractions;
 using StockMapSvelte.Application.Abstractions.Repositories;
 using StockMapSvelte.Application.DTOs;
 using StockMapSvelte.Application.Exceptions.Portfolio;
+using StockMapSvelte.Application.Exceptions.Stock;
 using StockMapSvelte.Application.UseCases.PortfolioUseCases.Commands;
 using StockMapSvelte.Domain.Entities;
 using StockMapSvelte.Domain.Exceptions.Portfolio;
@@ -30,6 +31,19 @@ public class CreatePortfolioHandler
         if (nameExists)
         {
             throw new PortfolioNameAlreadyExistsException(cmd.PortfolioName);
+        }
+        
+        var upperTickerSymbols = cmd.TickerSymbols
+            .Where(t => !string.IsNullOrWhiteSpace(t))
+            .Select(t => t.Trim().ToUpperInvariant())
+            .ToList();
+
+        var uninitializedStocks =
+            await _portfolioRepository.GetUninitializedStocks(upperTickerSymbols, cancellationToken);
+        
+        if (uninitializedStocks.Count != 0)
+        {
+            throw new StocksNotInitializedException(uninitializedStocks);
         }
 
         var result = await _portfolioRepository.CreatePortfolioAsync(portfolio, cmd.TickerSymbols, cancellationToken);

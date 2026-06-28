@@ -77,28 +77,23 @@ public class PortfolioRepository : IPortfolioRepository
             .AnyAsync(p => p.Name == portfolioName && p.UserId == userId, cancellationToken);
     }
 
-    public async Task<int> CreatePortfolioAsync(Portfolio portfolio, IList<string> tickerSymbols, CancellationToken cancellationToken)
+    public async Task<IList<string>> GetUninitializedStocks(IList<string> tickerSymbols, CancellationToken cancellationToken)
     {
         await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
         
-        var upperTickerSymbols = tickerSymbols
-            .Where(t => !string.IsNullOrWhiteSpace(t))
-            .Select(t => t.Trim().ToUpperInvariant())
-            .ToList();
-        
-        var uninitializedStocksInRequest = await context.Stocks
-            .Where(s => upperTickerSymbols.Contains(s.TickerSymbol))
+        return await context.Stocks
+            .Where(s => tickerSymbols.Contains(s.TickerSymbol))
             .Where(s => s.IsInitialized == false)
             .Select(s => s.TickerSymbol)
             .ToListAsync(cancellationToken);
+    }
 
-        if (uninitializedStocksInRequest.Count != 0)
-        {
-            throw new StocksNotInitializedException(uninitializedStocksInRequest);
-        }
+    public async Task<int> CreatePortfolioAsync(Portfolio portfolio, IList<string> tickerSymbols, CancellationToken cancellationToken)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
 
         var stocks =  await context.Stocks
-            .Where(s => upperTickerSymbols.Contains(s.TickerSymbol))
+            .Where(s => tickerSymbols.Contains(s.TickerSymbol))
             .ToListAsync(cancellationToken);
 
         portfolio.AssignStocks(stocks);
