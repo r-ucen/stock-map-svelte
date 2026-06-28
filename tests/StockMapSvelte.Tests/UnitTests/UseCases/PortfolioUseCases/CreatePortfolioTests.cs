@@ -5,6 +5,7 @@ using StockMapSvelte.Application.Exceptions.Portfolio;
 using StockMapSvelte.Application.UseCases.PortfolioUseCases.Commands;
 using StockMapSvelte.Application.UseCases.PortfolioUseCases.Handlers;
 using StockMapSvelte.Domain.Entities;
+using StockMapSvelte.Domain.Exceptions.Portfolio;
 
 namespace StockMapSvelte.Tests.UnitTests.UseCases.PortfolioUseCases;
 

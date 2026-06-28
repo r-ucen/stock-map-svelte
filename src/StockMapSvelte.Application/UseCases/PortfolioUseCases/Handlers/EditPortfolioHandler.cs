@@ -3,6 +3,7 @@ using StockMapSvelte.Application.Abstractions.Repositories;
 using StockMapSvelte.Application.DTOs;
 using StockMapSvelte.Application.Exceptions.Portfolio;
 using StockMapSvelte.Application.UseCases.PortfolioUseCases.Commands;
+using StockMapSvelte.Domain.Exceptions.Portfolio;
 
 namespace StockMapSvelte.Application.UseCases.PortfolioUseCases.Handlers;
 
