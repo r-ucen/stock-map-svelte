@@ -53,9 +53,12 @@ public class CreatePortfolioHandler
         }
 
         var result = await _portfolioRepository.CreatePortfolioAsync(portfolio, cmd.TickerSymbols, cancellationToken);
+        if (result <= 0)
+        {
+            throw new PortfolioCreationFailedException("Failed to create portfolio.");
+        }
         
         var portfolioCount = await _portfolioRepository.GetPortfolioCountByUserIdAsync(userId);
-        
         if (portfolioCount == 1)
         {
             var setPortfolioAsDefaultResult = await _userSettingRepository.SetPortfolioAsDefaultAsync(userId, portfolio.Id);
@@ -64,11 +67,6 @@ public class CreatePortfolioHandler
             {
                 throw new PortfolioCreationFailedException("Failed to set portfolio as default.");
             }
-        }
-        
-        if (result <= 0)
-        {
-            throw new PortfolioCreationFailedException("Failed to create portfolio.");
         }
 
         return new PortfolioStockDto()
