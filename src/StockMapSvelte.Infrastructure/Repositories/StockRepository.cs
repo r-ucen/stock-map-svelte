@@ -157,4 +157,15 @@ public class StockRepository : IStockRepository
                 s => s.IsInitialized, true
                 ), cancellationToken);
     }
+    
+    public async Task<IList<string>> GetUninitializedStocks(IList<string> tickerSymbols, CancellationToken cancellationToken)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        
+        return await context.Stocks
+            .Where(s => tickerSymbols.Contains(s.TickerSymbol))
+            .Where(s => s.IsInitialized == false)
+            .Select(s => s.TickerSymbol)
+            .ToListAsync(cancellationToken);
+    }
 }
