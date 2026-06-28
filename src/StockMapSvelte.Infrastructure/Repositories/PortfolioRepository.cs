@@ -77,17 +77,6 @@ public class PortfolioRepository : IPortfolioRepository
             .AnyAsync(p => p.Name == portfolioName && p.UserId == userId, cancellationToken);
     }
 
-    public async Task<IList<string>> GetUninitializedStocks(IList<string> tickerSymbols, CancellationToken cancellationToken)
-    {
-        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
-        
-        return await context.Stocks
-            .Where(s => tickerSymbols.Contains(s.TickerSymbol))
-            .Where(s => s.IsInitialized == false)
-            .Select(s => s.TickerSymbol)
-            .ToListAsync(cancellationToken);
-    }
-
     public async Task<int> CreatePortfolioAsync(Portfolio portfolio, IList<string> tickerSymbols, CancellationToken cancellationToken)
     {
         await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);

@@ -12,14 +12,20 @@ namespace StockMapSvelte.Application.UseCases.PortfolioUseCases.Handlers;
 public class CreatePortfolioHandler
 {
     private readonly IPortfolioRepository _portfolioRepository;
+    private readonly IStockRepository _stockRepository;
     private readonly IUserSettingRepository _userSettingRepository;
     private readonly IUserContext _userContext;
 
-    public CreatePortfolioHandler(IUserContext userContext, IPortfolioRepository portfolioRepository, IUserSettingRepository userSettingRepository)
+    public CreatePortfolioHandler(
+        IUserContext userContext,
+        IPortfolioRepository portfolioRepository,
+        IUserSettingRepository userSettingRepository,
+        IStockRepository stockRepository)
     {
         _userContext = userContext;
         _portfolioRepository = portfolioRepository;
         _userSettingRepository = userSettingRepository;
+        _stockRepository = stockRepository;
     }
 
     public async Task<PortfolioStockDto> Handle(CreatePortfolioCommand cmd, CancellationToken cancellationToken)
@@ -39,7 +45,7 @@ public class CreatePortfolioHandler
             .ToList();
 
         var uninitializedStocks =
-            await _portfolioRepository.GetUninitializedStocks(upperTickerSymbols, cancellationToken);
+            await _stockRepository.GetUninitializedStocks(upperTickerSymbols, cancellationToken);
         
         if (uninitializedStocks.Count != 0)
         {
