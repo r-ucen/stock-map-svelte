@@ -213,10 +213,7 @@ public class PortfolioRepository : IPortfolioRepository
         await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
         
         var portfolio = await context.Portfolios.FirstOrDefaultAsync(p => p.Id == portfolioId, cancellationToken);
-        if (portfolio == null)
-        {
-            throw new InvalidOperationException($"Portfolio with id: {portfolioId} not found.");
-        }
+        if (portfolio == null) { return 0; }
         
         context.Portfolios.Remove(portfolio);
         return await context.SaveChangesAsync(cancellationToken);
