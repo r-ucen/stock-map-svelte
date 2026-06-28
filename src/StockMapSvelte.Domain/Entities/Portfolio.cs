@@ -38,4 +38,23 @@ public class Portfolio : Entity<Guid>
             throw new UnauthorizedAccessException($"You do not have permission to modify portfolio with id: '{Id}'.");
         }
     }
+    
+    public void UpdateName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            throw new PortfolioNameMissingException();
+        }
+        Name = name.Trim();
+    }
+
+    public void UpdateStocks(IEnumerable<Stock> stocks)
+    {
+        Stocks = stocks.ToList();
+    }
+
+    public bool HasChanges(string name, IList<string> tickerSymbols)
+    {
+        return Name != name || !Stocks.Select(s => s.TickerSymbol).SequenceEqual(tickerSymbols);
+    }
 }

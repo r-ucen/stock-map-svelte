@@ -51,7 +51,7 @@ public class CachedPortfolioRepository : IPortfolioRepository
     
     // modifying
 
-    public async Task<Portfolio> EditPortfolioAsync(Guid portfolioId, string portfolioName, IList<string> tickerSymbols,
+    public async Task<int> EditPortfolioAsync(Guid portfolioId, string portfolioName, IList<string> tickerSymbols,
         CancellationToken cancellationToken)
     {
         var result = await _decorated.EditPortfolioAsync(portfolioId, portfolioName, tickerSymbols, cancellationToken);
