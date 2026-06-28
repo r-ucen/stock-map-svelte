@@ -134,21 +134,16 @@ public class IdentityService : IIdentityService
         
     public async Task<bool> HasPasswordConfiguredAsync(string userId)
     {
-        var user = await _userManager.FindByIdAsync(userId);
-        if (user == null)
-        {
-            return false;
-        }
+        var user = await GetUserById(userId);
+        if (user == null) { return false; }
+        
         return await _userManager.HasPasswordAsync(user);
     }
 
     public async Task<bool> SetAccountPasswordAsync(string userId, string password)
     {
-        var user = await _userManager.FindByIdAsync(userId);
-        if (user == null)
-        {
-            return false;
-        }
+        var user = await GetUserById(userId);
+        if (user == null) { return false; }
 
         if (await _userManager.HasPasswordAsync(user))
         {
@@ -161,18 +156,15 @@ public class IdentityService : IIdentityService
     
     public async Task<IList<UserLoginInfo>> GetExternalLoginsAsync(string userId)
     {
-        var user = await _userManager.FindByIdAsync(userId);
-        if (user == null)
-        {
-            return new List<UserLoginInfo>();
-        }
+        var user = await GetUserById(userId);
+        if (user == null) { return new List<UserLoginInfo>(); }
 
         return await _userManager.GetLoginsAsync(user);
     }
 
     public async Task<RemoveGoogleExternalLoginStatus> RemoveGoogleExternalLoginAsync(string userId)
     {
-        var user = await _userManager.FindByIdAsync(userId);
+        var user = await GetUserById(userId);
         if (user == null)
         {
             return new RemoveGoogleExternalLoginStatus
@@ -223,40 +215,29 @@ public class IdentityService : IIdentityService
     
     public async Task<bool> DeleteAccountAsync(string userId)
     {
-        var user = await _userManager.FindByIdAsync(userId);
-        if (user == null)
-        {
-            return false;
-        }
+        var user = await GetUserById(userId);
+        if (user == null) { return false; }
 
         var result = await _userManager.DeleteAsync(user);
 
-        if (!result.Succeeded)
-        {
-            return false;
-        }
+        if (!result.Succeeded) { return false; }
         await _signInManager.SignOutAsync();
         return true;
-
     }
 
     public async Task<bool> IsUserInRoleAsync(string userId, string role)
     {
-        var user = await _userManager.FindByIdAsync(userId);
-        if (user == null)
-        {
-            return false;
-        }
+        var user = await GetUserById(userId);
+        if (user == null) { return false; }
+        
         return await _userManager.IsInRoleAsync(user, role);
     }
 
     public async Task<bool> DoesUserComplyWithPolicyAsync(string userId, string policyName)
     {
-        var user = await _userManager.FindByIdAsync(userId);
-        if (user == null)
-        {
-            return false;
-        }
+        var user = await GetUserById(userId);
+        if (user == null) { return false; }
+        
         var principal = await _principalFactory.CreateAsync(user);
         var authorizationResult = await _authorizationService.AuthorizeAsync(principal, policyName);
         return authorizationResult.Succeeded;
@@ -264,31 +245,24 @@ public class IdentityService : IIdentityService
 
     public async Task<string?> GetUserEmailAsync(string userId)
     {
-        var user = await _userManager.FindByIdAsync(userId);
-        if (user == null)
-        {
-            return null;
-        }
+        var user = await GetUserById(userId);
+        if (user == null) { return null; }
+        
         return await _userManager.GetEmailAsync(user);
     }
 
     public async Task<bool> IsEmailConfirmedAsync(string userId)
     {
-        var user = await _userManager.FindByIdAsync(userId);
-        if (user == null)
-        {
-            return false;
-        }
+        var user = await GetUserById(userId);
+        if (user == null) { return false; }
+        
         return await _userManager.IsEmailConfirmedAsync(user);
     }
 
     public async Task<bool> UpdateUserRoles(string userId, string[] roles)
     {
-        var user = await _userManager.FindByIdAsync(userId);
-        if (user == null)
-        {
-            return false;
-        }
+        var user = await GetUserById(userId);
+        if (user == null) { return false; }
 
         var existingUserRoles = await _userManager.GetRolesAsync(user);
         var existingUserRolesNormalized = existingUserRoles.Where(r => r != "Customer");
@@ -338,19 +312,17 @@ public class IdentityService : IIdentityService
 
     public async Task<bool> IsUserTheLastAdminAsync(string userId)
     {
-        var user = await _userManager.FindByIdAsync(userId);
-        if (user == null)
-        {
-            return false;
-        }
+        var user = await GetUserById(userId);
+        if (user == null) { return false; }
+        
         var isUserAdmin = await _userManager.IsInRoleAsync(user, "Admin");
         var adminsCount = await GetUserCountInRoleAsync("Admin");
 
-        if (isUserAdmin && (adminsCount <= 1))
-        {
-            return true;
-        }
-
-        return false;
+        return isUserAdmin && (adminsCount <= 1);
+    }
+    
+    private async Task<ApplicationUser?> GetUserById(string userId)
+    {
+        return await _userManager.FindByIdAsync(userId);
     }
 }
