@@ -190,12 +190,10 @@ public class PortfolioRepository : IPortfolioRepository
     public async Task<int> DeletePortfolioAsync(Guid portfolioId, CancellationToken cancellationToken)
     {
         await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
-        
-        var portfolio = await context.Portfolios.FirstOrDefaultAsync(p => p.Id == portfolioId, cancellationToken);
-        if (portfolio == null) { return 0; }
-        
-        context.Portfolios.Remove(portfolio);
-        return await context.SaveChangesAsync(cancellationToken);
+
+        return await context.Portfolios
+            .Where(p => p.Id == portfolioId)
+            .ExecuteDeleteAsync(cancellationToken);
     }
 
     public async Task<Portfolio?> GetPortfolioByIdAsync(Guid portfolioId, CancellationToken cancellationToken)
