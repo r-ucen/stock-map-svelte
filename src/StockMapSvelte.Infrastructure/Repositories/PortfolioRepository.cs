@@ -81,13 +81,6 @@ public class PortfolioRepository : IPortfolioRepository
     {
         await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
         
-        var user = await context.Users.FirstOrDefaultAsync(u => u.Id == portfolio.UserId, cancellationToken);
-        
-        if (user == null)
-        {
-            throw new InvalidOperationException("Authenticated user not found.");
-        }
-        
         var upperTickerSymbols = tickerSymbols
             .Where(t => !string.IsNullOrWhiteSpace(t))
             .Select(t => t.Trim().ToUpperInvariant())
@@ -108,7 +101,7 @@ public class PortfolioRepository : IPortfolioRepository
             .Where(s => upperTickerSymbols.Contains(s.TickerSymbol))
             .ToListAsync(cancellationToken);
 
-        portfolio.Stocks = stocks;
+        portfolio.AssignStocks(stocks);
 
         context.Portfolios.Add(portfolio);
         return await context.SaveChangesAsync(cancellationToken);
