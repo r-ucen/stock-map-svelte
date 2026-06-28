@@ -1,3 +1,3 @@
 namespace StockMapSvelte.Application.UseCases.AccountActionUseCases.Queries;
 
-public record GetAccountInfoQuery(string? UserId);
+public record GetAccountInfoQuery(string UserId);
