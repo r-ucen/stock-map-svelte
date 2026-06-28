@@ -245,6 +245,100 @@ public class PortfolioIntegrationTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
     }
     
+    // GET PORTFOLIOS BY USER ID
+
+    [Fact]
+    public async Task GetPortfoliosByUserId_WithNoPortfolios_ShouldReturnDefaultPortfolio()
+    {
+        // Act
+        var response = await _customerClient.GetAsync("/portfolios/me");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var result = await response.Content.ReadFromJsonAsync<List<PortfolioStockDto>>();
+        Assert.NotNull(result);
+        Assert.Single(result);
+        Assert.Equal("Default portfolio", result[0].PortfolioName);
+    }
+
+    [Fact]
+    public async Task GetPortfoliosByUserId_WithNoPortfolios_DefaultPortfolioShouldBeSetAsDefault()
+    {
+        // Act
+        var response = await _customerClient.GetAsync("/portfolios/me");
+        var result = await response.Content.ReadFromJsonAsync<List<PortfolioStockDto>>();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.True(result[0].IsDefault);
+    }
+
+    [Fact]
+    public async Task GetPortfoliosByUserId_WithExistingPortfolios_ShouldReturnAll()
+    {
+        // Arrange
+        await _factory.SeedStocksAsync("AAPL", "MSFT");
+        await _customerClient.PostAsJsonAsync("/portfolios", new CreatePortfolioRequest("First Portfolio", ["AAPL"]));
+        await _customerClient.PostAsJsonAsync("/portfolios", new CreatePortfolioRequest("Second Portfolio", ["MSFT"]));
+
+        // Act
+        var response = await _customerClient.GetAsync("/portfolios/me");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var result = await response.Content.ReadFromJsonAsync<List<PortfolioStockDto>>();
+        Assert.NotNull(result);
+        Assert.Equal(2, result.Count);
+    }
+
+    [Fact]
+    public async Task GetPortfoliosByUserId_FirstCreatedPortfolio_ShouldBeSetAsDefault()
+    {
+        // Arrange
+        await _factory.SeedStocksAsync("AAPL", "MSFT");
+        await _customerClient.PostAsJsonAsync("/portfolios", new CreatePortfolioRequest("First Portfolio", ["AAPL"]));
+        await _customerClient.PostAsJsonAsync("/portfolios", new CreatePortfolioRequest("Second Portfolio", ["MSFT"]));
+
+        // Act
+        var response = await _customerClient.GetAsync("/portfolios/me");
+        var result = await response.Content.ReadFromJsonAsync<List<PortfolioStockDto>>();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Single(result, p => p.IsDefault);
+    }
+
+    [Fact]
+    public async Task GetPortfoliosByUserId_ShouldOnlyReturnOwnPortfolios()
+    {
+        // Arrange
+        await _factory.SeedStocksAsync("AAPL");
+        await _managerClient.PostAsJsonAsync("/portfolios", new CreatePortfolioRequest("Manager Portfolio", ["AAPL"]));
+        await _customerClient.PostAsJsonAsync("/portfolios", new CreatePortfolioRequest("Customer Portfolio", ["AAPL"]));
+
+        // Act
+        var response = await _customerClient.GetAsync("/portfolios/me");
+        var result = await response.Content.ReadFromJsonAsync<List<PortfolioStockDto>>();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Single(result);
+        Assert.Equal("Customer Portfolio", result[0].PortfolioName);
+    }
+
+    [Fact]
+    public async Task GetPortfoliosByUserId_CalledTwiceWithNoPortfolios_ShouldNotCreateMultipleDefaultPortfolios()
+    {
+        // Act
+        await _customerClient.GetAsync("/portfolios/me");
+        var response = await _customerClient.GetAsync("/portfolios/me");
+        var result = await response.Content.ReadFromJsonAsync<List<PortfolioStockDto>>();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Single(result);
+    }
+    
     public async Task InitializeAsync()
     {
         await _factory.ResetDatabaseAsync();
