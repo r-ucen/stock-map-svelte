@@ -135,6 +135,116 @@ public class PortfolioIntegrationTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
     }
     
+    // EDIT
+
+    [Fact]
+    public async Task EditPortfolio_WithValidData_ShouldReturnOk()
+    {
+        // Arrange
+        await _factory.SeedStocksAsync("AAPL", "MSFT");
+        var createResponse = await _customerClient.PostAsJsonAsync("/portfolios", new CreatePortfolioRequest("Original Name", ["AAPL"]));
+        var createdPortfolio = await createResponse.Content.ReadFromJsonAsync<PortfolioStockDto>();
+        Assert.NotNull(createdPortfolio);
+
+        var editRequest = new EditPortfolioRequest("Updated Name", ["AAPL", "MSFT"]);
+
+        // Act
+        var response = await _customerClient.PutAsJsonAsync($"/portfolios/{createdPortfolio.PortfolioId}", editRequest);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var result = await response.Content.ReadFromJsonAsync<PortfolioStockDto>();
+        Assert.NotNull(result);
+        Assert.Equal("Updated Name", result.PortfolioName);
+        Assert.Contains("MSFT", result.TickerSymbols);
+    }
+
+    [Fact]
+    public async Task EditPortfolio_WithoutName_ShouldReturnBadRequest()
+    {
+        // Arrange
+        await _factory.SeedStocksAsync("AAPL");
+        var createResponse = await _customerClient.PostAsJsonAsync("/portfolios", new CreatePortfolioRequest("Original Name", ["AAPL"]));
+        var createdPortfolio = await createResponse.Content.ReadFromJsonAsync<PortfolioStockDto>();
+        Assert.NotNull(createdPortfolio);
+
+        var editRequest = new EditPortfolioRequest("", ["AAPL"]);
+
+        // Act
+        var response = await _customerClient.PutAsJsonAsync($"/portfolios/{createdPortfolio.PortfolioId}", editRequest);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task EditPortfolio_WithInvalidId_ShouldReturnNotFound()
+    {
+        // Arrange
+        var editRequest = new EditPortfolioRequest("Updated Name", []);
+
+        // Act
+        var response = await _customerClient.PutAsJsonAsync($"/portfolios/{Guid.NewGuid()}", editRequest);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task EditPortfolio_WithDuplicateName_ShouldReturnConflict()
+    {
+        // Arrange
+        await _factory.SeedStocksAsync("AAPL");
+        await _customerClient.PostAsJsonAsync("/portfolios", new CreatePortfolioRequest("First Portfolio", ["AAPL"]));
+        var createResponse = await _customerClient.PostAsJsonAsync("/portfolios", new CreatePortfolioRequest("Second Portfolio", ["AAPL"]));
+        var secondPortfolio = await createResponse.Content.ReadFromJsonAsync<PortfolioStockDto>();
+        Assert.NotNull(secondPortfolio);
+
+        var editRequest = new EditPortfolioRequest("First Portfolio", ["AAPL"]);
+
+        // Act
+        var response = await _customerClient.PutAsJsonAsync($"/portfolios/{secondPortfolio.PortfolioId}", editRequest);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task EditPortfolio_WithUnchangedData_ShouldReturnOk()
+    {
+        // Arrange
+        await _factory.SeedStocksAsync("AAPL");
+        var createResponse = await _customerClient.PostAsJsonAsync("/portfolios", new CreatePortfolioRequest("Original Name", ["AAPL"]));
+        var createdPortfolio = await createResponse.Content.ReadFromJsonAsync<PortfolioStockDto>();
+        Assert.NotNull(createdPortfolio);
+
+        var editRequest = new EditPortfolioRequest("Original Name", ["AAPL"]);
+
+        // Act
+        var response = await _customerClient.PutAsJsonAsync($"/portfolios/{createdPortfolio.PortfolioId}", editRequest);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task EditPortfolio_WithOtherUsersPortfolioId_ShouldReturnForbidden()
+    {
+        // Arrange
+        await _factory.SeedStocksAsync("AAPL", "MSFT");
+        var createResponse = await _managerClient.PostAsJsonAsync("/portfolios", new CreatePortfolioRequest("Manager Portfolio", ["AAPL"]));
+        var managerPortfolio = await createResponse.Content.ReadFromJsonAsync<PortfolioStockDto>();
+        Assert.NotNull(managerPortfolio);
+
+        var editRequest = new EditPortfolioRequest("Other User Portfolio Name", ["MSFT"]);
+
+        // Act
+        var response = await _customerClient.PutAsJsonAsync($"/portfolios/{managerPortfolio.PortfolioId}", editRequest);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
+    
     public async Task InitializeAsync()
     {
         await _factory.ResetDatabaseAsync();
