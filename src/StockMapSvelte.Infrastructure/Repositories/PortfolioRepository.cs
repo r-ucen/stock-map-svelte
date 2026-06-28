@@ -161,7 +161,7 @@ public class PortfolioRepository : IPortfolioRepository
             .AnyAsync(p => p.UserId == userId &&  p.Id != portfolioId && p.Name == portfolioName, cancellationToken);
     }
 
-    public async Task<Portfolio> EditPortfolioAsync(Guid portfolioId, string portfolioName, IList<string> tickerSymbols, CancellationToken cancellationToken)
+    public async Task<int> EditPortfolioAsync(Guid portfolioId, string portfolioName, IList<string> tickerSymbols, CancellationToken cancellationToken)
     {
         await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
         
@@ -169,43 +169,22 @@ public class PortfolioRepository : IPortfolioRepository
             .Include(p => p.Stocks)
             .FirstOrDefaultAsync(p => p.Id == portfolioId, cancellationToken);
 
-        if (portfolioToEdit == null)
-        {
-            throw new InvalidOperationException($"Portfolio with id: {portfolioId} was not found");
-        }
+        if (portfolioToEdit == null) { return 0; }
         
         var tickers = tickerSymbols
             .Where(ts => !string.IsNullOrWhiteSpace(ts))
             .Select(ts => ts.Trim())
             .ToList();
         
-        var uninitializedStocksInRequest = await context.Stocks
-            .Where(s => tickers.Contains(s.TickerSymbol))
-            .Where(s => s.IsInitialized == false)
-            .Select(s => s.TickerSymbol)
-            .ToListAsync(cancellationToken);
-
-        if (uninitializedStocksInRequest.Count != 0)
-        {
-            throw new StocksNotInitializedException(uninitializedStocksInRequest);
-        }
-        
         var stocks = await context.Stocks
             .Where(s => tickers.Contains(s.TickerSymbol))
             .ToListAsync(cancellationToken);
         
-        portfolioToEdit.Stocks.Clear();
-        foreach (var s in stocks)
-        {
-            portfolioToEdit.Stocks.Add(s);
-        }
-        
-        portfolioToEdit.Name = portfolioName;
+        portfolioToEdit.UpdateStocks(stocks);
+        portfolioToEdit.UpdateName(portfolioName);
         
         context.Portfolios.Update(portfolioToEdit);
-        var result = await context.SaveChangesAsync(cancellationToken);
-        
-        return result <= 0 ? throw new Exception("Failed to update portfolio.") : portfolioToEdit;
+        return await context.SaveChangesAsync(cancellationToken);
     }
     
     public async Task<int> DeletePortfolioAsync(Guid portfolioId, CancellationToken cancellationToken)
@@ -224,6 +203,7 @@ public class PortfolioRepository : IPortfolioRepository
         await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
         
         return await context.Portfolios
+            .Include(p => p.Stocks)
             .FirstOrDefaultAsync(p => p.Id == portfolioId, cancellationToken);
     }
     

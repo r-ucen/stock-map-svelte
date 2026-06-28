@@ -2,29 +2,28 @@ using StockMapSvelte.Application.Abstractions;
 using StockMapSvelte.Application.Abstractions.Repositories;
 using StockMapSvelte.Application.DTOs;
 using StockMapSvelte.Application.Exceptions.Portfolio;
+using StockMapSvelte.Application.Exceptions.Stock;
 using StockMapSvelte.Application.UseCases.PortfolioUseCases.Commands;
-using StockMapSvelte.Domain.Exceptions.Portfolio;
-
 namespace StockMapSvelte.Application.UseCases.PortfolioUseCases.Handlers;
 
 public class EditPortfolioHandler
 {
     private readonly IPortfolioRepository _portfolioRepository;
+    private readonly IStockRepository _stockRepository;
     private readonly IUserContext _userContext;
     
-    public EditPortfolioHandler(IUserContext userContext, IPortfolioRepository portfolioRepository)
+    public EditPortfolioHandler(
+        IUserContext userContext,
+        IPortfolioRepository portfolioRepository,
+        IStockRepository stockRepository)
     {
         _userContext = userContext;
         _portfolioRepository = portfolioRepository;
+        _stockRepository = stockRepository;
     }
     
     public async Task<PortfolioStockDto> Handle(EditPortfolioCommand cmd, CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(cmd.PortfolioName))
-        {
-            throw new PortfolioNameMissingException();
-        }
-        
         var currentUserId = await _userContext.GetCurrentUserIdAsync();
 
         var existing = await _portfolioRepository.GetPortfolioByIdAsync(cmd.PortfolioId, cancellationToken);
@@ -32,15 +31,12 @@ public class EditPortfolioHandler
         {
             throw new PortfolioNotFoundException("Portfolio not found.");
         }
+            
+        existing.ValidateOwnership(currentUserId);
         
-        if (cmd.PortfolioName == existing.Name && cmd.TickerSymbols.SequenceEqual(existing.Stocks.Select(s => s.TickerSymbol)))
+        if (!existing.HasChanges(cmd.PortfolioName, cmd.TickerSymbols))
         {
             throw new PortfolioUnchangedException("Portfolio name and stocks are unchanged.");
-        }
-            
-        if (existing.UserId != currentUserId)
-        {
-            throw new UnauthorizedAccessException($"User {currentUserId} does not have permission to edit portfolio with id {cmd.PortfolioId}.");
         }
         
         var nameExists = await _portfolioRepository.PortfolioNameExistsAsync(currentUserId, cmd.PortfolioId, cmd.PortfolioName, cancellationToken);
@@ -48,17 +44,25 @@ public class EditPortfolioHandler
         {
             throw new PortfolioNameAlreadyExistsException(cmd.PortfolioName);
         }
-
-        var result = await _portfolioRepository.EditPortfolioAsync(cmd.PortfolioId, cmd.PortfolioName.Trim(), cmd.TickerSymbols, cancellationToken);
         
-        var portfolioDto = new PortfolioStockDto
+        var uninitializedStocks = await _stockRepository.GetUninitializedStocks(cmd.TickerSymbols, cancellationToken);
+        if (uninitializedStocks.Count != 0)
         {
-            PortfolioId = result.Id,
-            UserId = result.UserId,
-            PortfolioName = result.Name ?? "",
-            TickerSymbols = result.Stocks.Select(s => s.TickerSymbol).ToList() ?? []
-        };
+            throw new StocksNotInitializedException(uninitializedStocks);
+        }
+
+        var result = await _portfolioRepository.EditPortfolioAsync(cmd.PortfolioId, cmd.PortfolioName, cmd.TickerSymbols, cancellationToken);
+        if (result <= 0)
+        {
+            throw new PortfolioEditFailedException("Failed to edit portfolio.");
+        }
         
-        return portfolioDto;
+        return new PortfolioStockDto
+        {
+            PortfolioId = existing.Id,
+            UserId = existing.UserId,
+            PortfolioName = cmd.PortfolioName.Trim(),
+            TickerSymbols = cmd.TickerSymbols
+        };
     }
 }
