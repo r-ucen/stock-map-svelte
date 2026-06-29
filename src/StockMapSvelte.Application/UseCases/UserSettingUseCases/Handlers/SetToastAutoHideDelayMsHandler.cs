@@ -18,7 +18,7 @@ public class SetToastAutoHideDelayMsHandler
 
     public async Task Handle(SetToastAutoHideDelayMsCommand cmd)
     {
-        if (cmd.DelayMs <= 500 || cmd.DelayMs > 60000)
+        if (cmd.DelayMs is <= 500 or > 60000)
         {
             throw new InvalidDelayException(cmd.DelayMs);
         }
@@ -26,9 +26,6 @@ public class SetToastAutoHideDelayMsHandler
         var currentUserId = await _userContext.GetCurrentUserIdAsync();
         
         var result = await _userSettingRepository.SetToastAutoHideDelayMsAsync(currentUserId, cmd.DelayMs);
-        if (result < 0)
-        {
-            throw new Exception("Failed to set toast auto hide delay ms");
-        }
+        if (result < 0) { throw new Exception("Failed to set toast auto hide delay ms"); }
     }
 }
