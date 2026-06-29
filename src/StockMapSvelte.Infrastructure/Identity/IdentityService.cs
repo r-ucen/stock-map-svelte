@@ -228,6 +228,13 @@ public class IdentityService : IIdentityService
         
         return await _userManager.IsEmailConfirmedAsync(user);
     }
+    
+    public async Task<IList<string>> GetUserRolesAsync(string userId)
+    {
+        var user = await GetUserById(userId);
+        if (user == null) return new List<string>();
+        return await _userManager.GetRolesAsync(user);
+    }
 
     public async Task<bool> UpdateUserRoles(string userId, string[] roles)
     {
@@ -249,17 +256,8 @@ public class IdentityService : IIdentityService
         
         if (rolesToRemove.Length != 0)
         {
-            // can be moved into the handler in the future (last admin check)
-            if (rolesToRemove.Contains("Admin") && await GetUserCountInRoleAsync("Admin") <= 1)
-            {
-                throw new UnableToSetRoleException("Cannot remove the last admin");
-            }
-            
             var removeResult = await _userManager.RemoveFromRolesAsync(user, rolesToRemove);
-            if (!removeResult.Succeeded)
-            {
-                return false;
-            }
+            if (!removeResult.Succeeded) { return false; }
         }
 
         if (rolesToAdd.Length != 0)
