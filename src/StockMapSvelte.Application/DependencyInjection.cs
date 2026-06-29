@@ -39,7 +39,6 @@ public static class DependencyInjection
         services.AddScoped<GetPortfoliosByUserIdHandler>();
         services.AddScoped<GetAllPortfoliosHandler>();
         services.AddScoped<GetTreemapDataHandler>();
-        services.AddScoped<GetAllStocksHandler>();
         services.AddScoped<GetAllStocksQueriedHandler>();
         services.AddScoped<CreateStockHandler>();
         services.AddScoped<CreateStocksHandler>();

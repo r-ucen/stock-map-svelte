@@ -23,18 +23,11 @@ public class UserSettingRepository : IUserSettingRepository
 
         if (userSetting == null)
         {
-            userSetting = new UserSetting
-            {
-                UserId = userId,
-                DefaultPortfolioId = portfolioId
-            };
-
-            context.UserSettings.Add(userSetting);
+            userSetting = UserSetting.CreateForUser(userId);
+            await context.UserSettings.AddAsync(userSetting);
         }
-        else
-        {
-            userSetting.DefaultPortfolioId = portfolioId;
-        }
+        
+        userSetting.SetDefaultPortfolio(portfolioId);
 
         return await context.SaveChangesAsync();
     }
@@ -59,18 +52,11 @@ public class UserSettingRepository : IUserSettingRepository
 
         if (userSetting == null)
         {
-            userSetting = new UserSetting
-            {
-                UserId = userId,
-                ToastAutoHide = autoHide
-            };
-
+            userSetting = UserSetting.CreateForUser(userId);
             context.UserSettings.Add(userSetting);
         }
-        else
-        {
-            userSetting.ToastAutoHide = autoHide;
-        }
+        
+        userSetting.SetToastAutoHide(autoHide);
 
         return await context.SaveChangesAsync();
     }
@@ -106,18 +92,11 @@ public class UserSettingRepository : IUserSettingRepository
 
         if (userSetting == null)
         {
-            userSetting = new UserSetting
-            {
-                UserId = userId,
-                ToastAutoHideDelayMs = delayMs
-            };
-
+            userSetting = UserSetting.CreateForUser(userId);
             context.UserSettings.Add(userSetting);
         }
-        else
-        {
-            userSetting.ToastAutoHideDelayMs = delayMs;
-        }
+        
+        userSetting.SetToastAutoHideDelay(delayMs);
 
         return await context.SaveChangesAsync();
     }

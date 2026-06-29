@@ -6,7 +6,7 @@ namespace StockMapSvelte.Application.Abstractions.Repositories;
 
 public interface IStockRepository
 {
-    Task<IReadOnlyList<StockDto>?> GetAllStocksAsync(CancellationToken cancellationToken);
+    public Task<IList<string>> GetUninitializedStocks(IList<string> tickerSymbols, CancellationToken cancellationToken);
     Task<PagedResponse<StockDto>> GetAllStocksAsyncQueried(QueryFilter filter, CancellationToken cancellationToken);
     Task<bool> StockExistsAsync(string ticker, CancellationToken cancellationToken);
     Task<bool> StockExistsAsync(Guid stockId, CancellationToken cancellationToken);

@@ -8,52 +8,39 @@ namespace StockMapSvelte.Application.UseCases.StockUseCases.Handlers;
 public class EditStockHandler
 {
     private readonly IStockRepository _stockRepository;
-    private readonly IStockProfileRepository _stockProfileRepository;
-    private readonly IUserContext _userContext;
     private readonly IStockClient _stockClient;
     
     public EditStockHandler(
         IStockRepository stockRepository,
-        IStockProfileRepository stockProfileRepository,
-        IUserContext userContext,
         IStockClient stockClient)
     {
         _stockRepository = stockRepository;
-        _stockProfileRepository = stockProfileRepository;
-        _userContext = userContext;
         _stockClient = stockClient;
     }
     
     public async Task Handle(EditStockCommand cmd, CancellationToken cancellationToken)
     {
-        if (await _stockRepository.StockExistsAsync(cmd.TickerSymbol, cancellationToken))
-        {
-            throw new TickerSymbolAlreadyExists($"Stock with ticker symbol '{cmd.TickerSymbol}' already exists.");
-        }
-        
-        if (!await _stockClient.TickerExists(cmd.TickerSymbol))
-        {
-            throw new InvalidTickerSymbolException($"This ticker symbol: '{cmd.TickerSymbol}' is not valid.");
-        }
-        
         if (!await _stockRepository.StockExistsAsync(cmd.Id, cancellationToken))
         {
             throw new StockNotFoundException($"Stock with id: '{cmd.Id}' was not found.", cmd.Id.ToString());
         }
         
-        var editStockResult = await _stockRepository.EditStockAsync(cmd.Id, cmd.TickerSymbol.Trim().ToUpperInvariant(), cancellationToken);
+        var normalizedTicker = cmd.TickerSymbol.Trim().ToUpperInvariant();
         
+        if (await _stockRepository.StockExistsAsync(normalizedTicker, cancellationToken))
+        {
+            throw new TickerSymbolAlreadyExists($"Stock with ticker symbol '{normalizedTicker}' already exists.");
+        }
+        
+        if (!await _stockClient.TickerExists(normalizedTicker))
+        {
+            throw new InvalidTickerSymbolException($"This ticker symbol: '{normalizedTicker}' is not valid.");
+        }
+        
+        var editStockResult = await _stockRepository.EditStockAsync(cmd.Id, normalizedTicker, cancellationToken);
         if (editStockResult <= 0)
         {
             throw new Exception("Failed to edit the stock.");
-        }
-        
-        var stockProfiles = await _stockClient.GetStockProfilesAsync(cancellationToken);
-
-        var saveStockProfilesResult = await _stockProfileRepository.SaveStockProfilesAsync(stockProfiles, cancellationToken);
-        if (saveStockProfilesResult <= 0)
-        {
-            throw new CreateStockFailException("Failed to edit the stock.");
         }
     }
 }

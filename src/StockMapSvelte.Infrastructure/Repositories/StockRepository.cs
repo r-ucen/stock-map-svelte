@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using StockMapSvelte.Application.Abstractions.Repositories;
 using StockMapSvelte.Application.DTOs;
 using StockMapSvelte.Application.DTOs.Common;
-using StockMapSvelte.Application.Exceptions.Stock;
 using StockMapSvelte.Domain.Entities;
 using StockMapSvelte.Infrastructure.Database;
 using StockMapSvelte.Infrastructure.Extensions;
@@ -49,19 +48,9 @@ public class StockRepository : IStockRepository
     {
         await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
 
-        if (stockId == Guid.Empty)
-        {
-            throw new InvalidStockIdException("Invalid stock id.", stockId);
-        }
-
-        var stock = await context.Stocks.FindAsync([stockId], cancellationToken);
-        if (stock is null)
-        {
-            throw new InvalidOperationException($"Stock with id {stockId} not found");
-        }
-
-        context.Stocks.Remove(stock);
-        return await context.SaveChangesAsync(cancellationToken);
+        return await context.Stocks
+            .Where(s => s.Id == stockId)
+            .ExecuteDeleteAsync(cancellationToken);
     }
 
     public async Task<int> EditStockAsync(Guid stockId, string ticker, CancellationToken cancellationToken)
@@ -74,22 +63,9 @@ public class StockRepository : IStockRepository
             throw new InvalidOperationException($"Stock with id: '{stockId}' was not found.");
         }
         
-        existingStock.TickerSymbol = ticker;
+        existingStock.Update(ticker);
 
         return await context.SaveChangesAsync(cancellationToken);
-    }
-
-    public async Task<IReadOnlyList<StockDto>?> GetAllStocksAsync(CancellationToken cancellationToken)
-    {
-        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
-        
-        var stocks = await context.Stocks.AsNoTracking().OrderBy(s => s.TickerSymbol).ToListAsync(cancellationToken);
-        
-        return stocks.Select(s => new StockDto
-        (
-            s.Id,
-            s.TickerSymbol
-        )).ToList();
     }
     
     public async Task<PagedResponse<StockDto>> GetAllStocksAsyncQueried(QueryFilter filter, CancellationToken cancellationToken)
@@ -180,5 +156,16 @@ public class StockRepository : IStockRepository
             .ExecuteUpdateAsync(x => x.SetProperty(
                 s => s.IsInitialized, true
                 ), cancellationToken);
+    }
+    
+    public async Task<IList<string>> GetUninitializedStocks(IList<string> tickerSymbols, CancellationToken cancellationToken)
+    {
+        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        
+        return await context.Stocks
+            .Where(s => tickerSymbols.Contains(s.TickerSymbol))
+            .Where(s => s.IsInitialized == false)
+            .Select(s => s.TickerSymbol)
+            .ToListAsync(cancellationToken);
     }
 }

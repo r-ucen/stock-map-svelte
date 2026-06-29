@@ -7,7 +7,6 @@ namespace StockMapSvelte.Application.Abstractions.Facades;
 
 public interface IStockFacade
 {
-    Task<IReadOnlyList<StockDto>> GetAllStocksAsync(CancellationToken cancellationToken);
     Task<PagedResponse<StockDto>> GetAllStocksQueriedAsync(QueryFilter filter, CancellationToken cancellationToken);
     Task<StockDto> GetStockViewModelByIdAsync(Guid stockId, CancellationToken cancellationToken);
     Task<StockDto> CreateStockAsync(CreateStockCommand cmd, CancellationToken cancellationToken);

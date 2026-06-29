@@ -21,9 +21,6 @@ public class SetToastAutoHideValueHandler
 
         var result = await _userSettingRepository.SetToastAutoHideValueAsync(currentUserId, cmd.Value);
         
-        if (result < 0)
-        {
-            throw new Exception($"Failed to set toast auto-hide value: {result}");
-        }
+        if (result < 0) { throw new Exception($"Failed to set toast auto-hide value: {result}"); }
     }
 }

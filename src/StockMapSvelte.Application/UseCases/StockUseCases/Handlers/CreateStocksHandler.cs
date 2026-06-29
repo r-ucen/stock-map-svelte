@@ -41,48 +41,37 @@ public class CreateStocksHandler
         
         foreach (var tickerSymbol in tickers)
         {
-            if (string.IsNullOrWhiteSpace(tickerSymbol))
+            try
             {
-                continue;
-            }
-            
-            var ticker = tickerSymbol.Trim().ToUpperInvariant();
-            try 
-            {
-                if (!await _stockClient.TickerExists(ticker))
+                if (!await _stockClient.TickerExists(tickerSymbol))
                 {
-                    failed.Add(new StockCreationFailure(ticker, "Not a valid ticker symbol"));
+                    failed.Add(new StockCreationFailure(tickerSymbol, "Not a valid ticker symbol"));
                     continue;
                 }
+
+                var exists = await _stockRepository.StockExistsAsync(tickerSymbol, cancellationToken);
+                if (exists)
+                {
+                    failed.Add(new StockCreationFailure(tickerSymbol, "Already exists"));
+                    continue;
+                }
+
+                var stock = Stock.Create(tickerSymbol);
+
+                var createStockResult = await _stockRepository.CreateStockAsync(stock);
+                if (createStockResult <= 0)
+                {
+                    failed.Add(new StockCreationFailure(tickerSymbol, "Unknown error"));
+                    continue;
+                }
+
+                created.Add(stock.TickerSymbol);
             }
             catch (ArgumentException ex)
             {
-                failed.Add(new StockCreationFailure(ticker, $"Malformed symbol format"));
+                failed.Add(new StockCreationFailure(tickerSymbol, $"Malformed symbol format"));
                 _logger.LogWarning(ex, "Malformed symbol format: {msg}",  ex.Message);
-                continue;
             }
-            
-            var exists = await _stockRepository.StockExistsAsync(ticker, cancellationToken);
-            if (exists)
-            {
-                failed.Add(new StockCreationFailure(ticker, "Already exists"));
-                continue;
-            }
-            
-            var entity = new Stock
-            {
-                TickerSymbol = ticker,
-                Id = Guid.NewGuid()
-            };
-        
-            var createStockResult = await _stockRepository.CreateStockAsync(entity);
-            if (createStockResult <= 0)
-            {
-                failed.Add(new StockCreationFailure(ticker, "Unknown error"));
-                continue;
-            }
-            
-            created.Add(ticker);
         }
         
         return new CreateStocksResponse(created.ToArray(), failed.ToArray());

@@ -15,21 +15,9 @@ public class SetPasswordHandler
     
     public async Task Handle(SetPasswordCommand cmd)
     {
-        if (string.IsNullOrEmpty(cmd.UserId))
-        {
-            throw new ArgumentException("User ID must be provided to set password.");
-        }
-        
-        if (string.IsNullOrWhiteSpace(cmd.NewPassword))
-        {
-            throw new ArgumentException("New password must be provided.");
-        }
+        if (string.IsNullOrWhiteSpace(cmd.NewPassword)) { throw new ArgumentException("New password must be provided."); }
         
         var result = await _identityService.SetAccountPasswordAsync(cmd.UserId, cmd.NewPassword);
-
-        if (!result)
-        {
-            throw new SetPasswordFailedException();
-        }
+        if (!result) { throw new SetPasswordFailedException(); }
     }
 }
