@@ -99,18 +99,11 @@ public class UserSettingRepository : IUserSettingRepository
 
         if (userSetting == null)
         {
-            userSetting = new UserSetting
-            {
-                UserId = userId,
-                ToastAutoHideDelayMs = delayMs
-            };
-
+            userSetting = UserSetting.CreateForUser(userId);
             context.UserSettings.Add(userSetting);
         }
-        else
-        {
-            userSetting.ToastAutoHideDelayMs = delayMs;
-        }
+        
+        userSetting.SetToastAutoHideDelay(delayMs);
 
         return await context.SaveChangesAsync();
     }

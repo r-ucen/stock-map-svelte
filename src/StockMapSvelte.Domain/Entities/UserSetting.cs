@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using StockMapSvelte.Domain.Exceptions.UserSetting;
 
 namespace StockMapSvelte.Domain.Entities;
 
@@ -37,5 +38,13 @@ public class UserSetting
     public void SetDefaultPortfolio(Guid? portfolioId)
     {
         DefaultPortfolioId = portfolioId;
+    }
+
+    public static void ValidateDelayRange(int delayMs)
+    {
+        if (delayMs is <= 500 or > 60000)
+        {
+            throw new InvalidDelayException(delayMs);
+        }
     }
 }
