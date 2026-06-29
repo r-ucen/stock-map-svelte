@@ -20,6 +20,11 @@ public class DeleteUserHandler
     
     public async Task Handle(DeleteUserCommand cmd, CancellationToken cancellationToken)
     {
+        if (!await _identityService.UserExistsAsync(cmd.UserId))
+        {
+            throw new DeleteUserFailException($"User with id {cmd.UserId} not found.");
+        }
+        
         // add check that prevents deleting the last admin in case delete permissions change in the future
         if (await _identityService.IsUserTheLastAdminAsync(cmd.UserId))
         {
