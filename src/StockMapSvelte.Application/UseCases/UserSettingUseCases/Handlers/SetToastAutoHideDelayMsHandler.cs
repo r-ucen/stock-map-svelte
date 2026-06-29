@@ -2,6 +2,7 @@ using StockMapSvelte.Application.Abstractions;
 using StockMapSvelte.Application.Abstractions.Repositories;
 using StockMapSvelte.Application.Exceptions.UserSetting;
 using StockMapSvelte.Application.UseCases.UserSettingUseCases.Commands;
+using StockMapSvelte.Domain.Entities;
 
 namespace StockMapSvelte.Application.UseCases.UserSettingUseCases.Handlers;
 
@@ -18,10 +19,7 @@ public class SetToastAutoHideDelayMsHandler
 
     public async Task Handle(SetToastAutoHideDelayMsCommand cmd)
     {
-        if (cmd.DelayMs is <= 500 or > 60000)
-        {
-            throw new InvalidDelayException(cmd.DelayMs);
-        }
+        UserSetting.ValidateDelayRange(cmd.DelayMs);
         
         var currentUserId = await _userContext.GetCurrentUserIdAsync();
         

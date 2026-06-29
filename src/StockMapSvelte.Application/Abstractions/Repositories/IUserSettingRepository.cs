@@ -1,3 +1,5 @@
+using StockMapSvelte.Domain.Entities;
+
 namespace StockMapSvelte.Application.Abstractions.Repositories;
 
 public interface IUserSettingRepository
