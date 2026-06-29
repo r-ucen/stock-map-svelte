@@ -52,18 +52,11 @@ public class UserSettingRepository : IUserSettingRepository
 
         if (userSetting == null)
         {
-            userSetting = new UserSetting
-            {
-                UserId = userId,
-                ToastAutoHide = autoHide
-            };
-
+            userSetting = UserSetting.CreateForUser(userId);
             context.UserSettings.Add(userSetting);
         }
-        else
-        {
-            userSetting.ToastAutoHide = autoHide;
-        }
+        
+        userSetting.SetToastAutoHide(autoHide);
 
         return await context.SaveChangesAsync();
     }
