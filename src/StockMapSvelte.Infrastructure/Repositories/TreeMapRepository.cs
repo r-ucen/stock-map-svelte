@@ -15,24 +15,16 @@ public class TreeMapRepository : ITreeMapRepository
         _contextFactory = contextFactory;
     }
     
-    public async Task<TreemapDataDto?> GetTreemapDataViewModelByIdAsync(Guid portfolioId, CancellationToken cancellationToken)
+    public async Task<TreemapDataDto> GetTreemapDataViewModelByIdAsync(Guid portfolioId, CancellationToken cancellationToken)
         {
             await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
-            
-            if (portfolioId == Guid.Empty)
-            {
-                throw new ArgumentException("Portfolio ID cannot be empty.", nameof(portfolioId));
-            }
             
             var portfolio = await context.Portfolios
                 .Include(p => p.Stocks.Where(s => s.IsInitialized))
                     .ThenInclude(s => s.StockProfile)
                 .FirstOrDefaultAsync(p => p.Id == portfolioId, cancellationToken);
 
-            if (portfolio == null)
-            {
-                throw new PortfolioNotFoundException("Portfolio with the specified ID was not found.");
-            }
+            if (portfolio == null) { throw new PortfolioNotFoundException("Portfolio with the specified ID was not found."); }
             
             var nodes = portfolio.Stocks
                 .Select(s => new TreemapNodeDto
@@ -86,12 +78,10 @@ public class TreeMapRepository : ITreeMapRepository
                 })
                 .ToList();
             
-            var data = new TreemapDataDto
+            return new TreemapDataDto
             {
                 Sectors = sectors,
                 TotalMarketCap = sectors.Sum(s => s.TotalMarketCap)
             };
-
-            return data;
         }
 }

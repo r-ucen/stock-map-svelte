@@ -24,18 +24,12 @@ public class GetTreemapDataHandler
     public async Task<TreemapDataDto> Handle(Guid portfolioId, CancellationToken cancellationToken)
     {
         var currentUserId = await _userContext.GetCurrentUserIdAsync();
-        var portfolio = await _portfolioRepository.GetPortfolioByIdAsync(portfolioId, cancellationToken);
-            
-        if (portfolio == null)
-        {
-            throw new PortfolioNotFoundException("Portfolio not found.");
-        }
-            
-        if (portfolio.UserId != currentUserId)
-        {
-            throw new UnauthorizedAccessException($"You do not have permission to view portfolio with id {portfolioId}.");
-        }
         
-        return await _treeMapRepository.GetTreemapDataViewModelByIdAsync(portfolioId, cancellationToken) ?? new TreemapDataDto();
+        var portfolio = await _portfolioRepository.GetPortfolioByIdAsync(portfolioId, cancellationToken);
+        if (portfolio == null) { throw new PortfolioNotFoundException("Portfolio not found."); }
+            
+        portfolio.ValidateOwnership(currentUserId);
+
+        return await _treeMapRepository.GetTreemapDataViewModelByIdAsync(portfolioId, cancellationToken);
     }
 }
