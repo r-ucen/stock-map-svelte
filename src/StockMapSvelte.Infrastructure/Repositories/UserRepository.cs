@@ -81,20 +81,14 @@ public class UserRepository : IUserRepository
     public async Task<UserDto> GetByIdAsync(string id, CancellationToken cancellationToken)
     {
         var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+        if (user == null) { return new UserDto(string.Empty, string.Empty, string.Empty, []); }
 
-        if (user == null)
-        {
-            return new UserDto(string.Empty, string.Empty, string.Empty, []);
-        }
-
-        var vm = new UserDto
+        return new UserDto
         (
             user.Id,
             user.UserName ?? string.Empty,
             user.Email ?? string.Empty,
             await _userManager.GetRolesAsync(user)
         );
-
-        return vm;
     }
 }

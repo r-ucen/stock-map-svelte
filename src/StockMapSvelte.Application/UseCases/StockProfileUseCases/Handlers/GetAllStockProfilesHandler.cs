@@ -1,4 +1,3 @@
-using StockMapSvelte.Application.Abstractions;
 using StockMapSvelte.Application.Abstractions.Repositories;
 using StockMapSvelte.Application.DTOs;
 using StockMapSvelte.Application.DTOs.Common;
@@ -19,5 +18,4 @@ public class GetAllStockProfilesHandler
     {
         return await _stockProfileRepository.GetAllStockProfilesAsync(filter, cancellationToken);
     }
-        
 }

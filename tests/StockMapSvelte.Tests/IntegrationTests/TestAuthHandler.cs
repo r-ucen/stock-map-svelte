@@ -10,6 +10,7 @@ public class TestAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions
 {
     public const string AuthenticationScheme = "Test";
     public const string RoleHeaderName = "X-Test-Role";
+    public const string UserIdHeaderName = "X-Test-UserId";
     
     public TestAuthHandler(IOptionsMonitor<AuthenticationSchemeOptions> options, ILoggerFactory logger, UrlEncoder encoder) : base(options, logger, encoder) { }
 
@@ -24,9 +25,13 @@ public class TestAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions
                 return Task.FromResult(AuthenticateResult.Fail("Anonymous client"));
             }
             
+            var userId = Request.Headers.TryGetValue(UserIdHeaderName, out var userIdValues)
+                ? userIdValues.ToString()
+                : $"test-user-{requestedRole.ToLower()}";
+            
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()),
+                new Claim(ClaimTypes.NameIdentifier, userId),
                 new Claim(ClaimTypes.Role, requestedRole)
             };
 

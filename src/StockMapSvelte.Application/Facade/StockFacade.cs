@@ -9,7 +9,6 @@ namespace StockMapSvelte.Application.Facade;
 
 public class StockFacade : IStockFacade
 {
-    private readonly GetAllStocksHandler _getAllStocksHandler;
     private readonly GetAllStocksQueriedHandler _getAllStocksQueriedHandler;
     private readonly CreateStockHandler _createStockHandler;
     private readonly CreateStocksHandler _createStocksHandler;
@@ -19,7 +18,6 @@ public class StockFacade : IStockFacade
     private readonly GetPossibleToAddStocksHandler _getPossibleToAddStocksHandler;
     
     public StockFacade(
-        GetAllStocksHandler getAllStocksHandler,
         GetAllStocksQueriedHandler getAllStocksQueriedHandler,
         CreateStockHandler createStockHandler,
         CreateStocksHandler createStocksHandler,
@@ -28,7 +26,6 @@ public class StockFacade : IStockFacade
         GetStockHandler getStockHandler,
         GetPossibleToAddStocksHandler getPossibleToAddStocksHandler)
     {
-        _getAllStocksHandler = getAllStocksHandler;
         _getAllStocksQueriedHandler = getAllStocksQueriedHandler;
         _createStockHandler = createStockHandler;
         _createStocksHandler = createStocksHandler;
@@ -36,11 +33,6 @@ public class StockFacade : IStockFacade
         _editStockHandler = editStockHandler;
         _getStockHandler = getStockHandler;
         _getPossibleToAddStocksHandler = getPossibleToAddStocksHandler;
-    }
-    
-    public async Task<IReadOnlyList<StockDto>> GetAllStocksAsync(CancellationToken cancellationToken)
-    {
-        return await _getAllStocksHandler.Handle(cancellationToken);
     }
     
     public async Task<PagedResponse<StockDto>> GetAllStocksQueriedAsync(QueryFilter filter, CancellationToken cancellationToken)

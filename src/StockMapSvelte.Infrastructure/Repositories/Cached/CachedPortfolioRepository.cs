@@ -25,7 +25,7 @@ public class CachedPortfolioRepository : IPortfolioRepository
     public Task<int> CreatePortfolioAsync(Portfolio portfolio, IList<string> tickerSymbols, CancellationToken cancellationToken)
     => _decorated.CreatePortfolioAsync(portfolio, tickerSymbols, cancellationToken);
 
-    public Task<IReadOnlyList<PortfolioStockDto>?> GetPortfoliosByUserIdAsync(string userId, CancellationToken cancellationToken)
+    public Task<IReadOnlyList<Portfolio>?> GetPortfoliosByUserIdAsync(string userId, CancellationToken cancellationToken)
     => _decorated.GetPortfoliosByUserIdAsync(userId, cancellationToken);
     
     public Task<Portfolio?> GetPortfolioByIdAsync(Guid portfolioId, CancellationToken cancellationToken)
@@ -51,7 +51,7 @@ public class CachedPortfolioRepository : IPortfolioRepository
     
     // modifying
 
-    public async Task<Portfolio> EditPortfolioAsync(Guid portfolioId, string portfolioName, IList<string> tickerSymbols,
+    public async Task<int> EditPortfolioAsync(Guid portfolioId, string portfolioName, IList<string> tickerSymbols,
         CancellationToken cancellationToken)
     {
         var result = await _decorated.EditPortfolioAsync(portfolioId, portfolioName, tickerSymbols, cancellationToken);

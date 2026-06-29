@@ -28,6 +28,9 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Role, str
                 .OnDelete(DeleteBehavior.Cascade);
             
             modelBuilder.Entity<UserSetting>()
+                .HasKey(us => us.UserId);
+            
+            modelBuilder.Entity<UserSetting>()
                 .HasOne<ApplicationUser>()
                 .WithOne(au => au.UserSetting)
                 .HasForeignKey<UserSetting>(us => us.UserId)

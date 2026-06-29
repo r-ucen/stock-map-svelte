@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Identity;
 using StockMapSvelte.Application.Abstractions;
 using StockMapSvelte.Application.Exceptions.User;
 using StockMapSvelte.Application.UseCases.UserUseCases.Commands;
@@ -18,27 +17,17 @@ public class UpdateRolesHandler
 
     public async Task HandleAsync(UpdateRolesCommand request)
     {
-        var isCurrentUserAdmin = await _userContext.IsInRoleAsync("Admin");
-        if (!isCurrentUserAdmin)
-        {
-            throw new UnableToSetRoleException("You do not have permission to change the role");
-        }
-
         var currentUserId = await _userContext.GetCurrentUserIdAsync();
-        if (currentUserId == request.userId)
+        if (currentUserId == request.UserId) { throw new UnableToSetRoleException("You cannot modify your own roles"); }
+        
+        var currentRoles = await _identityService.GetUserRolesAsync(request.UserId);
+        var isRemovingAdmin = currentRoles.Contains("Admin") && !request.NewRoles.Contains("Admin");
+        if (isRemovingAdmin && await _identityService.IsUserTheLastAdminAsync(request.UserId))
         {
-            throw new UnableToSetRoleException("You cannot modify your own roles");
+            throw new UnableToSetRoleException("Cannot remove the last admin");
         }
         
-        var rolesToAdd = request.newRoles
-            .Where(role => role is "Admin" or "Manager")
-            .ToArray();
-        
-        var result = await _identityService.UpdateUserRoles(request.userId, rolesToAdd);
-
-        if (!result)
-        {
-            throw new UnableToSetRoleException("An error occured while updating the roles");
-        }
+        var result = await _identityService.UpdateUserRoles(request.UserId, request.NewRoles);
+        if (!result) { throw new UnableToSetRoleException("An error occured while updating the roles"); }
     }
 }

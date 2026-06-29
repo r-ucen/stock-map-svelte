@@ -1,3 +1,3 @@
 namespace StockMapSvelte.Application.UseCases.UserUseCases.Commands;
 
-public record UpdateRolesCommand(string userId, string[] newRoles);
+public record UpdateRolesCommand(string UserId, string[] NewRoles);

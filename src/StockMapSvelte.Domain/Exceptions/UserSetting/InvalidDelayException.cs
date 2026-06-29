@@ -1,4 +1,4 @@
-namespace StockMapSvelte.Application.Exceptions.UserSetting;
+namespace StockMapSvelte.Domain.Exceptions.UserSetting;
 
 public class InvalidDelayException : AppException
 {

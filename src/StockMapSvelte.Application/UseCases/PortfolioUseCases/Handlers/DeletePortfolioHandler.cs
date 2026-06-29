@@ -26,10 +26,7 @@ public class DeletePortfolioHandler
             throw new PortfolioNotFoundException("Portfolio not found.");
         }
             
-        if (existing.UserId != currentUserId)
-        {
-            throw new UnauthorizedAccessException($"User {currentUserId} does not have permission to delete portfolio with id {cmd.PortfolioId}.");
-        }
+        existing.ValidateOwnership(currentUserId);
         
         var result = await _portfolioRepository.DeletePortfolioAsync(existing.Id, cancellationToken);
         

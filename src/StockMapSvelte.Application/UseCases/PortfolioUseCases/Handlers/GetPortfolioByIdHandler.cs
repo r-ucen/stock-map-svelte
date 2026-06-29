@@ -23,11 +23,6 @@ public class GetPortfolioByIdHandler
         
         var portfolio = await _portfolioRepository.GetPortfolioByIdForUserAsync(currentUserId, query.PortfolioId, cancellationToken);
         
-        if (portfolio == null)
-        {
-            throw new PortfolioNotFoundException("Portfolio not found.");
-        }
-        
-        return portfolio;
+        return portfolio ?? throw new PortfolioNotFoundException("Portfolio not found.");
     }
 }

@@ -20,24 +20,15 @@ public class SetPortfolioAsDefaultHandler
     
     public async Task Handle(SetPortfolioAsDefaultCommand cmd, CancellationToken cancellationToken)
     {
-        var existing = await _portfolioRepository.GetPortfolioByIdAsync(cmd.PortfolioId, cancellationToken);
-        if (existing == null)
-        {
-            throw new PortfolioNotFoundException("Portfolio not found.");
-        }
-        
         var currentUserId = await _userContext.GetCurrentUserIdAsync();
         
-        if (existing.UserId != currentUserId)
-        {
-            throw new UnauthorizedAccessException($"User {currentUserId} does not have permission to set this portfolio as default.");
-        }
+        var existing = await _portfolioRepository.GetPortfolioByIdAsync(cmd.PortfolioId, cancellationToken);
+        if (existing == null) { throw new PortfolioNotFoundException("Portfolio not found."); }
+        
+        existing.ValidateOwnership(currentUserId);
         
         var result = await _userSettingRepository.SetPortfolioAsDefaultAsync(currentUserId, cmd.PortfolioId);
 
-        if (result < 0)
-        {
-            throw new Exception("Failed to set portfolio as default.");
-        }
+        if (result < 0) { throw new Exception("Failed to set portfolio as default."); }
     }
 }

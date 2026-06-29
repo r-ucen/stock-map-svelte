@@ -5,6 +5,7 @@ using StockMapSvelte.Application.Exceptions.Portfolio;
 using StockMapSvelte.Application.UseCases.PortfolioUseCases.Commands;
 using StockMapSvelte.Application.UseCases.PortfolioUseCases.Handlers;
 using StockMapSvelte.Domain.Entities;
+using StockMapSvelte.Domain.Exceptions.Portfolio;
 
 namespace StockMapSvelte.Tests.UnitTests.UseCases.PortfolioUseCases;
 
@@ -17,6 +18,7 @@ public class CreatePortfolioTests
         var portfolioRepoMock = new Mock<IPortfolioRepository>();
         var userSettingRepoMock = new Mock<IUserSettingRepository>();
         var userContextMock = new Mock<IUserContext>();
+        var stockRepoMock = new Mock<IStockRepository>();
         
         var userId = "test-user-id";
         
@@ -35,7 +37,10 @@ public class CreatePortfolioTests
         portfolioRepoMock.Setup(r => r.GetPortfolioCountByUserIdAsync(userId))
             .ReturnsAsync(2);
         
-        var useCase = new CreatePortfolioHandler(userContextMock.Object, portfolioRepoMock.Object, userSettingRepoMock.Object);
+        stockRepoMock.Setup(r => r.GetUninitializedStocks(It.IsAny<IList<string>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<string>());
+        
+        var useCase = new CreatePortfolioHandler(userContextMock.Object, portfolioRepoMock.Object, userSettingRepoMock.Object, stockRepoMock.Object);
         
         var cmd = new CreatePortfolioCommand
         (
@@ -73,6 +78,7 @@ public class CreatePortfolioTests
         var portfolioRepoMock = new Mock<IPortfolioRepository>();
         var userSettingRepoMock = new Mock<IUserSettingRepository>();
         var userContextMock = new Mock<IUserContext>();
+        var stockRepoMock = new Mock<IStockRepository>();
         
         var userId = "test-user-id";
         
@@ -91,7 +97,10 @@ public class CreatePortfolioTests
         portfolioRepoMock.Setup(r => r.GetPortfolioCountByUserIdAsync(userId))
             .ReturnsAsync(2);
         
-        var useCase = new CreatePortfolioHandler(userContextMock.Object, portfolioRepoMock.Object, userSettingRepoMock.Object);
+        stockRepoMock.Setup(r => r.GetUninitializedStocks(It.IsAny<IList<string>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<string>());
+        
+        var useCase = new CreatePortfolioHandler(userContextMock.Object, portfolioRepoMock.Object, userSettingRepoMock.Object, stockRepoMock.Object);
         
         var cmd = new CreatePortfolioCommand
         (
@@ -112,6 +121,7 @@ public class CreatePortfolioTests
         var portfolioRepoMock = new Mock<IPortfolioRepository>();
         var userSettingRepoMock = new Mock<IUserSettingRepository>();
         var userContextMock = new Mock<IUserContext>();
+        var stockRepoMock = new Mock<IStockRepository>();
         
         var userId = "test-user-id";
         
@@ -130,7 +140,10 @@ public class CreatePortfolioTests
         portfolioRepoMock.Setup(r => r.GetPortfolioCountByUserIdAsync(userId))
             .ReturnsAsync(2);
         
-        var useCase = new CreatePortfolioHandler(userContextMock.Object, portfolioRepoMock.Object, userSettingRepoMock.Object);
+        stockRepoMock.Setup(r => r.GetUninitializedStocks(It.IsAny<IList<string>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<string>());
+        
+        var useCase = new CreatePortfolioHandler(userContextMock.Object, portfolioRepoMock.Object, userSettingRepoMock.Object, stockRepoMock.Object);
         
         var cmd = new CreatePortfolioCommand
         (
@@ -151,6 +164,7 @@ public class CreatePortfolioTests
         var portfolioRepoMock = new Mock<IPortfolioRepository>();
         var userSettingRepoMock = new Mock<IUserSettingRepository>();
         var userContextMock = new Mock<IUserContext>();
+        var stockRepoMock = new Mock<IStockRepository>();
         
         var userId = "test-user-id";
         
@@ -173,7 +187,10 @@ public class CreatePortfolioTests
         userSettingRepoMock.Setup(r => r.SetPortfolioAsDefaultAsync(userId, It.IsAny<Guid>()))
             .ReturnsAsync(1);
         
-        var useCase = new CreatePortfolioHandler(userContextMock.Object, portfolioRepoMock.Object, userSettingRepoMock.Object);
+        stockRepoMock.Setup(r => r.GetUninitializedStocks(It.IsAny<IList<string>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<string>());
+        
+        var useCase = new CreatePortfolioHandler(userContextMock.Object, portfolioRepoMock.Object, userSettingRepoMock.Object, stockRepoMock.Object);
         
         var cmd = new CreatePortfolioCommand
         (
@@ -213,6 +230,7 @@ public class CreatePortfolioTests
         var portfolioRepoMock = new Mock<IPortfolioRepository>();
         var userSettingRepoMock = new Mock<IUserSettingRepository>();
         var userContextMock = new Mock<IUserContext>();
+        var stockRepoMock = new Mock<IStockRepository>();
         
         var userId = "test-user-id";
         
@@ -235,7 +253,10 @@ public class CreatePortfolioTests
         userSettingRepoMock.Setup(r => r.SetPortfolioAsDefaultAsync(userId, It.IsAny<Guid>()))
             .ReturnsAsync(0);
         
-        var useCase = new CreatePortfolioHandler(userContextMock.Object, portfolioRepoMock.Object, userSettingRepoMock.Object);
+        stockRepoMock.Setup(r => r.GetUninitializedStocks(It.IsAny<IList<string>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<string>());
+        
+        var useCase = new CreatePortfolioHandler(userContextMock.Object, portfolioRepoMock.Object, userSettingRepoMock.Object, stockRepoMock.Object);
         
         var cmd = new CreatePortfolioCommand
         (
@@ -254,6 +275,7 @@ public class CreatePortfolioTests
         var portfolioRepoMock = new Mock<IPortfolioRepository>();
         var userSettingRepoMock = new Mock<IUserSettingRepository>();
         var userContextMock = new Mock<IUserContext>();
+        var stockRepoMock = new Mock<IStockRepository>();
         
         var userId = "test-user-id";
         
@@ -276,7 +298,10 @@ public class CreatePortfolioTests
         userSettingRepoMock.Setup(r => r.SetPortfolioAsDefaultAsync(userId, It.IsAny<Guid>()))
             .ReturnsAsync(1);
         
-        var useCase = new CreatePortfolioHandler(userContextMock.Object, portfolioRepoMock.Object, userSettingRepoMock.Object);
+        stockRepoMock.Setup(r => r.GetUninitializedStocks(It.IsAny<IList<string>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<string>());
+        
+        var useCase = new CreatePortfolioHandler(userContextMock.Object, portfolioRepoMock.Object, userSettingRepoMock.Object, stockRepoMock.Object);
         
         var cmd = new CreatePortfolioCommand
         (
