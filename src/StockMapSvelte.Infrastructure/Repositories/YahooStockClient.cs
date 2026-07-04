@@ -363,6 +363,7 @@ public class YahooStockClient : IStockClient
                         var recommendationKey = financialData.Value
                             .GetProperty("recommendationKey")
                             .GetString();
+                        if (recommendationKey == "none") { recommendationKey = null; }
                         profile.AnalystRecommendationKey = recommendationKey;
                     }
                     catch (Exception)
