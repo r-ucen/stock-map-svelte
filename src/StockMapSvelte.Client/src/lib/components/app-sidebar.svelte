@@ -58,6 +58,7 @@
 	import { useSidebar } from "$lib/components/ui/sidebar/index.js";
 	import type { IState } from '$lib/Abstractions/IState';
 	import { page } from '$app/state';
+	import Legend from '$lib/components/Legend.svelte';
 
 	let {
 		ref = $bindable(null),
@@ -79,6 +80,7 @@
 
 		{#if sidebar.state !== "collapsed"}
 			<MapSettings />
+			<Legend selectedMetric={s.selectedMetric} />
 		{/if}
 		
 	</Sidebar.Content>
