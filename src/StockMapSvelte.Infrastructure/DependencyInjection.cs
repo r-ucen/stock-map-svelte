@@ -42,6 +42,7 @@ public static class DependencyInjection
         services.AddTransient<IEmailSender<ApplicationUser>, ResendEmailSender>();
         
         // DI
+        services.AddScoped<IUserContext, UserContext>();
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddScoped<IStockUpdateService, StockUpdateService>();
         
