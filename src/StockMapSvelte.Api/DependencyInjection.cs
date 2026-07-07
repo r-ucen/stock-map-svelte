@@ -1,8 +1,6 @@
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
-using StockMapSvelte.Api.Services;
-using StockMapSvelte.Application.Abstractions;
 
 namespace StockMapSvelte.Api;
 
@@ -10,8 +8,6 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddPresentation(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddScoped<IUserContext, UserContext>();
-        
         var allowedOrigins = configuration.GetSection("AllowedOrigins").Get<string[]>();
 
         services.AddCors(options =>
