@@ -386,7 +386,6 @@ More detailed information about the API endpoints can be found at https://localh
 - Exceptions containing custom exceptions inheriting from AppException class
 The DTO's, enums, exceptions and requests from the Api layer could be moved into a dedicated common layer
 - Facades wrapping the use cases since the app doesn't utilize the Mediator pattern (yet)
-- DEPRECATED Services containing logic related to rendering the treemap data, this logic is executed by the Svelte client at this moment, but it remains in the backend since the app was initially designed with use of BlazorServer
 - UseCases containing the use cases for the app, which are called from the API layer through the facades
 - DependencyInjection.cs featuring AddApplication method called in Program.cs to register application related services
 ---

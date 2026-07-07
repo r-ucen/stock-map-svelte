@@ -37,7 +37,7 @@ public class UserFacade : IUserFacade
 
     public async Task UpdateRolesAsync(UpdateRolesCommand request)
     {
-        await _updateRolesHandler.HandleAsync(request);
+        await _updateRolesHandler.Handle(request);
     }
 
     public async Task DeleteUserAsync(DeleteUserCommand cmd, CancellationToken cancellationToken)
@@ -47,11 +47,11 @@ public class UserFacade : IUserFacade
     
     public async Task<PagedResponse<UserDto>> GetAllUsersQueriedAsync(QueryFilter filter, CancellationToken cancellationToken)
     {
-        return await _getAllUsersQueriedHandler.HandleAsync(filter, cancellationToken);
+        return await _getAllUsersQueriedHandler.Handle(filter, cancellationToken);
     }
     
     public async Task<UserDto> GetUserAsync(GetUserQuery query, CancellationToken cancellationToken)
     {
-        return await _getUserHandler.HandleAsync(query, cancellationToken);
+        return await _getUserHandler.Handle(query, cancellationToken);
     }
 }
