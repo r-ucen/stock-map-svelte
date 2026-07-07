@@ -15,7 +15,7 @@ public class CachedTreeMapRepository : ITreeMapRepository
         _cache = cache;
     }
     
-    public async Task<TreemapDataDto?> GetTreemapDataViewModelByIdAsync(Guid portfolioId, CancellationToken cancellationToken)
+    public async Task<TreemapDataDto> GetTreemapDataViewModelByIdAsync(Guid portfolioId, CancellationToken cancellationToken)
     {
         var cacheKey = $"treemap-data:portfolio:{portfolioId}";
         var tags = new[] { "tag-all-portfolios-treemap-data" };
