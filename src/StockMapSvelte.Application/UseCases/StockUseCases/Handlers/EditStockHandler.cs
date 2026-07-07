@@ -40,7 +40,7 @@ public class EditStockHandler
         var editStockResult = await _stockRepository.EditStockAsync(cmd.Id, normalizedTicker, cancellationToken);
         if (editStockResult <= 0)
         {
-            throw new Exception("Failed to edit the stock.");
+            throw new EditStockFailException("Failed to edit the stock.");
         }
     }
 }

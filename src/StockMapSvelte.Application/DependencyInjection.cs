@@ -1,11 +1,6 @@
 using StockMapSvelte.Application.UseCases.TreeMapUseCases.Handlers;
-using StockMapSvelte.Application.Abstractions;
 using StockMapSvelte.Application.Abstractions.Facades;
 using StockMapSvelte.Application.Facade;
-using StockMapSvelte.Application.Services.TreeMap;
-using StockMapSvelte.Application.Services.TreeMap.Coloring;
-using StockMapSvelte.Application.Services.TreeMap.Formatting;
-using StockMapSvelte.Application.Services.TreeMap.Layout;
 using StockMapSvelte.Application.UseCases.AccountActionUseCases.Handlers;
 using StockMapSvelte.Application.UseCases.PortfolioUseCases.Handlers;
 using StockMapSvelte.Application.UseCases.StockProfileUseCases.Handlers;
@@ -20,11 +15,6 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        services.AddScoped<ITreeMapService, TreeMapService>();
-        services.AddScoped<ColorScaleService>();
-        services.AddScoped<TreemapLayoutCalculator>();
-        services.AddScoped<CellDescriptionFormatter>();
-
         services.AddScoped<IAccountActionFacade, AccountActionFacade>();
         services.AddScoped<IPortfolioFacade, PortfolioFacade>();
         services.AddScoped<ITreeMapFacade, TreeMapFacade>();
