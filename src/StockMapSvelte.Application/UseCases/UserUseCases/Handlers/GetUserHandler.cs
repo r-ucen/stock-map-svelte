@@ -13,7 +13,7 @@ public class GetUserHandler
         _userRepository = userRepository;
     }
     
-    public async Task<UserDto> HandleAsync(GetUserQuery query, CancellationToken cancellationToken)
+    public async Task<UserDto> Handle(GetUserQuery query, CancellationToken cancellationToken)
     {
         return await _userRepository.GetByIdAsync(query.UserId, cancellationToken);
     }

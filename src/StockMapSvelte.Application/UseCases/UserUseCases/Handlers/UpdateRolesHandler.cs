@@ -15,7 +15,7 @@ public class UpdateRolesHandler
         _identityService = identityService;
     }
 
-    public async Task HandleAsync(UpdateRolesCommand request)
+    public async Task Handle(UpdateRolesCommand request)
     {
         var currentUserId = await _userContext.GetCurrentUserIdAsync();
         if (currentUserId == request.UserId) { throw new UnableToSetRoleException("You cannot modify your own roles"); }
