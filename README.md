@@ -376,7 +376,6 @@ More detailed information about the API endpoints can be found at https://localh
 - Middleware for intercepting thrown exceptions across the app and returning appropriate responses to the client
 - Properties containing the app's configuration settings - launchSettings.json lets you configure the app's launch settings, such as the URL and port it runs on
 - Requests containing the request models for the API endpoints - this could be moved into a dedicated layer in the future containing also the DTO's declared in Application layer
-- Services containing logic related to the API layer, currently only UserContext making use of the HttpContext through IHttpContextAccessor
 - DependencyInjection.cs featuring AddPresentation method called in Program.cs to register API related services - CORS policy, cookie configuration, rate limiting
 
 # Application layer
@@ -423,7 +422,7 @@ Customer - explicit role (DEPRECATED - IsCustomer policy is used instead for now
 It makes use of StockUpdateJitter which tells the service whether to run the current round of fetching and the delay until next attempt. If an update is made, the service publishes a message alerting all subscribers to TreeMapUpdateNotifier (treemap data stream endpoint)
 - Database contains seeding logic and ApplicationDbContext.cs where seeding and mapping of relationships between entities is done. The project is set up to use the PostgreSQL database
 - Extentions folder contains logic for pagination, sorting, search designed to be translated into EntityFramework/database queries
-- Identity defines the roles, application user entity, role entity and service that uses Identity API (SignInManager, UserManager)
+- Identity defines the roles, application user entity, role entity and service that uses Identity API (SignInManager, UserManager), also provides classes for interacting with user authentication and authorization
 - Migrations folder containing generated database migrations
 - Repositories containing classes which work directly with EntityFramework to get data from and to the database as well as getting data from external providers (this could be better to move into a dedicated folder), the folder uses the decorator pattern that extends those classes through their cached versions, the app makes use of the HybridCache
 - Services such as the implementation of the IEmailSender
