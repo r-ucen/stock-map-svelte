@@ -148,9 +148,9 @@ public class PortfolioRepository(ApplicationDbContext dbContext) : IPortfolioRep
             .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async Task<int> GetPortfolioCountByUserIdAsync(string userId)
+    public async Task<int> GetPortfolioCountByUserIdAsync(string userId, CancellationToken cancellationToken)
     {
         return await dbContext.Portfolios
-            .CountAsync(p => p.UserId == userId);
+            .CountAsync(p => p.UserId == userId, cancellationToken);
     }
 }
