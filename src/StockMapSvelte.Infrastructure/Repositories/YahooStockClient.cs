@@ -10,31 +10,21 @@ using YahooQuotesApi;
 
 namespace StockMapSvelte.Infrastructure.Repositories;
 
-public class YahooStockClient : IStockClient
+public class YahooStockClient(
+    ApplicationDbContext dbContext,
+    YahooQuotes yahooQuotes,
+    ILogger<YahooStockClient> logger)
+    : IStockClient
 {
-    private readonly IDbContextFactory<ApplicationDbContext> _contextFactory;
-    private readonly YahooQuotes _yahooQuotes;
-    private readonly ILogger<YahooStockClient> _logger;
-    
-    public YahooStockClient(
-        IDbContextFactory<ApplicationDbContext> contextFactory,
-        YahooQuotes yahooQuotes,
-        ILogger<YahooStockClient> logger)
-    {
-        _contextFactory = contextFactory;
-        _yahooQuotes = yahooQuotes;
-        _logger = logger;
-    }
-
     public async Task<bool> TickerExists(string ticker)
     {
-        var snapshots = await _yahooQuotes.GetSnapshotAsync([ticker]);
+        var snapshots = await yahooQuotes.GetSnapshotAsync([ticker]);
 
         foreach (var snapshot in snapshots)
         {
             if (snapshot.Value != null)
             {
-                var modules = await _yahooQuotes.GetModulesAsync(snapshot.Key, ["assetProfile", "summaryDetail", "defaultKeyStatistics", "financialData"]);
+                var modules = await yahooQuotes.GetModulesAsync(snapshot.Key, ["assetProfile", "summaryDetail", "defaultKeyStatistics", "financialData"]);
 
                 if (!modules.HasError && modules.Value.Length > 0)
                 {
@@ -53,18 +43,13 @@ public class YahooStockClient : IStockClient
 
     public async Task<IReadOnlyList<StockProfile>> GetStockProfilesAsync(CancellationToken cancellationToken)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
-
-        var stocksByTicker = await context.Stocks
+        var stocksByTicker = await dbContext.Stocks
             .AsNoTracking()
             .ToDictionaryAsync(s => s.TickerSymbol, s => s, cancellationToken);
 
-        if (stocksByTicker.Count == 0)
-        {
-            return [];
-        }
+        if (stocksByTicker.Count == 0) { return []; }
 
-        var snapshots = await _yahooQuotes.GetSnapshotAsync(stocksByTicker.Keys, cancellationToken);
+        var snapshots = await yahooQuotes.GetSnapshotAsync(stocksByTicker.Keys, cancellationToken);
 
         var result = new List<StockProfile>();
         var now = DateTimeOffset.UtcNow;
@@ -118,7 +103,7 @@ public class YahooStockClient : IStockClient
                     RevenueGrowth = null
                 };
 
-                var modules = await _yahooQuotes.GetModulesAsync(snapshot.Key, ["assetProfile", "summaryDetail", "defaultKeyStatistics", "financialData"], cancellationToken);
+                var modules = await yahooQuotes.GetModulesAsync(snapshot.Key, ["assetProfile", "summaryDetail", "defaultKeyStatistics", "financialData"], cancellationToken);
 
                 if (!modules.HasError && modules.Value.Length > 0)
                 {
@@ -206,7 +191,7 @@ public class YahooStockClient : IStockClient
                     }
                     catch (Exception)
                     {
-                        _logger.LogTrace("No Ex Dividend Date data found for {name}.", snapshot.Value);
+                        logger.LogTrace("No Ex Dividend Date data found for {name}.", snapshot.Value);
                     }
 
                     // DIVIDEND YIELD
@@ -218,7 +203,7 @@ public class YahooStockClient : IStockClient
                     }
                     else
                     {
-                        _logger.LogTrace("No Dividend Yield data found for {name}.", snapshot.Value);
+                        logger.LogTrace("No Dividend Yield data found for {name}.", snapshot.Value);
                     }
 
                     // BETA
@@ -230,7 +215,7 @@ public class YahooStockClient : IStockClient
                     }
                     else
                     {
-                        _logger.LogTrace("No Beta data found for {name}.", snapshot.Value);
+                        logger.LogTrace("No Beta data found for {name}.", snapshot.Value);
                     }
 
                     // P/E
@@ -249,7 +234,7 @@ public class YahooStockClient : IStockClient
                     }
                     else
                     {
-                        _logger.LogTrace("No ShortRatio data found for {name}.", snapshot.Value);
+                        logger.LogTrace("No ShortRatio data found for {name}.", snapshot.Value);
                     }
 
                     // VOLUME
@@ -264,7 +249,7 @@ public class YahooStockClient : IStockClient
                     }
                     else
                     {
-                        _logger.LogTrace("No profitMargins data found for {name}.", snapshot.Value);
+                        logger.LogTrace("No profitMargins data found for {name}.", snapshot.Value);
                     }
                 
                     var earningsQuarterlyGrowth = GetDoubleFromProperty(defaultKeyStatistics.Value, "earningsQuarterlyGrowth");
@@ -272,7 +257,7 @@ public class YahooStockClient : IStockClient
                         profile.EarningsQuarterlyGrowth = earningsQuarterlyGrowth;
                     }
                     else                    {
-                        _logger.LogTrace("No earningsQuarterlyGrowth data found for {name}.", snapshot.Value);
+                        logger.LogTrace("No earningsQuarterlyGrowth data found for {name}.", snapshot.Value);
                     }
                     
                     var trailingEps = GetDoubleFromProperty(defaultKeyStatistics.Value, "trailingEps");
@@ -282,7 +267,7 @@ public class YahooStockClient : IStockClient
                     }
                     else
                     {
-                        _logger.LogTrace("No trailingEps data found for {name}.", snapshot.Value);
+                        logger.LogTrace("No trailingEps data found for {name}.", snapshot.Value);
                     }
                     
                     var forwardEps = GetDoubleFromProperty(defaultKeyStatistics.Value, "forwardEps");
@@ -291,7 +276,7 @@ public class YahooStockClient : IStockClient
                         profile.ForwardEps = forwardEps;
                     }
                     else {
-                        _logger.LogTrace("No forwardEps data found for {name}.", snapshot.Value);
+                        logger.LogTrace("No forwardEps data found for {name}.", snapshot.Value);
                     }
                     
                     var pegRatio = GetDoubleFromProperty(defaultKeyStatistics.Value, "pegRatio");
@@ -300,7 +285,7 @@ public class YahooStockClient : IStockClient
                         profile.PegRatio = pegRatio;
                     }
                     else {
-                        _logger.LogTrace("No pegRatio data found for {name}.", snapshot.Value);
+                        logger.LogTrace("No pegRatio data found for {name}.", snapshot.Value);
                     }
                     
                     var oneYearChange = GetDoubleFromProperty(defaultKeyStatistics.Value, "52WeekChange");
@@ -309,7 +294,7 @@ public class YahooStockClient : IStockClient
                         profile.OneYearChange = oneYearChange;
                     }
                     else {
-                        _logger.LogTrace("No 52WeekChange data found for {name}.", snapshot.Value);
+                        logger.LogTrace("No 52WeekChange data found for {name}.", snapshot.Value);
                     }
                     
                     var targetHighPrice = GetDoubleFromProperty(financialData.Value, "targetHighPrice");
@@ -319,7 +304,7 @@ public class YahooStockClient : IStockClient
                     }
                     else
                     {
-                        _logger.LogTrace("No targetHighPrice data found for {name}.", snapshot.Value);
+                        logger.LogTrace("No targetHighPrice data found for {name}.", snapshot.Value);
                     }
                     
                     var targetLowPrice = GetDoubleFromProperty(financialData.Value, "targetLowPrice");
@@ -328,7 +313,7 @@ public class YahooStockClient : IStockClient
                         profile.TargetLowPrice = targetLowPrice;
                     }
                     else                    {
-                        _logger.LogTrace("No targetLowPrice data found for {name}.", snapshot.Value);
+                        logger.LogTrace("No targetLowPrice data found for {name}.", snapshot.Value);
                     }
                     
                     var targetMeanPrice = GetDoubleFromProperty(financialData.Value, "targetMeanPrice");
@@ -337,7 +322,7 @@ public class YahooStockClient : IStockClient
                         profile.TargetMeanPrice = targetMeanPrice;
                     }
                     else                    {
-                        _logger.LogTrace("No targetMeanPrice data found for {name}.", snapshot.Value);
+                        logger.LogTrace("No targetMeanPrice data found for {name}.", snapshot.Value);
                     }
                     
                     var targetMedianPrice = GetDoubleFromProperty(financialData.Value, "targetMedianPrice");
@@ -346,7 +331,7 @@ public class YahooStockClient : IStockClient
                         profile.TargetMedianPrice = targetMedianPrice;
                     }
                     else                    {
-                        _logger.LogTrace("No targetMedianPrice data found for {name}.", snapshot.Value);
+                        logger.LogTrace("No targetMedianPrice data found for {name}.", snapshot.Value);
                     }
                     
                     var analystRecommendationMean = GetDoubleFromProperty(financialData.Value, "recommendationMean");
@@ -355,7 +340,7 @@ public class YahooStockClient : IStockClient
                         profile.AnalystRecommendationMean = analystRecommendationMean;
                     }
                     else                    {
-                        _logger.LogTrace("No recommendationMean data found for {name}.", snapshot.Value);
+                        logger.LogTrace("No recommendationMean data found for {name}.", snapshot.Value);
                     }
 
                     try
@@ -368,7 +353,7 @@ public class YahooStockClient : IStockClient
                     }
                     catch (Exception)
                     {
-                        _logger.LogTrace("No recommendationKey data found for {name}.", snapshot.Value);
+                        logger.LogTrace("No recommendationKey data found for {name}.", snapshot.Value);
                     }
                     
                     var totalDebt = GetDoubleFromProperty(financialData.Value, "totalDebt");
@@ -378,7 +363,7 @@ public class YahooStockClient : IStockClient
                     }
                     else
                     {
-                        _logger.LogTrace("No totalDebt data found for {name}.", snapshot.Value);
+                        logger.LogTrace("No totalDebt data found for {name}.", snapshot.Value);
                     }
                     
                     var freeCashflow = GetDoubleFromProperty(financialData.Value, "freeCashflow");
@@ -387,7 +372,7 @@ public class YahooStockClient : IStockClient
                         profile.FreeCashflow = freeCashflow;
                     }
                     else                    {
-                        _logger.LogTrace("No freeCashflow data found for {name}.", snapshot.Value);
+                        logger.LogTrace("No freeCashflow data found for {name}.", snapshot.Value);
                     }
                     
                     var earningsGrowth = GetDoubleFromProperty(financialData.Value, "earningsGrowth");
@@ -396,7 +381,7 @@ public class YahooStockClient : IStockClient
                         profile.EarningsGrowth = earningsGrowth;
                     }
                     else                    {
-                        _logger.LogTrace("No earningsGrowth data found for {name}.", snapshot.Value);
+                        logger.LogTrace("No earningsGrowth data found for {name}.", snapshot.Value);
                     }
                     
                     var revenueGrowth = GetDoubleFromProperty(financialData.Value, "revenueGrowth");
@@ -406,7 +391,7 @@ public class YahooStockClient : IStockClient
                     }
                     else
                     {
-                        _logger.LogTrace("No revenueGrowth data found for {name}.", snapshot.Value);
+                        logger.LogTrace("No revenueGrowth data found for {name}.", snapshot.Value);
                     }
                 }
 
@@ -414,7 +399,7 @@ public class YahooStockClient : IStockClient
             }
             else
             {
-                _logger.LogTrace(" No data found for {name}.", snapshot.Value);
+                logger.LogTrace(" No data found for {name}.", snapshot.Value);
             }
         }
         return result;
