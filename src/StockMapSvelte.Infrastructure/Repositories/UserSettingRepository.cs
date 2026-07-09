@@ -5,19 +5,10 @@ using StockMapSvelte.Infrastructure.Database;
 
 namespace StockMapSvelte.Infrastructure.Repositories;
 
-public class UserSettingRepository : IUserSettingRepository
+public class UserSettingRepository(ApplicationDbContext context) : IUserSettingRepository
 {
-    private readonly IDbContextFactory<ApplicationDbContext> _contextFactory;
-
-    public UserSettingRepository(IDbContextFactory<ApplicationDbContext> contextFactory)
-    {
-        _contextFactory = contextFactory;
-    }
-
     public async Task<int> SetPortfolioAsDefaultAsync(string userId, Guid portfolioId)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
-
         var userSetting = await context.UserSettings
             .FirstOrDefaultAsync(us => us.UserId == userId);
 
@@ -34,8 +25,6 @@ public class UserSettingRepository : IUserSettingRepository
     
     public async Task<Guid?> GetDefaultPortfolioIdAsync(string userId, CancellationToken cancellationToken)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
-
         var userSetting = await context.UserSettings
             .AsNoTracking()
             .FirstOrDefaultAsync(us => us.UserId == userId, cancellationToken);
@@ -45,8 +34,6 @@ public class UserSettingRepository : IUserSettingRepository
 
     public async Task<int> SetToastAutoHideValueAsync(string userId, bool autoHide)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
-
         var userSetting = await context.UserSettings
             .FirstOrDefaultAsync(us => us.UserId == userId);
 
@@ -63,8 +50,6 @@ public class UserSettingRepository : IUserSettingRepository
 
     public async Task<bool?> GetToastAutoHideValueAsync(string userId)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
-
         var userSetting = await context.UserSettings
             .AsNoTracking()
             .FirstOrDefaultAsync(us => us.UserId == userId);
@@ -74,8 +59,6 @@ public class UserSettingRepository : IUserSettingRepository
 
     public async Task<int?> GetToastAutoHideDelayMs(string userId)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
-        
         var userSetting = await context.UserSettings
             .AsNoTracking()
             .FirstOrDefaultAsync(us => us.UserId == userId);
@@ -85,8 +68,6 @@ public class UserSettingRepository : IUserSettingRepository
     
     public async Task<int> SetToastAutoHideDelayMsAsync(string userId, int delayMs)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
-        
         var userSetting = await context.UserSettings
             .FirstOrDefaultAsync(us => us.UserId == userId);
 
