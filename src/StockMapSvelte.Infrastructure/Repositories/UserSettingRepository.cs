@@ -5,27 +5,27 @@ using StockMapSvelte.Infrastructure.Database;
 
 namespace StockMapSvelte.Infrastructure.Repositories;
 
-public class UserSettingRepository(ApplicationDbContext context) : IUserSettingRepository
+public class UserSettingRepository(ApplicationDbContext dbContext) : IUserSettingRepository
 {
     public async Task<int> SetPortfolioAsDefaultAsync(string userId, Guid portfolioId)
     {
-        var userSetting = await context.UserSettings
+        var userSetting = await dbContext.UserSettings
             .FirstOrDefaultAsync(us => us.UserId == userId);
 
         if (userSetting == null)
         {
             userSetting = UserSetting.CreateForUser(userId);
-            await context.UserSettings.AddAsync(userSetting);
+            await dbContext.UserSettings.AddAsync(userSetting);
         }
         
         userSetting.SetDefaultPortfolio(portfolioId);
 
-        return await context.SaveChangesAsync();
+        return await dbContext.SaveChangesAsync();
     }
     
     public async Task<Guid?> GetDefaultPortfolioIdAsync(string userId, CancellationToken cancellationToken)
     {
-        var userSetting = await context.UserSettings
+        var userSetting = await dbContext.UserSettings
             .AsNoTracking()
             .FirstOrDefaultAsync(us => us.UserId == userId, cancellationToken);
 
@@ -34,23 +34,23 @@ public class UserSettingRepository(ApplicationDbContext context) : IUserSettingR
 
     public async Task<int> SetToastAutoHideValueAsync(string userId, bool autoHide)
     {
-        var userSetting = await context.UserSettings
+        var userSetting = await dbContext.UserSettings
             .FirstOrDefaultAsync(us => us.UserId == userId);
 
         if (userSetting == null)
         {
             userSetting = UserSetting.CreateForUser(userId);
-            context.UserSettings.Add(userSetting);
+            dbContext.UserSettings.Add(userSetting);
         }
         
         userSetting.SetToastAutoHide(autoHide);
 
-        return await context.SaveChangesAsync();
+        return await dbContext.SaveChangesAsync();
     }
 
     public async Task<bool?> GetToastAutoHideValueAsync(string userId)
     {
-        var userSetting = await context.UserSettings
+        var userSetting = await dbContext.UserSettings
             .AsNoTracking()
             .FirstOrDefaultAsync(us => us.UserId == userId);
         
@@ -59,7 +59,7 @@ public class UserSettingRepository(ApplicationDbContext context) : IUserSettingR
 
     public async Task<int?> GetToastAutoHideDelayMs(string userId)
     {
-        var userSetting = await context.UserSettings
+        var userSetting = await dbContext.UserSettings
             .AsNoTracking()
             .FirstOrDefaultAsync(us => us.UserId == userId);
 
@@ -68,17 +68,17 @@ public class UserSettingRepository(ApplicationDbContext context) : IUserSettingR
     
     public async Task<int> SetToastAutoHideDelayMsAsync(string userId, int delayMs)
     {
-        var userSetting = await context.UserSettings
+        var userSetting = await dbContext.UserSettings
             .FirstOrDefaultAsync(us => us.UserId == userId);
 
         if (userSetting == null)
         {
             userSetting = UserSetting.CreateForUser(userId);
-            context.UserSettings.Add(userSetting);
+            dbContext.UserSettings.Add(userSetting);
         }
         
         userSetting.SetToastAutoHideDelay(delayMs);
 
-        return await context.SaveChangesAsync();
+        return await dbContext.SaveChangesAsync();
     }
 }

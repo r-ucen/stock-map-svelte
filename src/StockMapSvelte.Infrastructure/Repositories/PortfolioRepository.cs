@@ -9,14 +9,14 @@ using StockMapSvelte.Infrastructure.Extensions.Portfolio;
 
 namespace StockMapSvelte.Infrastructure.Repositories;
 
-public class PortfolioRepository(ApplicationDbContext context) : IPortfolioRepository
+public class PortfolioRepository(ApplicationDbContext dbContext) : IPortfolioRepository
 {
     public async Task<PagedResponse<PortfolioStockDto>> GetAllPortfolioStockViewModelsAsync(QueryFilter filter, CancellationToken cancellationToken)
     {
         var pageNumber = Math.Max(1, filter.PageNumber);
         var pageSize = Math.Clamp(filter.PageSize, 1, 50);
 
-        var query = context.Portfolios
+        var query = dbContext.Portfolios
             .Include(p => p.Stocks)
             .AsNoTracking()
             .AsQueryable();
@@ -52,32 +52,32 @@ public class PortfolioRepository(ApplicationDbContext context) : IPortfolioRepos
     
     public async Task<IReadOnlyList<Portfolio>> GetAllPortfoliosAsync()
     {
-        return await context.Portfolios
+        return await dbContext.Portfolios
             .Include(p => p.Stocks)
             .ToListAsync();
     }
 
     public async Task<bool> PortfolioNameExistsAsync(string userId, string portfolioName, CancellationToken cancellationToken)
     {
-        return await context.Portfolios
+        return await dbContext.Portfolios
             .AnyAsync(p => p.Name == portfolioName && p.UserId == userId, cancellationToken);
     }
 
     public async Task<int> CreatePortfolioAsync(Portfolio portfolio, IList<string> tickerSymbols, CancellationToken cancellationToken)
     {
-        var stocks =  await context.Stocks
+        var stocks =  await dbContext.Stocks
             .Where(s => tickerSymbols.Contains(s.TickerSymbol))
             .ToListAsync(cancellationToken);
 
         portfolio.AssignStocks(stocks);
 
-        context.Portfolios.Add(portfolio);
-        return await context.SaveChangesAsync(cancellationToken);
+        dbContext.Portfolios.Add(portfolio);
+        return await dbContext.SaveChangesAsync(cancellationToken);
     }
 
     public async Task<IReadOnlyList<Portfolio>?> GetPortfoliosByUserIdAsync(string userId, CancellationToken cancellationToken)
     {
-        return await context.Portfolios
+        return await dbContext.Portfolios
             .Where(p => p.UserId == userId)
             .Include(p => p.Stocks.Where(s => s.IsInitialized))
             .ToListAsync(cancellationToken);
@@ -85,13 +85,13 @@ public class PortfolioRepository(ApplicationDbContext context) : IPortfolioRepos
     
     public async Task<bool> PortfolioNameExistsAsync(string userId, Guid portfolioId, string portfolioName, CancellationToken cancellationToken)
     {
-        return await context.Portfolios
+        return await dbContext.Portfolios
             .AnyAsync(p => p.UserId == userId &&  p.Id != portfolioId && p.Name == portfolioName, cancellationToken);
     }
 
     public async Task<int> EditPortfolioAsync(Guid portfolioId, string portfolioName, IList<string> tickerSymbols, CancellationToken cancellationToken)
     {
-        var portfolioToEdit = await context.Portfolios
+        var portfolioToEdit = await dbContext.Portfolios
             .Include(p => p.Stocks)
             .FirstOrDefaultAsync(p => p.Id == portfolioId, cancellationToken);
 
@@ -102,39 +102,39 @@ public class PortfolioRepository(ApplicationDbContext context) : IPortfolioRepos
             .Select(ts => ts.Trim())
             .ToList();
         
-        var stocks = await context.Stocks
+        var stocks = await dbContext.Stocks
             .Where(s => tickers.Contains(s.TickerSymbol))
             .ToListAsync(cancellationToken);
         
         portfolioToEdit.UpdateStocks(stocks);
         portfolioToEdit.UpdateName(portfolioName);
         
-        context.Portfolios.Update(portfolioToEdit);
-        return await context.SaveChangesAsync(cancellationToken);
+        dbContext.Portfolios.Update(portfolioToEdit);
+        return await dbContext.SaveChangesAsync(cancellationToken);
     }
     
     public async Task<int> DeletePortfolioAsync(Guid portfolioId, CancellationToken cancellationToken)
     {
-        return await context.Portfolios
+        return await dbContext.Portfolios
             .Where(p => p.Id == portfolioId)
             .ExecuteDeleteAsync(cancellationToken);
     }
 
     public async Task<Portfolio?> GetPortfolioByIdAsync(Guid portfolioId, CancellationToken cancellationToken)
     {
-        return await context.Portfolios
+        return await dbContext.Portfolios
             .Include(p => p.Stocks)
             .FirstOrDefaultAsync(p => p.Id == portfolioId, cancellationToken);
     }
     
     public async Task<PortfolioStockDto?> GetPortfolioByIdForUserAsync(string userId, Guid portfolioId, CancellationToken cancellationToken)
     {
-        var userSetting = await context.UserSettings
+        var userSetting = await dbContext.UserSettings
             .FirstOrDefaultAsync(us => us.UserId == userId, cancellationToken);
 
         var defaultPortfolioId = userSetting?.DefaultPortfolioId;
 
-        return await context.Portfolios
+        return await dbContext.Portfolios
             .Where(p => p.Id == portfolioId && p.UserId == userId)
             .Include(p => p.Stocks.Where(s => s.IsInitialized))
             .Select(p => new PortfolioStockDto
@@ -150,7 +150,7 @@ public class PortfolioRepository(ApplicationDbContext context) : IPortfolioRepos
 
     public async Task<int> GetPortfolioCountByUserIdAsync(string userId)
     {
-        return await context.Portfolios
+        return await dbContext.Portfolios
             .CountAsync(p => p.UserId == userId);
     }
 }

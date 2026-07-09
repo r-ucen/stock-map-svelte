@@ -9,30 +9,15 @@ using StockMapSvelte.Infrastructure.Extensions.User;
 
 namespace StockMapSvelte.Infrastructure.Repositories;
 
-public class UserRepository : IUserRepository
+public class UserRepository(UserManager<ApplicationUser> userManager) : IUserRepository
 {
-    private readonly UserManager<ApplicationUser> _userManager;
-
-    public UserRepository(UserManager<ApplicationUser> userManager)
-    {
-        _userManager = userManager;
-    }
-
     public async Task<bool> DeleteAsync(string userId, CancellationToken cancellationToken)
     {
-        if (userId == null)
-        {
-            throw new ArgumentNullException(userId);
-        }
+        if (userId == null) { throw new ArgumentNullException(userId); }
+        var user = await userManager.Users.FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
+        if (user == null) { throw new InvalidOperationException($"The user with id: {userId} was not found"); }
 
-        var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
-
-        if (user == null)
-        {
-            throw new InvalidOperationException($"The user with id: {userId} was not found");
-        }
-
-        var result = await _userManager.DeleteAsync(user);
+        var result = await userManager.DeleteAsync(user);
         return result.Succeeded;
     }
 
@@ -41,7 +26,7 @@ public class UserRepository : IUserRepository
         var pageNumber = Math.Max(1, filter.PageNumber);
         var pageSize = Math.Clamp(filter.PageSize, 1, 50);
         
-        var query = _userManager.Users.AsNoTracking().AsQueryable();
+        var query = userManager.Users.AsNoTracking().AsQueryable();
         
         query = query.ApplySearch(filter.Search, filter.SearchBy);
         
@@ -58,7 +43,7 @@ public class UserRepository : IUserRepository
         
         foreach (var u in usersList)
         {
-            var roles = await _userManager.GetRolesAsync(u);
+            var roles = await userManager.GetRolesAsync(u);
     
             users.Add(new UserDto(
                 u.Id, 
@@ -80,7 +65,7 @@ public class UserRepository : IUserRepository
 
     public async Task<UserDto> GetByIdAsync(string id, CancellationToken cancellationToken)
     {
-        var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+        var user = await userManager.Users.FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
         if (user == null) { return new UserDto(string.Empty, string.Empty, string.Empty, []); }
 
         return new UserDto
@@ -88,7 +73,7 @@ public class UserRepository : IUserRepository
             user.Id,
             user.UserName ?? string.Empty,
             user.Email ?? string.Empty,
-            await _userManager.GetRolesAsync(user)
+            await userManager.GetRolesAsync(user)
         );
     }
 }

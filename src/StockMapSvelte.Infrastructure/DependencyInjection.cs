@@ -23,11 +23,8 @@ public static class DependencyInjection
     {
         var connectionString = configuration.GetConnectionString("DefaultConnection");
         
-        services.AddDbContextFactory<ApplicationDbContext>(options =>
+        services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(connectionString));
-        
-        services.AddScoped(p => 
-            p.GetRequiredService<IDbContextFactory<ApplicationDbContext>>().CreateDbContext());
         
         services.AddIdentityApiEndpoints<ApplicationUser>(options => {
                 options.SignIn.RequireConfirmedAccount = true;

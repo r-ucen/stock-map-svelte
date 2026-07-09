@@ -9,19 +9,10 @@ using StockMapSvelte.Infrastructure.Extensions.StockProfile;
 
 namespace StockMapSvelte.Infrastructure.Repositories;
 
-public class StockProfileRepository : IStockProfileRepository
+public class StockProfileRepository(ApplicationDbContext dbContext) : IStockProfileRepository
 {
-    private readonly IDbContextFactory<ApplicationDbContext> _contextFactory;
-
-    public StockProfileRepository(IDbContextFactory<ApplicationDbContext> contextFactory)
-    {
-        _contextFactory = contextFactory;
-    }
-    
     public async Task<PagedResponse<StockStockProfileDto>> GetAllStockProfilesAsync(QueryFilter filter, CancellationToken cancellationToken)
     {
-        await using var dbContext = await _contextFactory.CreateDbContextAsync(cancellationToken);
-        
         var pageNumber = Math.Max(1, filter.PageNumber);
         var pageSize = Math.Clamp(filter.PageSize, 1, 50);
 
@@ -88,8 +79,6 @@ public class StockProfileRepository : IStockProfileRepository
     
     public async Task<int> SaveStockProfilesAsync(IEnumerable<StockProfile> profiles, CancellationToken cancellationToken)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
-            
         var profileList = profiles
             .GroupBy(p => p.StockId)
             .Select(g => g.OrderByDescending(p => p.Date).First())
@@ -103,7 +92,7 @@ public class StockProfileRepository : IStockProfileRepository
         var stockIds = profileList.Select(p => p.StockId).Distinct().ToList();
 
         // existing profiles for the profiles being saved
-        var existingProfiles = await context.StockProfiles
+        var existingProfiles = await dbContext.StockProfiles
             .Where(sp => stockIds.Contains(sp.StockId))
             .ToListAsync(cancellationToken);
 
@@ -116,7 +105,7 @@ public class StockProfileRepository : IStockProfileRepository
                 incoming.Id = existing.Id;
                 incoming.StockId = existing.StockId;
 
-                context.Entry(existing).CurrentValues.SetValues(incoming);
+                dbContext.Entry(existing).CurrentValues.SetValues(incoming);
             }
             else
             {
@@ -125,10 +114,10 @@ public class StockProfileRepository : IStockProfileRepository
                     incoming.Id = Guid.NewGuid();
                 }
 
-                context.StockProfiles.Add(incoming);
+                dbContext.StockProfiles.Add(incoming);
             }
         }
 
-        return await context.SaveChangesAsync(cancellationToken);
+        return await dbContext.SaveChangesAsync(cancellationToken);
     }
 }
