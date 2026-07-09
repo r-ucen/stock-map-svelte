@@ -16,5 +16,5 @@ public interface IPortfolioRepository
     Task<PortfolioStockDto?> GetPortfolioByIdForUserAsync(string userId, Guid portfolioId, CancellationToken cancellationToken);
     Task<IReadOnlyList<Portfolio>> GetAllPortfoliosAsync();
     Task<bool> PortfolioNameExistsAsync(string userId, string portfolioName, CancellationToken cancellationToken);
-    Task<int> GetPortfolioCountByUserIdAsync(string userId);
+    Task<int> GetPortfolioCountByUserIdAsync(string userId, CancellationToken cancellationToken);
 }

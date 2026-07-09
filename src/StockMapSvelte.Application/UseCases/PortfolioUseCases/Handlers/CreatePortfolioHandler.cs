@@ -30,7 +30,7 @@ public class CreatePortfolioHandler
     public async Task<PortfolioStockDto> Handle(CreatePortfolioCommand cmd, CancellationToken cancellationToken)
     {
         var userId = await _userContext.GetCurrentUserIdAsync();
-        var portfolioCount = await _portfolioRepository.GetPortfolioCountByUserIdAsync(userId);
+        var portfolioCount = await _portfolioRepository.GetPortfolioCountByUserIdAsync(userId, cancellationToken);
         if (portfolioCount >= 5) { throw new MaxPortfoliosReachedException(5); }
         
         var portfolio = Portfolio.Create(userId, cmd.PortfolioName);

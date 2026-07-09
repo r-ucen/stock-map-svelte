@@ -34,7 +34,7 @@ public class CreatePortfolioTests
             .ReturnsAsync(1);
         
         // assume we already have one portfolio, so that the set default checks will be skipped
-        portfolioRepoMock.Setup(r => r.GetPortfolioCountByUserIdAsync(userId))
+        portfolioRepoMock.Setup(r => r.GetPortfolioCountByUserIdAsync(userId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(2);
         
         stockRepoMock.Setup(r => r.GetUninitializedStocks(It.IsAny<IList<string>>(), It.IsAny<CancellationToken>()))
@@ -94,7 +94,7 @@ public class CreatePortfolioTests
             .ReturnsAsync(1);
         
         // assume we already have one portfolio, so that the set default checks will be skipped
-        portfolioRepoMock.Setup(r => r.GetPortfolioCountByUserIdAsync(userId))
+        portfolioRepoMock.Setup(r => r.GetPortfolioCountByUserIdAsync(userId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(2);
         
         stockRepoMock.Setup(r => r.GetUninitializedStocks(It.IsAny<IList<string>>(), It.IsAny<CancellationToken>()))
@@ -137,7 +137,7 @@ public class CreatePortfolioTests
             .ReturnsAsync(1);
         
         // assume we already have one portfolio, so that the set default checks will be skipped
-        portfolioRepoMock.Setup(r => r.GetPortfolioCountByUserIdAsync(userId))
+        portfolioRepoMock.Setup(r => r.GetPortfolioCountByUserIdAsync(userId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(2);
         
         stockRepoMock.Setup(r => r.GetUninitializedStocks(It.IsAny<IList<string>>(), It.IsAny<CancellationToken>()))
@@ -180,7 +180,7 @@ public class CreatePortfolioTests
             .ReturnsAsync(1);
         
         // this is the first portfolio, so the setting as default logic will be triggered
-        portfolioRepoMock.Setup(r => r.GetPortfolioCountByUserIdAsync(userId))
+        portfolioRepoMock.Setup(r => r.GetPortfolioCountByUserIdAsync(userId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
         
         // return 1 on set portfolio as default
@@ -246,7 +246,7 @@ public class CreatePortfolioTests
             .ReturnsAsync(1);
         
         // this is the first portfolio, so the setting as default logic will be triggered
-        portfolioRepoMock.Setup(r => r.GetPortfolioCountByUserIdAsync(userId))
+        portfolioRepoMock.Setup(r => r.GetPortfolioCountByUserIdAsync(userId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
         
         // return 0 on set portfolio as default (not successful)
@@ -291,7 +291,7 @@ public class CreatePortfolioTests
             .ReturnsAsync(0);
         
         // this is the first portfolio, so the setting as default logic will be triggered
-        portfolioRepoMock.Setup(r => r.GetPortfolioCountByUserIdAsync(userId))
+        portfolioRepoMock.Setup(r => r.GetPortfolioCountByUserIdAsync(userId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(1);
         
         // return 1 on set portfolio as default (successful)
