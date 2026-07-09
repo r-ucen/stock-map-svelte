@@ -9,18 +9,11 @@ using StockMapSvelte.Infrastructure.Extensions.Stock;
 
 namespace StockMapSvelte.Infrastructure.Repositories;
 
-public class StockRepository : IStockRepository
+public class StockRepository(IDbContextFactory<ApplicationDbContext> contextFactory, ApplicationDbContext dbContext) : IStockRepository
 {
-    private readonly IDbContextFactory<ApplicationDbContext> _contextFactory;
-
-    public StockRepository(IDbContextFactory<ApplicationDbContext> contextFactory)
-    {
-        _contextFactory = contextFactory;
-    }
-    
     public async Task<bool> StockExistsAsync(string ticker, CancellationToken cancellationToken)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        await using var context = await contextFactory.CreateDbContextAsync(cancellationToken);
 
         return await context.Stocks
             .AsNoTracking()
@@ -29,7 +22,7 @@ public class StockRepository : IStockRepository
     
     public async Task<bool> StockExistsAsync(Guid stockId, CancellationToken cancellationToken)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        await using var context = await contextFactory.CreateDbContextAsync(cancellationToken);
 
         return await context.Stocks
             .AsNoTracking()
@@ -38,7 +31,7 @@ public class StockRepository : IStockRepository
 
     public async Task<int> CreateStockAsync(Stock stock)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        await using var context = await contextFactory.CreateDbContextAsync();
 
         context.Stocks.Add(stock);
         return await context.SaveChangesAsync();
@@ -46,7 +39,7 @@ public class StockRepository : IStockRepository
 
     public async Task<int> DeleteStockAsync(Guid stockId, CancellationToken cancellationToken)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        await using var context = await contextFactory.CreateDbContextAsync(cancellationToken);
 
         return await context.Stocks
             .Where(s => s.Id == stockId)
@@ -55,7 +48,7 @@ public class StockRepository : IStockRepository
 
     public async Task<int> EditStockAsync(Guid stockId, string ticker, CancellationToken cancellationToken)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        await using var context = await contextFactory.CreateDbContextAsync(cancellationToken);
         
         var existingStock = await context.Stocks.FindAsync([stockId], cancellationToken);
         if (existingStock == null)
@@ -70,7 +63,7 @@ public class StockRepository : IStockRepository
     
     public async Task<PagedResponse<StockDto>> GetAllStocksAsyncQueried(QueryFilter filter, CancellationToken cancellationToken)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        await using var context = await contextFactory.CreateDbContextAsync(cancellationToken);
         
         var pageNumber = Math.Max(1, filter.PageNumber);
         var pageSize = Math.Clamp(filter.PageSize, 1, 50);
@@ -105,7 +98,7 @@ public class StockRepository : IStockRepository
     
     public async Task<IReadOnlyList<StockDto>> GetPossibleToAddStocksAsync(string filter, IList<string> stocksInPortfolio, CancellationToken cancellationToken)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        await using var context = await contextFactory.CreateDbContextAsync(cancellationToken);
         
         var upperTickersInPortfolio = stocksInPortfolio
             .Where(t => !string.IsNullOrWhiteSpace(t))
@@ -129,7 +122,7 @@ public class StockRepository : IStockRepository
 
     public async Task<StockDto?> GetStockViewModelByIdAsync(Guid stockId, CancellationToken cancellationToken)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        await using var context = await contextFactory.CreateDbContextAsync(cancellationToken);
         
         var stock = await context.Stocks.AsNoTracking().FirstOrDefaultAsync(s => s.Id == stockId, cancellationToken);
         return stock == null ? null : new StockDto(stockId, stock.TickerSymbol);
@@ -137,7 +130,7 @@ public class StockRepository : IStockRepository
 
     public async Task<IReadOnlyList<Stock>> GetUninitializedStocksAsync(CancellationToken cancellationToken)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        await using var context = await contextFactory.CreateDbContextAsync(cancellationToken);
         
         return await context.Stocks
             .AsNoTracking()
@@ -147,7 +140,7 @@ public class StockRepository : IStockRepository
 
     public async Task<int> MarkStocksAsInitializedAsync(IEnumerable<Guid> stockIds, CancellationToken cancellationToken)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
+        await using var context = await contextFactory.CreateDbContextAsync(cancellationToken);
 
         var uninitializedStocks =  context.Stocks
             .Where(s => stockIds.Contains(s.Id));
@@ -160,9 +153,7 @@ public class StockRepository : IStockRepository
     
     public async Task<IList<string>> GetUninitializedStocks(IList<string> tickerSymbols, CancellationToken cancellationToken)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync(cancellationToken);
-        
-        return await context.Stocks
+        return await dbContext.Stocks
             .Where(s => tickerSymbols.Contains(s.TickerSymbol))
             .Where(s => s.IsInitialized == false)
             .Select(s => s.TickerSymbol)
