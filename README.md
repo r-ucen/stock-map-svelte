@@ -354,7 +354,6 @@ get /user-settings/default-portfolio
 put /user-settings/default-portfolio
 ```
 - ...
-```
 
 More detailed information about the API endpoints can be found at https://localhost:7086/scalar/v1 when running the app in development mode.
 
@@ -370,7 +369,6 @@ More detailed information about the API endpoints can be found at https://localh
 - DTO's containing the data transfer objects
 - Enums
 - Exceptions containing custom exceptions inheriting from AppException class
-The DTO's, enums, exceptions and requests from the Api layer could be moved into a dedicated common layer
 - Facades wrapping the use cases since the app doesn't utilize the Mediator pattern (yet)
 - UseCases containing the use cases for the app, which are called from the API layer through the facades
 - DependencyInjection.cs featuring AddApplication method called in Program.cs to register application related services
@@ -393,7 +391,7 @@ The DTO's, enums, exceptions and requests from the Api layer could be moved into
 
 # Domain layer
 - Entities containing the app's entities, such as User, Portfolio, Stock, etc.
-These entities are supposed to be extended with methods to prevent anemic domain models
+- Domain specific exception
 
 # Infrastructure layer
 This layer contains implementation of various external services used in the app such as the database, client for fetching stock data, email sender
@@ -419,6 +417,3 @@ It makes use of StockUpdateJitter which tells the service whether to run the cur
 This folder contains integration and unit tests for the backend (and possibly frontend in the future)
 - The integration tests folder offers an IntegrationTestWebApplicationFactory that makes use of Testcontainers (PostgreSqlContainer) as well as a TestAuthHandler that makes it possible to configure authentication/authorization for clients created by the factory.
 - The unit tests make use of the Moq library to mock the apps repositories etc. and configure their behavior
-
-# TODO Features:
-- Introduce limit on the number of portfolios the user can have at one moment & limit on the number of stocks in one portfolio - this can be then upraded based on the user's role (tiers)
