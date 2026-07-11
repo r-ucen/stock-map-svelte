@@ -37,8 +37,8 @@ public class CachedPortfolioRepository : IPortfolioRepository
     public Task<IReadOnlyList<Portfolio>> GetAllPortfoliosAsync()
         => _decorated.GetAllPortfoliosAsync();
     
-    public Task<int> GetPortfolioCountByUserIdAsync(string userId)
-        => _decorated.GetPortfolioCountByUserIdAsync(userId);
+    public Task<int> GetPortfolioCountByUserIdAsync(string userId, CancellationToken cancellationToken)
+        => _decorated.GetPortfolioCountByUserIdAsync(userId, cancellationToken);
     
     // helpers
     

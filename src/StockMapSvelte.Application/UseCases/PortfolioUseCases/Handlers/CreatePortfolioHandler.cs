@@ -5,7 +5,6 @@ using StockMapSvelte.Application.Exceptions.Portfolio;
 using StockMapSvelte.Application.Exceptions.Stock;
 using StockMapSvelte.Application.UseCases.PortfolioUseCases.Commands;
 using StockMapSvelte.Domain.Entities;
-using StockMapSvelte.Domain.Exceptions.Portfolio;
 
 namespace StockMapSvelte.Application.UseCases.PortfolioUseCases.Handlers;
 
@@ -31,6 +30,9 @@ public class CreatePortfolioHandler
     public async Task<PortfolioStockDto> Handle(CreatePortfolioCommand cmd, CancellationToken cancellationToken)
     {
         var userId = await _userContext.GetCurrentUserIdAsync();
+        var portfolioCount = await _portfolioRepository.GetPortfolioCountByUserIdAsync(userId, cancellationToken);
+        if (portfolioCount >= 5) { throw new MaxPortfoliosReachedException(5); }
+        
         var portfolio = Portfolio.Create(userId, cmd.PortfolioName);
         
         var nameExists = await _portfolioRepository.PortfolioNameExistsAsync(userId, portfolio.Name, cancellationToken);
@@ -58,7 +60,6 @@ public class CreatePortfolioHandler
             throw new PortfolioCreationFailedException("Failed to create portfolio.");
         }
         
-        var portfolioCount = await _portfolioRepository.GetPortfolioCountByUserIdAsync(userId);
         if (portfolioCount == 1)
         {
             var setPortfolioAsDefaultResult = await _userSettingRepository.SetPortfolioAsDefaultAsync(userId, portfolio.Id);

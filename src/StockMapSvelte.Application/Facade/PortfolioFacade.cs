@@ -49,12 +49,8 @@ public class PortfolioFacade : IPortfolioFacade
         return await _getAllPortfoliosHandler.Handle(filter, cancellationToken);
     }
 
-    public async Task<IReadOnlyList<PortfolioStockDto>> GetPortfoliosByUserIdAsync(CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<PortfolioStockDto>> GetPortfoliosByUserIdAsync(GetPortfoliosByUserIdQuery query, CancellationToken cancellationToken)
     {
-        var currentUserId = await _userContext.GetCurrentUserIdAsync();
-
-        var query = new GetPortfoliosByUserIdQuery(currentUserId);
-        
         return await _getPortfoliosByUserIdHandler.Handle(query, cancellationToken);
     }
 
@@ -63,10 +59,8 @@ public class PortfolioFacade : IPortfolioFacade
         return await _editPortfolioHandler.Handle(cmd, cancellationToken);
     }
 
-    public async Task DeletePortfolioAsync(Guid portfolioId, CancellationToken cancellationToken)
+    public async Task DeletePortfolioAsync(DeletePortfolioCommand cmd, CancellationToken cancellationToken)
     {
-        var cmd = new DeletePortfolioCommand(portfolioId);
-
         await _deletePortfolioHandler.Handle(cmd, cancellationToken);
     }
 
