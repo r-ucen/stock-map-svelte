@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using StockMapSvelte.Api.Requests.OAuth;
 using StockMapSvelte.Application.Abstractions;
 using StockMapSvelte.Infrastructure.Identity;
@@ -7,6 +8,7 @@ using StockMapSvelte.Application.Enums;
 
 namespace StockMapSvelte.Api.Controllers;
 
+[EnableRateLimiting("DataPolicy")]
 [ApiController]
 [Route("oauth")]
 public class OAuthController : Controller
