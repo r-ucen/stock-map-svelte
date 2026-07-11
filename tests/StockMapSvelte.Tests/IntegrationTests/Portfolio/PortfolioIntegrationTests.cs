@@ -4,7 +4,6 @@ using System.Net.Http.Json;
 using Microsoft.AspNetCore.Mvc.Testing;
 using StockMapSvelte.Api.Requests;
 using StockMapSvelte.Application.DTOs;
-using Xunit.Abstractions;
 
 namespace StockMapSvelte.Tests.IntegrationTests.Portfolio;
 

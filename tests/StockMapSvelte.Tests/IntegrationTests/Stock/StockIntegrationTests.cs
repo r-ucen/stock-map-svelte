@@ -3,10 +3,8 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Moq;
 using StockMapSvelte.Application.DTOs;
 using StockMapSvelte.Application.UseCases.StockUseCases.Commands;
-using StockMapSvelte.Domain.Entities;
 using Xunit.Abstractions;
 
 namespace StockMapSvelte.Tests.IntegrationTests.Stock;
