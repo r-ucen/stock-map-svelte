@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using StockMapSvelte.Api.Requests.User;
 using StockMapSvelte.Application.Abstractions.Facades;
 using StockMapSvelte.Application.DTOs.Common;
 using StockMapSvelte.Application.UseCases.UserUseCases.Commands;
@@ -54,9 +55,11 @@ public class UserController : Controller
     [HttpPut]
     [Authorize(Roles = "Admin")]
     [Route("roles")]
-    public async Task<IActionResult> UpdateRoles([FromBody] UpdateRolesCommand request)
+    public async Task<IActionResult> UpdateRoles([FromBody] UpdateRolesRequest request)
     {
-        await _userFacade.UpdateRolesAsync(request);
+        var cmd = new UpdateRolesCommand(request.UserId, request.NewRoles);
+        
+        await _userFacade.UpdateRolesAsync(cmd);
         return NoContent();
     }
 }

@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using StockMapSvelte.Api.Requests.OAuth;
 using StockMapSvelte.Application.Abstractions;
 using StockMapSvelte.Infrastructure.Identity;
-using StockMapSvelte.Application.DTOs;
 using StockMapSvelte.Application.Enums;
 
 namespace StockMapSvelte.Api.Controllers;

@@ -26,7 +26,9 @@ public class StockController : Controller
     [Route("{stockId:guid}")]
     public async Task<IActionResult> GetStock(Guid stockId, CancellationToken cancellationToken = default)
     {
-        var stock = await _stockFacade.GetStockViewModelByIdAsync(stockId, cancellationToken);
+        var query = new GetStockQuery(stockId);
+        
+        var stock = await _stockFacade.GetStockViewModelByIdAsync(query, cancellationToken);
         return Ok(stock);
     }
     

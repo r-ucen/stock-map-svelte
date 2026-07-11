@@ -15,19 +15,19 @@ public class UpdateRolesHandler
         _identityService = identityService;
     }
 
-    public async Task Handle(UpdateRolesCommand request)
+    public async Task Handle(UpdateRolesCommand cmd)
     {
         var currentUserId = await _userContext.GetCurrentUserIdAsync();
-        if (currentUserId == request.UserId) { throw new UnableToSetRoleException("You cannot modify your own roles"); }
+        if (currentUserId == cmd.UserId) { throw new UnableToSetRoleException("You cannot modify your own roles"); }
         
-        var currentRoles = await _identityService.GetUserRolesAsync(request.UserId);
-        var isRemovingAdmin = currentRoles.Contains("Admin") && !request.NewRoles.Contains("Admin");
-        if (isRemovingAdmin && await _identityService.IsUserTheLastAdminAsync(request.UserId))
+        var currentRoles = await _identityService.GetUserRolesAsync(cmd.UserId);
+        var isRemovingAdmin = currentRoles.Contains("Admin") && !cmd.NewRoles.Contains("Admin");
+        if (isRemovingAdmin && await _identityService.IsUserTheLastAdminAsync(cmd.UserId))
         {
             throw new UnableToSetRoleException("Cannot remove the last admin");
         }
         
-        var result = await _identityService.UpdateUserRoles(request.UserId, request.NewRoles);
+        var result = await _identityService.UpdateUserRoles(cmd.UserId, cmd.NewRoles);
         if (!result) { throw new UnableToSetRoleException("An error occured while updating the roles"); }
     }
 }

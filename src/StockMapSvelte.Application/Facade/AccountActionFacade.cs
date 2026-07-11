@@ -9,60 +9,40 @@ namespace StockMapSvelte.Application.Facade;
 
 public class AccountActionFacade : IAccountActionFacade
 {
-    private readonly IUserContext _userContext;
-    
     private readonly GetAccountInfoHandler _getAccountInfoHandler;
     private readonly DeleteAccountHandler _deleteAccountHandler;
     private readonly SetPasswordHandler _setPasswordHandler;
     private readonly RemoveGoogleExternalLoginHandler _removeGoogleExternalLoginHandler;
     
     public AccountActionFacade(
-        IUserContext userContext,
         GetAccountInfoHandler getAccountInfoHandler,
         DeleteAccountHandler deleteAccountHandler,
         SetPasswordHandler setPasswordHandler,
         RemoveGoogleExternalLoginHandler removeGoogleExternalLoginHandler)
     {
-        _userContext = userContext;
         _getAccountInfoHandler = getAccountInfoHandler;
         _deleteAccountHandler = deleteAccountHandler;
         _setPasswordHandler = setPasswordHandler;
         _removeGoogleExternalLoginHandler = removeGoogleExternalLoginHandler;
     }
 
-    public async Task<AccountInfoDto> GetAccountInfoAsync()
+    public async Task<AccountInfoDto> GetAccountInfoAsync(GetAccountInfoQuery query)
     {
-        var currentUserId = await _userContext.GetCurrentUserIdAsync();
-
-        var query = new GetAccountInfoQuery(currentUserId);
-        
         return await _getAccountInfoHandler.Handle(query);
     }
 
-    public async Task DeleteMyAccountAsync()
+    public async Task DeleteMyAccountAsync(DeleteAccountCommand command)
     {
-        var currentUserId = await _userContext.GetCurrentUserIdAsync();
-
-        var query = new DeleteAccountCommand(currentUserId);
-        
-        await _deleteAccountHandler.Handle(query);
+        await _deleteAccountHandler.Handle(command);
     }
 
-    public async Task SetPasswordAsync(string newPassword)
+    public async Task SetPasswordAsync(SetPasswordCommand command)
     {
-        var currentUserId = await _userContext.GetCurrentUserIdAsync();
-
-        var command = new SetPasswordCommand(currentUserId, newPassword);
-        
         await _setPasswordHandler.Handle(command);
     }
 
-    public async Task RemoveGoogleExternalLoginAsync()
+    public async Task RemoveGoogleExternalLoginAsync(RemoveGoogleExternalLoginCommand command)
     {
-        var currentUserId = await _userContext.GetCurrentUserIdAsync();
-
-        var command = new RemoveGoogleExternalLoginCommand(currentUserId);
-        
         await _removeGoogleExternalLoginHandler.Handle(command);
     }
 }
