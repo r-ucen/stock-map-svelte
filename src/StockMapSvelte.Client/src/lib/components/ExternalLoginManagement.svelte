@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
 	import type { IState } from '$lib/Abstractions/IState';
-	import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
-	import BadgeCheckIcon from '@lucide/svelte/icons/badge-check';
+	import BadgeAlertIcon from '@lucide/svelte/icons/badge-alert';
+	import Link2Icon from '@lucide/svelte/icons/link-2';
 	import { Badge } from '$lib/components/ui/badge';
 	import RemoveGoogleExternalLogin from '$lib/components/RemoveGoogleExternalLogin.svelte';
 
@@ -12,28 +12,39 @@
 	const hasPasswordConfigured = $derived(s.hasPasswordConfigured);
 </script>
 
-<Card>
-	<CardHeader>
-		<CardTitle>
-			<span class="pr-2">Manage external logins</span>
-			{#if noLoginConfigured}
-				<Badge variant="destructive">
-					<BadgeCheckIcon />
-					No external login configured
-				</Badge>
-			{/if}
-		</CardTitle>
-	</CardHeader>
-	<CardContent>
-		{#if !noLoginConfigured}
-			{#each s.externalLogins as item (item.loginProvider)}
-				<Badge variant="secondary">
-					{item.providerDisplayName}
-					{#if (item.loginProvider === 'GoogleOpenIdConnect') && hasPasswordConfigured}
-						<RemoveGoogleExternalLogin />
+<div class="py-8">
+	<div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+		<div class="flex items-start gap-3">
+			<div class="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
+				<Link2Icon class="size-4" />
+			</div>
+			<div>
+				<div class="flex flex-wrap items-center gap-2">
+					<h2 class="text-base font-semibold tracking-tight">External logins</h2>
+					{#if noLoginConfigured}
+						<Badge variant="destructive">
+							<BadgeAlertIcon />
+							No external login configured
+						</Badge>
 					{/if}
-				</Badge>
-			{/each}
+				</div>
+				<p class="text-sm text-muted-foreground mt-1">Accounts you can use to sign in instead of a password.</p>
+			</div>
+		</div>
+
+		{#if !noLoginConfigured}
+			<div class="ml-12 flex flex-wrap gap-2 sm:ml-0 sm:justify-end">
+				{#each s.externalLogins as item (item.loginProvider)}
+					<Badge
+						variant="outline"
+					>
+						{item.providerDisplayName}
+						{#if (item.loginProvider === 'GoogleOpenIdConnect') && hasPasswordConfigured}
+							<RemoveGoogleExternalLogin />
+						{/if}
+					</Badge>
+				{/each}
+			</div>
 		{/if}
-	</CardContent>
-</Card>
+	</div>
+</div>
