@@ -2,6 +2,7 @@ using StockMapSvelte.Application.Abstractions;
 using StockMapSvelte.Application.Abstractions.Repositories;
 using StockMapSvelte.Application.Exceptions.Portfolio;
 using StockMapSvelte.Application.DTOs;
+using StockMapSvelte.Application.UseCases.TreeMapUseCases.Queries;
 
 namespace StockMapSvelte.Application.UseCases.TreeMapUseCases.Handlers;
 
@@ -21,15 +22,15 @@ public class GetTreemapDataHandler
         _userContext = userContext;
     }
     
-    public async Task<TreemapDataDto> Handle(Guid portfolioId, CancellationToken cancellationToken)
+    public async Task<TreemapDataDto> Handle(GetTreemapDataQuery query, CancellationToken cancellationToken)
     {
         var currentUserId = await _userContext.GetCurrentUserIdAsync();
         
-        var portfolio = await _portfolioRepository.GetPortfolioByIdAsync(portfolioId, cancellationToken);
+        var portfolio = await _portfolioRepository.GetPortfolioByIdAsync(query.PortfolioId, cancellationToken);
         if (portfolio == null) { throw new PortfolioNotFoundException("Portfolio not found."); }
             
         portfolio.ValidateOwnership(currentUserId);
 
-        return await _treeMapRepository.GetTreemapDataViewModelByIdAsync(portfolioId, cancellationToken);
+        return await _treeMapRepository.GetTreemapDataViewModelByIdAsync(query.PortfolioId, cancellationToken);
     }
 }

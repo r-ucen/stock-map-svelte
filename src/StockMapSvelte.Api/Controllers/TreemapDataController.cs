@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using StockMapSvelte.Application.Abstractions.Facades;
+using StockMapSvelte.Application.UseCases.TreeMapUseCases.Queries;
 
 namespace StockMapSvelte.Api.Controllers;
 
@@ -21,7 +22,9 @@ public class TreemapDataController : Controller
     [HttpGet("{portfolioId:guid}")]
     public async Task<IActionResult> GetTreemapDataByPortfolioId(Guid portfolioId, CancellationToken cancellationToken = default)
     {
-        var treemapData = await _treeMapFacade.GetTreemapDataViewModelByIdAsync(portfolioId, cancellationToken);
+        var query = new GetTreemapDataQuery(portfolioId);
+        
+        var treemapData = await _treeMapFacade.GetTreemapDataViewModelByIdAsync(query, cancellationToken);
         return  Ok(treemapData);
     }
 }

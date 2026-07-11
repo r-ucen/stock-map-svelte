@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using StockMapSvelte.Api.Requests.UserSetting;
 using StockMapSvelte.Application.Abstractions.Facades;
 using StockMapSvelte.Application.UseCases.UserSettingUseCases.Commands;
 
@@ -27,37 +28,11 @@ public class UserSettingController : Controller
     }
 
     [HttpPut("default-portfolio")]
-    public async Task<IActionResult> SetDefaultPortfolio([FromBody] SetPortfolioAsDefaultCommand command, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> SetDefaultPortfolio([FromBody] SetPortfolioAsDefaultRequest request, CancellationToken cancellationToken = default)
     {
-        await _userSettingFacade.SetPortfolioAsDefaultAsync(command, cancellationToken);
-        return NoContent();
-    }
-
-    [HttpGet("toast-delay")]
-    public async Task<IActionResult> GetToastAutoHideDelayMs()
-    {
-        var delayMs = await _userSettingFacade.GetToastAutoHideDelayMs();
-        return Ok(delayMs);
-    }
-
-    [HttpPut("toast-delay")]
-    public async Task<IActionResult> SetToastAutoHideDelayMs([FromBody] SetToastAutoHideDelayMsCommand command)
-    {
-        await _userSettingFacade.SetToastAutoHideDelayMsAsync(command);
-        return NoContent();
-    }
-
-    [HttpGet("toast-auto-hide")]
-    public async Task<IActionResult> GetToastAutoHideValue()
-    {
-        var value = await _userSettingFacade.GetToastAutoHideValueAsync();
-        return Ok(value);
-    }
-
-    [HttpPut("toast-auto-hide")]
-    public async Task<IActionResult> SetToastAutoHideValue([FromBody] SetToastAutoHideValueCommand command)
-    {
-        await _userSettingFacade.SetToastAutoHideValueAsync(command);
+        var cmd = new SetPortfolioAsDefaultCommand(request.PortfolioId);
+        
+        await _userSettingFacade.SetPortfolioAsDefaultAsync(cmd, cancellationToken);
         return NoContent();
     }
 }

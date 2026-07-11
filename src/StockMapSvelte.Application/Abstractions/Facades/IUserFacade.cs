@@ -11,5 +11,5 @@ public interface IUserFacade
     Task<PagedResponse<UserDto>> GetAllUsersQueriedAsync(QueryFilter filter, CancellationToken cancellationToken);
     Task<UserDto> GetUserAsync(GetUserQuery query, CancellationToken cancellationToken);
     Task LogOutAsync();
-    Task UpdateRolesAsync(UpdateRolesCommand request);
+    Task UpdateRolesAsync(UpdateRolesCommand cmd);
 }

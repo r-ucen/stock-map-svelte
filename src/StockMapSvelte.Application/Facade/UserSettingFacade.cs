@@ -9,25 +9,13 @@ public class UserSettingFacade : IUserSettingFacade
     
     private readonly SetPortfolioAsDefaultHandler _setPortfolioAsDefaultHandler;
     private readonly GetDefaultPortfolioIdHandler _getDefaultPortfolioIdHandler;
-    private readonly GetToastAutoHideValueHandler _getToastAutoHideValueHandler;
-    private readonly SetToastAutoHideValueHandler _setToastAutoHideValueHandler;
-    private readonly GetToastAutoHideDelayMsHandler _getToastAutoHideDelayMs;
-    private readonly SetToastAutoHideDelayMsHandler _setToastAutoHideDelayMs;
     
     public UserSettingFacade(
         SetPortfolioAsDefaultHandler setPortfolioAsDefaultHandler,
-        GetDefaultPortfolioIdHandler getDefaultPortfolioIdHandler,
-        GetToastAutoHideValueHandler getToastAutoHideValueHandler,
-        SetToastAutoHideValueHandler setToastAutoHideValueHandler,
-        GetToastAutoHideDelayMsHandler getToastAutoHideDelayMsHandler,
-        SetToastAutoHideDelayMsHandler setToastAutoHideDelayMsHandler)
+        GetDefaultPortfolioIdHandler getDefaultPortfolioIdHandler)
     {
         _setPortfolioAsDefaultHandler = setPortfolioAsDefaultHandler;
         _getDefaultPortfolioIdHandler = getDefaultPortfolioIdHandler;
-        _getToastAutoHideValueHandler = getToastAutoHideValueHandler;
-        _setToastAutoHideValueHandler = setToastAutoHideValueHandler;
-        _getToastAutoHideDelayMs = getToastAutoHideDelayMsHandler;
-        _setToastAutoHideDelayMs = setToastAutoHideDelayMsHandler;
     }
     
     public async Task SetPortfolioAsDefaultAsync(SetPortfolioAsDefaultCommand cmd, CancellationToken cancellationToken)
@@ -38,25 +26,5 @@ public class UserSettingFacade : IUserSettingFacade
     public async Task<Guid> GetDefaultPortfolioIdAsync(CancellationToken cancellationToken)
     {
         return await _getDefaultPortfolioIdHandler.Handle(cancellationToken);
-    }
-    
-    public async Task SetToastAutoHideValueAsync(SetToastAutoHideValueCommand cmd)
-    {
-        await _setToastAutoHideValueHandler.Handle(cmd);
-    }
-    
-    public async Task<bool> GetToastAutoHideValueAsync()
-    {
-        return await _getToastAutoHideValueHandler.Handle();
-    }
-
-    public async Task<int> GetToastAutoHideDelayMs()
-    {
-        return await _getToastAutoHideDelayMs.Handle();
-    }
-
-    public async Task SetToastAutoHideDelayMsAsync(SetToastAutoHideDelayMsCommand cmd)
-    {
-        await _setToastAutoHideDelayMs.Handle(cmd);
     }
 }

@@ -354,12 +354,6 @@ get /user-settings/default-portfolio
 put /user-settings/default-portfolio
 ```
 - ...
-The following four enpoints are deprecated:
-```
-get /user-settings/toast-delay
-put /user-settings/toast-delay
-get /user-settings/toast-auto-hide
-put /user-settings/toast-auto-hide
 ```
 
 More detailed information about the API endpoints can be found at https://localhost:7086/scalar/v1 when running the app in development mode.
