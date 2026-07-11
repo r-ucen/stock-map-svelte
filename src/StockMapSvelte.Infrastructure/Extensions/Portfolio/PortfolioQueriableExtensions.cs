@@ -17,9 +17,9 @@ public static class PortfolioQueryableExtensions
         return targetColumn switch
         {
             "userid" => query.Where(p =>
-                EF.Functions.ILike(p.UserId ?? "", $"%{search}%")),
+                EF.Functions.ILike(p.UserId, $"%{search}%")),
             "name" => query.Where(p =>
-                EF.Functions.ILike(p.Name ?? "", $"%{search}%")),
+                EF.Functions.ILike(p.Name, $"%{search}%")),
             "stocks" => query.Where(p =>
                 p.Stocks.Any(s =>
                     EF.Functions.ILike(s.TickerSymbol, $"%{search}%"))),
