@@ -1,6 +1,5 @@
 using System.Linq.Dynamic.Core;
 using System.Reflection;
-using Microsoft.EntityFrameworkCore;
 
 namespace StockMapSvelte.Infrastructure.Extensions;
 
