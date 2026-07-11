@@ -34,7 +34,7 @@ public class PortfolioRepository(ApplicationDbContext dbContext) : IPortfolioRep
             {
                 PortfolioId = p.Id,
                 UserId = p.UserId,
-                PortfolioName = p.Name ?? "",
+                PortfolioName = p.Name,
                 TickerSymbols = p.Stocks.Select(s => s.TickerSymbol).ToList()
                 
             })
@@ -141,7 +141,7 @@ public class PortfolioRepository(ApplicationDbContext dbContext) : IPortfolioRep
             {
                 PortfolioId = p.Id,
                 UserId = p.UserId,
-                PortfolioName = p.Name ?? "",
+                PortfolioName = p.Name,
                 IsDefault = p.Id == defaultPortfolioId,
                 TickerSymbols = p.Stocks.Select(s => s.TickerSymbol).ToList()
             })

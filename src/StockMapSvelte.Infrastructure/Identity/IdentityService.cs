@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Identity;
 using StockMapSvelte.Application.Abstractions;
 using StockMapSvelte.Application.DTOs;
 using StockMapSvelte.Application.Enums;
-using StockMapSvelte.Application.Exceptions.User;
 
 namespace StockMapSvelte.Infrastructure.Identity;
 
