@@ -35,9 +35,9 @@ public class UserFacade : IUserFacade
          await _identityService.LogOutAsync();
     }
 
-    public async Task UpdateRolesAsync(UpdateRolesCommand request)
+    public async Task UpdateRolesAsync(UpdateRolesCommand cmd)
     {
-        await _updateRolesHandler.Handle(request);
+        await _updateRolesHandler.Handle(cmd);
     }
 
     public async Task DeleteUserAsync(DeleteUserCommand cmd, CancellationToken cancellationToken)

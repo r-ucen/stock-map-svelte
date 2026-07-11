@@ -62,7 +62,7 @@ public class StockDataUpdateTimedService : BackgroundService
         var count = Interlocked.Increment(ref _executionCount);
             
         using var scope = _scopeFactory.CreateScope();
-        var stockUpdateService = scope.ServiceProvider.GetRequiredService<Application.Abstractions.IStockUpdateService>();
+        var stockUpdateService = scope.ServiceProvider.GetRequiredService<IStockUpdateService>();
         _logger.LogInformation("Starting stock update...");
         await stockUpdateService.UpdateAsync(cancellationToken);
         

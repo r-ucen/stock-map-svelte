@@ -1,21 +1,14 @@
 <script lang="ts">
 	import { toast } from 'svelte-sonner';
 	import { auth } from '$lib/auth.svelte';
-	import {
-		Card,
-		CardContent,
-		CardDescription,
-		CardFooter,
-		CardHeader,
-		CardTitle
-	} from '$lib/components/ui/card/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import type { IState } from '$lib/Abstractions/IState';
 	import { getContext } from 'svelte';
 	import { Badge } from '$lib/components/ui/badge';
-	import BadgeCheckIcon from "@lucide/svelte/icons/badge-check";
+	import BadgeAlertIcon from "@lucide/svelte/icons/badge-alert";
+	import KeyRoundIcon from "@lucide/svelte/icons/key-round";
 
 	let oldPassword = $state('');
 	let newPassword = $state('');
@@ -64,39 +57,43 @@
 	}
 </script>
 
-<Card>	
-	<CardHeader>
-		<CardTitle>
-			<span class="pr-2">Change Password</span>
-			{#if isPaswordlessAccount}
-				<Badge variant="destructive">
-					<BadgeCheckIcon />
-					No password set
-				</Badge>
-			{/if}
-		</CardTitle>
-		<CardDescription>New password must be at least 6 characters long, contain uppercase letter, number and a special symbol.
-		</CardDescription>
-	</CardHeader>
-	<CardContent>
-		<form id="password-form" onsubmit={updatePassword} class="space-y-4">
-			<div class="space-y-2">
-				<Label for="old-password">Current Password</Label>
-				<Input disabled={isPaswordlessAccount} id="old-password" type="password" bind:value={oldPassword} required />
+<div class="py-8 first:pt-0">
+	<div class="flex items-start gap-3">
+		<div class="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
+			<KeyRoundIcon class="size-4" />
+		</div>
+		<div class="min-w-0 flex-1">
+			<div class="flex flex-wrap items-center gap-2">
+				<h2 class="text-base font-semibold tracking-tight">Change password</h2>
+				{#if isPaswordlessAccount}
+					<Badge variant="destructive">
+						<BadgeAlertIcon />
+						No password set
+					</Badge>
+				{/if}
 			</div>
-			<div class="space-y-2">
-				<Label for="new-password">New Password</Label>
-				<Input disabled={isPaswordlessAccount} id="new-password" type="password" bind:value={newPassword} required />
-			</div>
-			<div class="space-y-2">
-				<Label for="confirm-password">Confirm New Password</Label>
-				<Input disabled={isPaswordlessAccount} id="confirm-password" type="password" bind:value={confirmPassword} required />
-			</div>
-		</form>
-	</CardContent>
-	<CardFooter>
-		<Button type="submit" form="password-form" disabled={isPasswordSubmitting || isPaswordlessAccount}>
-			Update Password
-		</Button>
-	</CardFooter>
-</Card>
+			<p class="text-sm text-muted-foreground mt-1">
+				Must be at least 6 characters, with an uppercase letter, a number, and a special symbol.
+			</p>
+
+			<form id="password-form" onsubmit={updatePassword} class="mt-5 max-w-sm space-y-4">
+				<div class="space-y-1.5">
+					<Label for="old-password" class="text-sm font-medium">Current password</Label>
+					<Input disabled={isPaswordlessAccount} id="old-password" type="password" bind:value={oldPassword} required />
+				</div>
+				<div class="space-y-1.5">
+					<Label for="new-password" class="text-sm font-medium">New password</Label>
+					<Input disabled={isPaswordlessAccount} id="new-password" type="password" bind:value={newPassword} required />
+				</div>
+				<div class="space-y-1.5">
+					<Label for="confirm-password" class="text-sm font-medium">Confirm new password</Label>
+					<Input disabled={isPaswordlessAccount} id="confirm-password" type="password" bind:value={confirmPassword} required />
+				</div>
+			</form>
+
+			<Button type="submit" form="password-form" disabled={isPasswordSubmitting || isPaswordlessAccount} class="mt-5">
+				Update password
+			</Button>
+		</div>
+	</div>
+</div>

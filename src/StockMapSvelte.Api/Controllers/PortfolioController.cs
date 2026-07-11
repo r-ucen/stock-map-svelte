@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using StockMapSvelte.Api.Requests;
+using StockMapSvelte.Api.Requests.Portfolio;
+using StockMapSvelte.Application.Abstractions;
 using StockMapSvelte.Application.Abstractions.Facades;
 using StockMapSvelte.Application.DTOs.Common;
 using StockMapSvelte.Application.UseCases.PortfolioUseCases.Commands;
@@ -16,10 +18,12 @@ namespace StockMapSvelte.Api.Controllers;
 public class PortfolioController : Controller
 {
     private readonly IPortfolioFacade _portfolioFacade;
+    private readonly IUserContext _userContext;
 
-    public PortfolioController(IPortfolioFacade portfolioFacade)
+    public PortfolioController(IPortfolioFacade portfolioFacade, IUserContext userContext)
     {
         _portfolioFacade = portfolioFacade;
+        _userContext = userContext;
     }
 
     [HttpGet]
@@ -34,7 +38,10 @@ public class PortfolioController : Controller
     [Route("me")]
     public async Task<IActionResult> GetCurrentUserPortfolios(CancellationToken cancellationToken = default)
     {
-        var portfolios = await _portfolioFacade.GetPortfoliosByUserIdAsync(cancellationToken);
+        var currentUserId = await _userContext.GetCurrentUserIdAsync();
+        var query = new GetPortfoliosByUserIdQuery(currentUserId);
+        
+        var portfolios = await _portfolioFacade.GetPortfoliosByUserIdAsync(query, cancellationToken);
         return Ok(portfolios);
     }
 
@@ -42,7 +49,9 @@ public class PortfolioController : Controller
     [Route("{portfolioId:guid}")]
     public async Task<IActionResult> DeletePortfolio(Guid portfolioId, CancellationToken cancellationToken = default)
     {
-        await _portfolioFacade.DeletePortfolioAsync(portfolioId, cancellationToken);
+        var cmd = new DeletePortfolioCommand(portfolioId);
+        
+        await _portfolioFacade.DeletePortfolioAsync(cmd, cancellationToken);
         return NoContent();
     }
 

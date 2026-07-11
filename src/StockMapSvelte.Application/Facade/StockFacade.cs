@@ -60,10 +60,8 @@ public class StockFacade : IStockFacade
         await _editStockHandler.Handle(cmd, cancellationToken);
     }
 
-    public async Task<StockDto> GetStockViewModelByIdAsync(Guid stockId, CancellationToken cancellationToken)
+    public async Task<StockDto> GetStockViewModelByIdAsync(GetStockQuery query, CancellationToken cancellationToken)
     {
-        var query = new GetStockQuery(stockId);
-        
         return await _getStockHandler.Handle(query, cancellationToken);
     }
     
