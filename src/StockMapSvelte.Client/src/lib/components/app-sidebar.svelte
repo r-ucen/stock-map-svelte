@@ -67,6 +67,12 @@
 	}: ComponentProps<typeof Sidebar.Root> = $props();
 	
 	const sidebar = useSidebar();
+
+	let currentPathName = $derived(
+		page.url.pathname ?? 'Stock Map'
+	);
+
+	'/map'
 	
 	let s = getContext<IState>('state');
 </script>
@@ -78,7 +84,7 @@
 	<Sidebar.Content>
 		<NavMain items={data.navMain} data={page.data}/>
 
-		{#if sidebar.state !== "collapsed"}
+		{#if sidebar.state !== "collapsed" && currentPathName === '/map'}
 			<MapSettings />
 			<Legend selectedMetric={s.selectedMetric} />
 		{/if}
