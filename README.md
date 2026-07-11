@@ -291,13 +291,6 @@ get /portfolios/{portfolioId}
 ```
 - ...
 
-### Role
-```
-[DEPRECATED]
-get /roles/is-admin
-get /roles/is-manager
-get /roles/is-customer
-```
 ### Stock
 ```
 get /stocks/{stockId}
