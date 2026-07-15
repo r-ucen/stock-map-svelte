@@ -181,8 +181,82 @@ rest of the environment variables should be stored in .NET user secrets configur
   }
 }
 ```
+# Deployment
+### Heroku deployment (only api + db)
+1) Create a new app on Heroku, name it stock-map-svelte
+2) Add a PostgreSQL database to the app
+3) Add the required environment variables to the app's settings on Heroku
+4) Also, if you have a custom domain, add the domain to the app's settings on heroku and register the DNS target in the domain's provider
+5) Seed the database or migrate it from somewhere else: seed by getting the DATABASE_URL from the app's settings -> config vars and convert it to a connection string and exchange it temporarily in the .NET user secrets for the local db connection string, the update the database using the most recent migration (in Rider IDE right click the Infrastructure project -> Entity Framework Core -> Update Database); to migrate run pg_dump against the existing populated database and then pg_restore with flags --no-owner --no-privileges on the generated .dump file using the DATABASE_URL connection string from the app's settings
 
+Migration:
+```
+pg_dump -F c -v -d "DATABASE_URL or CONNECTION STRING" -f backup.dump
+```
+(IF NOT IN PATH, use "/c/Program Files/PostgreSQL/16/bin/pg_dump" instead of pg_dump)
+```
+pg_restore --no-owner --no-privileges --clean -d "DATABASE_URL or CONNECTION STRING" -v backup.dump
+```
 
+6) Use this Dockerfile
+```
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+WORKDIR /src
+
+COPY ["src/StockMapSvelte.Api/StockMapSvelte.Api.csproj", "StockMapSvelte.Api/"]
+COPY ["src/StockMapSvelte.Application/StockMapSvelte.Application.csproj", "StockMapSvelte.Application/"]
+COPY ["src/StockMapSvelte.Domain/StockMapSvelte.Domain.csproj", "StockMapSvelte.Domain/"]
+COPY ["src/StockMapSvelte.Infrastructure/StockMapSvelte.Infrastructure.csproj", "StockMapSvelte.Infrastructure/"]
+
+RUN dotnet restore "StockMapSvelte.Api/StockMapSvelte.Api.csproj"
+
+COPY src/ .
+
+WORKDIR "/src/StockMapSvelte.Api"
+RUN dotnet build "StockMapSvelte.Api.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "StockMapSvelte.Api.csproj" -c Release -o /app/publish /p:UseAppHost=false
+
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
+WORKDIR /app
+
+# EXPOSE 8080 
+# ENV ASPNETCORE_URLS=http://+:8080
+
+COPY --from=publish /app/publish .
+
+CMD ASPNETCORE_URLS=http://*:$PORT dotnet StockMapSvelte.Api.dll
+
+# ENTRYPOINT ["dotnet", "StockMapSvelte.Api.dll"]
+```
+
+7) Install the Heroku CLI
+8) run "heroku login" (if path not configured on Windows, run export PATH="$PATH:/c/Program Files/heroku/bin" after installing the CLI via the installer)
+```
+heroku login
+```
+9) run the docker engine locally
+10) run
+```
+heroku container:login
+```
+11) run
+```
+heroku git:remote -a stock-map-svelte
+```
+12) build the Dockerfile in the current directory and push the Docker image
+```
+heroku container:push web
+```
+13) deploy the changes:
+```
+heroku container:release web
+```
+14) enable automated SSL certificate management by running:
+```
+heroku certs:auto:enable
+```
 # API layer
 
 ## Endpoints
