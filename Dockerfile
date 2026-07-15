@@ -19,9 +19,11 @@ RUN dotnet publish "StockMapSvelte.Api.csproj" -c Release -o /app/publish /p:Use
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
 
-EXPOSE 8080
-ENV ASPNETCORE_URLS=http://+:8080
+# EXPOSE 8080 
+# ENV ASPNETCORE_URLS=http://+:8080
 
 COPY --from=publish /app/publish .
 
-ENTRYPOINT ["dotnet", "StockMapSvelte.Api.dll"]
+CMD ASPNETCORE_URLS=http://*:$PORT dotnet StockMapSvelte.Api.dll
+
+# ENTRYPOINT ["dotnet", "StockMapSvelte.Api.dll"]
