@@ -1,0 +1,1 @@
+web: dotnet StockMapSvelte.Api.dll
