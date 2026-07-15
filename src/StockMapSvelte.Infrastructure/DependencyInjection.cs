@@ -21,7 +21,27 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("DefaultConnection");
+        var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+        string connectionString;
+
+        if (string.IsNullOrEmpty(databaseUrl))
+        {
+            connectionString = configuration.GetConnectionString("DefaultConnection") 
+                               ?? throw new InvalidOperationException("Connection string not found.");
+        }
+        else
+        {
+            var databaseUri = new Uri(databaseUrl);
+            var userInfo = databaseUri.UserInfo.Split(':');
+            
+            connectionString = $"Host={databaseUri.Host};" +
+                               $"Port={databaseUri.Port};" +
+                               $"Database={databaseUri.LocalPath.TrimStart('/')};" +
+                               $"Username={userInfo[0]};" +
+                               $"Password={userInfo[1]};" +
+                               $"SSL Mode=Require;" +
+                               $"Trust Server Certificate=True;";
+        }
         
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseNpgsql(connectionString));
