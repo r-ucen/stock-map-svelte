@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
@@ -110,7 +111,20 @@ public static class DependencyInjection
         {
             googleOptions.ClientId = configuration["Authentication:Google:ClientId"];
             googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
-            googleOptions.SignInScheme = IdentityConstants.ExternalScheme; 
+            googleOptions.SignInScheme = IdentityConstants.ExternalScheme;
+            
+            googleOptions.Events = new OpenIdConnectEvents
+            {
+                OnRemoteFailure = context =>
+                {
+                    var frontend = configuration["FrontendUrl"] ?? throw new InvalidOperationException("FrontendUrl not configured.");
+
+                    context.Response.Redirect($"{frontend}/login");
+
+                    context.HandleResponse();
+                    return Task.CompletedTask;
+                }
+            };
         });
         
         services.AddHybridCache();
