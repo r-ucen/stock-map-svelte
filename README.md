@@ -184,7 +184,11 @@ rest of the environment variables should be stored in .NET user secrets configur
 # Deployment
 
 ### Environement variables required for deployment
-
+Frontend
+```
+PUBLIC_API_BASE_URL
+```
+API
 ```
 AllowedOrigins__0
 AllowedOrigins__1
