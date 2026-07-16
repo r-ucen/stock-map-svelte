@@ -53,7 +53,7 @@ public class IdentityService : IIdentityService
                 var u = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
                 if (u != null)
                 {
-                    await _signInManager.SignInAsync(u, isPersistent: false);
+                    await _signInManager.SignInAsync(u, isPersistent: true);
                 }
             }
 
@@ -97,7 +97,7 @@ public class IdentityService : IIdentityService
         }
         
         await _userManager.AddLoginAsync(user, info);
-        await _signInManager.SignInAsync(user, isPersistent: false);
+        await _signInManager.SignInAsync(user, isPersistent: true);
         return new ExternalLoginResponse
         (
             ExternalLoginResult.Success,
@@ -127,7 +127,7 @@ public class IdentityService : IIdentityService
         {
             return false;
         }
-        await _signInManager.SignInAsync(user, isPersistent: false);
+        await _signInManager.SignInAsync(user, isPersistent: true);
         return true;
     }
         

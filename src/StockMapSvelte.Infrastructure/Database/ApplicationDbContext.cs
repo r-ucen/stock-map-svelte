@@ -1,18 +1,21 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using StockMapSvelte.Domain.Entities;
 using StockMapSvelte.Infrastructure.Database.Seeding;
 using StockMapSvelte.Infrastructure.Identity;
 
 namespace StockMapSvelte.Infrastructure.Database;
 
-public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Role, string>
+public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Role, string>, IDataProtectionKeyContext
 {
     public DbSet<Stock> Stocks { get; set; }
     public DbSet<Portfolio> Portfolios { get; set; }
     public DbSet<StockProfile> StockProfiles { get; set; }
     public DbSet<UserSetting> UserSettings { get; set; }
+    
+    public DbSet<DataProtectionKey> DataProtectionKeys { get; set; } = null!;
     
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
     
