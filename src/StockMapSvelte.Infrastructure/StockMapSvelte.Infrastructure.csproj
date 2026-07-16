@@ -12,21 +12,21 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Google.Apis.Auth.AspNetCore3" Version="1.74.0" />
-    <PackageReference Include="MassTransit" Version="9.1.0-develop.89" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.3" />
-    <PackageReference Include="Microsoft.AspNetCore.DataProtection.EntityFrameworkCore" Version="10.0.3" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.3" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.3" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.3">
+    <PackageReference Include="Google.Apis.Auth.AspNetCore3" Version="1.75.0" />
+    <PackageReference Include="MassTransit" Version="9.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.10" />
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection.EntityFrameworkCore" Version="10.0.10" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.10">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Caching.Hybrid" Version="10.6.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Hybrid" Version="10.8.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="11.0.0-preview.1.26104.118" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0" />
-    <PackageReference Include="Resend" Version="0.2.1" />
-    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.7.2" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
+    <PackageReference Include="Resend" Version="0.6.0" />
+    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.7.3" />
     <PackageReference Include="YahooQuotesApi" Version="7.0.6" />
   </ItemGroup>
 
