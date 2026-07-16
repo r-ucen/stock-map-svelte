@@ -1,9 +1,13 @@
 import { createGuardHook } from 'svelte-guard';
 import { sequence } from '@sveltejs/kit/hooks';
-import type { Handle } from '@sveltejs/kit';
+import { redirect, type Handle } from '@sveltejs/kit';
 import { apiFetch } from '$lib/apiFetch';
 
 const authHandle: Handle = async ({ event, resolve }) => {
+	if (event.url.pathname === '/maintenance' || event.url.pathname === '/error') {
+		return resolve(event);
+	}
+
 	const token = event.cookies.get('.AspNetCore.Identity.Application');
 
 	if (!token) {
@@ -13,6 +17,14 @@ const authHandle: Handle = async ({ event, resolve }) => {
 
 	try {
 		const response = await apiFetch('/account/info', { event });
+
+		if (response.status === 503) {
+			throw redirect(307, '/maintenance');
+		}
+
+		if (response.status >= 500) {
+			throw redirect(307, '/error');
+		}
 
 		if (response.ok) {
 			const data = await response.json();
@@ -33,6 +45,15 @@ const authHandle: Handle = async ({ event, resolve }) => {
 			event.locals.user = undefined;
 		}
 	} catch (err) {
+		if (
+			err &&
+			typeof err === 'object' &&
+			'status' in err &&
+			(err.status === 307 || err.status === 302)
+		) {
+			throw err;
+		}
+
 		console.error('Auth check failed:', err);
 		event.locals.user = undefined;
 	}
