@@ -110,7 +110,7 @@ root/
 ├── StockMapSvelte.slnx
 </pre>
 
-# Environment variables required to run the app
+# Environment variables required to run the app (locally)
 Since the app is recommended to be hosted separately, meaning the frontend and backend are hosted on different domains/servers, here are the required env. variables for each of those two layers:
 
 #### Frontend:
@@ -182,6 +182,27 @@ rest of the environment variables should be stored in .NET user secrets configur
 }
 ```
 # Deployment
+
+### Environement variables required for deployment
+
+```
+AllowedOrigins__0
+AllowedOrigins__1
+Authentication__Google__ClientId
+Authentication__Google__ClientSecret
+CookieDomain
+DATABASE_URL (or ConnectionStrings__DefaultConnection)
+DataProtectionCert (base64 encoded certificate)
+DataProtectionPassword (password used to encrypt the certificate)
+ERROR_PAGE_URL (link to a json file with status and message fields)
+FrontendUrl
+MAINTENANCE_PAGE_URL (link to a json file with status and message fields)
+Resend__ApiToken
+Resend__FromEmail
+Seeding__AdminPasswordHash
+Seeding__ManagerPasswordHash
+```
+
 ### Heroku deployment (only api + db)
 1) Create a new app on Heroku, name it stock-map-svelte
 2) Add a PostgreSQL database to the app
