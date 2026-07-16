@@ -1,4 +1,6 @@
+using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
@@ -127,6 +129,24 @@ public static class DependencyInjection
             };
         });
         
+        var dataProtectionBuilder = services.AddDataProtection()
+            .PersistKeysToDbContext<ApplicationDbContext>()
+            .SetApplicationName("StockMapSvelte");
+        
+        var certBase64 = configuration["DataProtectionCert"];
+        var certPassword = configuration["DataProtectionPassword"];
+
+        if (!string.IsNullOrEmpty(certBase64))
+        {
+            var certBytes = Convert.FromBase64String(certBase64);
+            var certificate = X509CertificateLoader.LoadPkcs12(
+                certBytes,
+                certPassword,
+                X509KeyStorageFlags.EphemeralKeySet);
+            
+            dataProtectionBuilder.ProtectKeysWithCertificate(certificate);
+        }
+
         services.AddHybridCache();
         
         return services;
