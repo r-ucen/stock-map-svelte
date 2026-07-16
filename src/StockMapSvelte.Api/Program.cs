@@ -17,6 +17,14 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.ExpireTimeSpan = TimeSpan.FromDays(30);
+    options.SlidingExpiration = true;
+    options.Cookie.MaxAge = TimeSpan.FromDays(30);
+    options.Cookie.IsEssential = true;
+});
+
 var app = builder.Build();
 
 var forwardedOptions = new ForwardedHeadersOptions
