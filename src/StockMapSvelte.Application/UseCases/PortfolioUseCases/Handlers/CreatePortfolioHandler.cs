@@ -45,14 +45,12 @@ public class CreatePortfolioHandler
             .Where(t => !string.IsNullOrWhiteSpace(t))
             .Select(t => t.Trim().ToUpperInvariant())
             .ToList();
-
-        var uninitializedStocks =
-            await _stockRepository.GetUninitializedStocks(upperTickerSymbols, cancellationToken);
         
-        if (uninitializedStocks.Count != 0)
-        {
-            throw new StocksNotInitializedException(uninitializedStocks);
-        }
+        var missingStocks = await _stockRepository.GetMissingStocksAsync(upperTickerSymbols, cancellationToken);
+        if (missingStocks.Count != 0) { throw new StocksNotInDatabaseException(missingStocks); }
+
+        var uninitializedStocks = await _stockRepository.GetUninitializedStocks(upperTickerSymbols, cancellationToken);
+        if (uninitializedStocks.Count != 0) { throw new StocksNotInitializedException(uninitializedStocks); }
 
         var result = await _portfolioRepository.CreatePortfolioAsync(portfolio, cmd.TickerSymbols, cancellationToken);
         if (result <= 0)
