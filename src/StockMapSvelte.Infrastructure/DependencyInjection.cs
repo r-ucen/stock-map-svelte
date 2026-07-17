@@ -16,6 +16,7 @@ using StockMapSvelte.Infrastructure.Identity;
 using StockMapSvelte.Infrastructure.Repositories;
 using StockMapSvelte.Infrastructure.Repositories.Cached;
 using StockMapSvelte.Infrastructure.Services;
+using StockMapSvelte.Infrastructure.Services.Yahoo;
 using YahooQuotesApi;
 
 namespace StockMapSvelte.Infrastructure;

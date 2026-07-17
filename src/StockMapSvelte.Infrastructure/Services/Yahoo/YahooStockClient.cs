@@ -8,7 +8,7 @@ using StockMapSvelte.Domain.Entities;
 using StockMapSvelte.Infrastructure.Database;
 using YahooQuotesApi;
 
-namespace StockMapSvelte.Infrastructure.Repositories;
+namespace StockMapSvelte.Infrastructure.Services.Yahoo;
 
 public class YahooStockClient(
     ApplicationDbContext dbContext,
