@@ -40,6 +40,9 @@ public class CreatePortfolioTests
         stockRepoMock.Setup(r => r.GetUninitializedStocks(It.IsAny<IList<string>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<string>());
         
+        stockRepoMock.Setup(r => r.GetMissingStocksAsync(It.IsAny<IList<string>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<string>());
+        
         var useCase = new CreatePortfolioHandler(userContextMock.Object, portfolioRepoMock.Object, userSettingRepoMock.Object, stockRepoMock.Object);
         
         var cmd = new CreatePortfolioCommand
@@ -100,6 +103,9 @@ public class CreatePortfolioTests
         stockRepoMock.Setup(r => r.GetUninitializedStocks(It.IsAny<IList<string>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<string>());
         
+        stockRepoMock.Setup(r => r.GetMissingStocksAsync(It.IsAny<IList<string>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<string>());
+        
         var useCase = new CreatePortfolioHandler(userContextMock.Object, portfolioRepoMock.Object, userSettingRepoMock.Object, stockRepoMock.Object);
         
         var cmd = new CreatePortfolioCommand
@@ -141,6 +147,9 @@ public class CreatePortfolioTests
             .ReturnsAsync(2);
         
         stockRepoMock.Setup(r => r.GetUninitializedStocks(It.IsAny<IList<string>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<string>());
+        
+        stockRepoMock.Setup(r => r.GetMissingStocksAsync(It.IsAny<IList<string>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<string>());
         
         var useCase = new CreatePortfolioHandler(userContextMock.Object, portfolioRepoMock.Object, userSettingRepoMock.Object, stockRepoMock.Object);
@@ -188,6 +197,9 @@ public class CreatePortfolioTests
             .ReturnsAsync(1);
         
         stockRepoMock.Setup(r => r.GetUninitializedStocks(It.IsAny<IList<string>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<string>());
+        
+        stockRepoMock.Setup(r => r.GetMissingStocksAsync(It.IsAny<IList<string>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<string>());
         
         var useCase = new CreatePortfolioHandler(userContextMock.Object, portfolioRepoMock.Object, userSettingRepoMock.Object, stockRepoMock.Object);
@@ -256,6 +268,9 @@ public class CreatePortfolioTests
         stockRepoMock.Setup(r => r.GetUninitializedStocks(It.IsAny<IList<string>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<string>());
         
+        stockRepoMock.Setup(r => r.GetMissingStocksAsync(It.IsAny<IList<string>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<string>());
+        
         var useCase = new CreatePortfolioHandler(userContextMock.Object, portfolioRepoMock.Object, userSettingRepoMock.Object, stockRepoMock.Object);
         
         var cmd = new CreatePortfolioCommand
@@ -299,6 +314,9 @@ public class CreatePortfolioTests
             .ReturnsAsync(1);
         
         stockRepoMock.Setup(r => r.GetUninitializedStocks(It.IsAny<IList<string>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<string>());
+        
+        stockRepoMock.Setup(r => r.GetMissingStocksAsync(It.IsAny<IList<string>>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<string>());
         
         var useCase = new CreatePortfolioHandler(userContextMock.Object, portfolioRepoMock.Object, userSettingRepoMock.Object, stockRepoMock.Object);
