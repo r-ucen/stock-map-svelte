@@ -1,0 +1,3 @@
+namespace StockMapSvelte.Application.UseCases.PortfolioUseCases.Commands;
+
+public record ImportPortfolioFromTrading212Command(string Trading212ApiKey, string Trading212ApiSecret, bool IsDemoTrading212Account, string PortfolioName);

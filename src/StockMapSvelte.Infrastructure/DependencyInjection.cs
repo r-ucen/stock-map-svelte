@@ -16,6 +16,7 @@ using StockMapSvelte.Infrastructure.Identity;
 using StockMapSvelte.Infrastructure.Repositories;
 using StockMapSvelte.Infrastructure.Repositories.Cached;
 using StockMapSvelte.Infrastructure.Services;
+using StockMapSvelte.Infrastructure.Services.Trading212;
 using StockMapSvelte.Infrastructure.Services.Yahoo;
 using YahooQuotesApi;
 
@@ -75,6 +76,10 @@ public static class DependencyInjection
             )
         );
         
+        services.AddHttpClient("YahooSearchClient", client =>
+        {
+            client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36");
+        });
         services.AddScoped<IStockClient, YahooStockClient>();
         
         services.AddScoped<PortfolioRepository>();
@@ -101,6 +106,8 @@ public static class DependencyInjection
         services.AddHostedService<StockDataUpdateTimedService>();
         services.AddSingleton<YahooQuotes>(new YahooQuotesBuilder().Build());
         services.AddSingleton<ITreeMapUpdateNotifier, TreeMapUpdateNotifier>();
+        
+        services.AddHttpClient<ITrading212Client, Trading212Client>();
         
         // Authorization policies
         services.AddAuthorizationBuilder()

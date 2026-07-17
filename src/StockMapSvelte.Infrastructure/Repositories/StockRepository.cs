@@ -11,6 +11,19 @@ namespace StockMapSvelte.Infrastructure.Repositories;
 
 public class StockRepository(ApplicationDbContext dbContext) : IStockRepository
 {
+    public async Task<IList<string>> GetMissingStocksAsync(IList<string> tickerSymbols, CancellationToken cancellationToken)
+    {
+        var existingSymbols = await dbContext.Stocks
+            .AsNoTracking()
+            .Where(s => tickerSymbols.Contains(s.TickerSymbol))
+            .Select(s => s.TickerSymbol)
+            .ToListAsync(cancellationToken);
+
+        return tickerSymbols
+            .Except(existingSymbols, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+    }
+    
     public async Task<bool> StockExistsAsync(string ticker, CancellationToken cancellationToken)
     {
         return await dbContext.Stocks
@@ -121,6 +134,16 @@ public class StockRepository(ApplicationDbContext dbContext) : IStockRepository
             .Where(s => s.IsInitialized == false)
             .ToListAsync(cancellationToken);
     }
+    
+    public async Task<IList<string>> GetUninitializedStocksAsync(IList<string> tickerSymbols, CancellationToken cancellationToken)
+    {
+        return await dbContext.Stocks
+            .AsNoTracking()
+            .Where(s => tickerSymbols.Contains(s.TickerSymbol))
+            .Where(s => s.IsInitialized == false)
+            .Select(s => s.TickerSymbol)
+            .ToListAsync(cancellationToken);
+    }
 
     public async Task<int> MarkStocksAsInitializedAsync(IEnumerable<Guid> stockIds, CancellationToken cancellationToken)
     {
@@ -136,6 +159,7 @@ public class StockRepository(ApplicationDbContext dbContext) : IStockRepository
     public async Task<IList<string>> GetUninitializedStocks(IList<string> tickerSymbols, CancellationToken cancellationToken)
     {
         return await dbContext.Stocks
+            .AsNoTracking()
             .Where(s => tickerSymbols.Contains(s.TickerSymbol))
             .Where(s => s.IsInitialized == false)
             .Select(s => s.TickerSymbol)

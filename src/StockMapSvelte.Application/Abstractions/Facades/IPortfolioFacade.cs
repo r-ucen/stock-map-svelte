@@ -7,6 +7,7 @@ namespace StockMapSvelte.Application.Abstractions.Facades;
 
 public interface IPortfolioFacade
 {
+    public Task<PortfolioStockDto> ImportPortfolioFromTrading212(ImportPortfolioFromTrading212Command cmd, CancellationToken cancellationToken);
     Task<PagedResponse<PortfolioStockDto>> GetAllPortfolioStockViewModelsQueriedAsync(QueryFilter filter, CancellationToken cancellationToken);
     Task<PortfolioStockDto> CreatePortfolioAsync(CreatePortfolioCommand cmd, CancellationToken cancellationToken);
     Task<IReadOnlyList<PortfolioStockDto>> GetPortfoliosByUserIdAsync(GetPortfoliosByUserIdQuery query, CancellationToken cancellationToken);
