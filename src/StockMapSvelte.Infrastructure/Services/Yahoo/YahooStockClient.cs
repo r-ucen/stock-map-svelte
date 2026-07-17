@@ -1,9 +1,11 @@
 using System.Globalization;
+using System.Net.Http.Json;
 using System.Text.Json;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using StockMapSvelte.Application.Abstractions;
+using StockMapSvelte.Application.DTOs;
 using StockMapSvelte.Domain.Entities;
 using StockMapSvelte.Infrastructure.Database;
 using YahooQuotesApi;
@@ -13,9 +15,27 @@ namespace StockMapSvelte.Infrastructure.Services.Yahoo;
 public class YahooStockClient(
     ApplicationDbContext dbContext,
     YahooQuotes yahooQuotes,
+    IHttpClientFactory httpClientFactory,
     ILogger<YahooStockClient> logger)
     : IStockClient
 {
+    public async Task<string> GetYahooTickerSymbol(string isin)
+    { 
+        var httpClient = httpClientFactory.CreateClient("YahooSearchClient");
+        var url = $"https://query2.finance.yahoo.com/v1/finance/search?q={isin}&quotesCount=1&newsCount=0";
+        
+        var request = new HttpRequestMessage(HttpMethod.Get, url);
+        using var response = await httpClient.SendAsync(request);
+        response.EnsureSuccessStatusCode();
+        
+        var responseContent = await response.Content.ReadFromJsonAsync<YahooSearchResponse>();
+        if (responseContent?.Quotes is not { Length: > 0 }) return string.Empty;
+        
+        var ticker = responseContent.Quotes[0].Symbol;
+        
+        return !string.IsNullOrWhiteSpace(ticker) ? ticker : string.Empty;
+    }
+    
     public async Task<bool> TickerExists(string ticker)
     {
         var snapshots = await yahooQuotes.GetSnapshotAsync([ticker]);
