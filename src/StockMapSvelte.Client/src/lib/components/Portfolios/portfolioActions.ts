@@ -44,7 +44,42 @@ function addPortfolioToState(state: IState, newPortfolio: IPortfolio) {
 	state.portfolios = [...state.portfolios, newPortfolio];
 }
 
-export async function createPortfolio(state: IState, p_portfolioName: string, p_tickerSymbols: string[]) {
+export async function importPortfolioFromTrading212(
+	state: IState,
+	p_isDemoTrading212Account: boolean,
+	p_portfolioName: string,
+	p_trading212ApiKey: string,
+	p_trading212ApiSecret: string
+) {
+	const res = await apiFetch(`/portfolios/import/trading212`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({
+			isDemoTrading212Account: p_isDemoTrading212Account,
+			portfolioName: p_portfolioName,
+			trading212ApiKey: p_trading212ApiKey,
+			trading212ApiSecret: p_trading212ApiSecret
+		})
+	});
+
+	if (res.ok) {
+		const newPortfolio = await res.json();
+		addPortfolioToState(state, newPortfolio);
+		return { success: true };
+	} else {
+		const errorData = await res.json().catch(() => ({}));
+		const error = errorData.message || 'Failed to create portfolio';
+		return { success: false, status: res.status, error };
+	}
+}
+
+export async function createPortfolio(
+	state: IState,
+	p_portfolioName: string,
+	p_tickerSymbols: string[]
+) {
 	const res = await apiFetch(`/portfolios`, {
 		method: 'POST',
 		headers: {
@@ -67,7 +102,12 @@ export async function createPortfolio(state: IState, p_portfolioName: string, p_
 	}
 }
 
-export async function editPortfolio(state: IState, id: string, p_portfolioName: string, p_tickerSymbols: string[]) {
+export async function editPortfolio(
+	state: IState,
+	id: string,
+	p_portfolioName: string,
+	p_tickerSymbols: string[]
+) {
 	const res = await apiFetch(`/portfolios/${id}`, {
 		method: 'PUT',
 		headers: {
@@ -89,7 +129,12 @@ export async function editPortfolio(state: IState, id: string, p_portfolioName: 
 	}
 }
 
-function editPortfolioInState(state: IState, id: string, p_portfolioName: string, p_tickerSymbols: string[]) {
+function editPortfolioInState(
+	state: IState,
+	id: string,
+	p_portfolioName: string,
+	p_tickerSymbols: string[]
+) {
 	state.portfolios = state.portfolios.map((p) => {
 		if (p.portfolioId === id) {
 			return {
@@ -102,6 +147,6 @@ function editPortfolioInState(state: IState, id: string, p_portfolioName: string
 	});
 }
 
-export function getPortfolioById(portfolios: IPortfolio[], id: string) : IPortfolio | undefined {
+export function getPortfolioById(portfolios: IPortfolio[], id: string): IPortfolio | undefined {
 	return portfolios.find((p) => p.portfolioId === id);
 }
