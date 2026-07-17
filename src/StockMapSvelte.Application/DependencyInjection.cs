@@ -48,6 +48,7 @@ public static class DependencyInjection
         services.AddScoped<SetPasswordHandler>();
         services.AddScoped<RemoveGoogleExternalLoginHandler>();
         services.AddScoped<UpdateRolesHandler>();
+        services.AddScoped<ImportPortfolioFromTrading212Handler>();
         
         return services;
     }

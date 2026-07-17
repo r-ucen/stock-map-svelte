@@ -98,4 +98,25 @@ public class PortfolioController : Controller
             portfolio
         );
     }
+    
+    [HttpPost]
+    [Route("import/trading212")]
+    public async Task<IActionResult> ImportPortfolioFromTrading212([FromBody] ImportPortfolioFromTrading212Request request, CancellationToken cancellationToken = default)
+    {
+        var cmd = new ImportPortfolioFromTrading212Command
+        (
+            request.Trading212ApiKey,
+            request.Trading212ApiSecret,
+            request.IsDemoTrading212Account,
+            request.PortfolioName
+        );
+
+        var portfolio = await _portfolioFacade.ImportPortfolioFromTrading212(cmd, cancellationToken);
+        
+        return CreatedAtAction(
+            nameof(GetPortfolioById),
+            new { portfolioId = portfolio.PortfolioId },
+            portfolio
+        );
+    }
 }

@@ -12,6 +12,7 @@
 	import { createPortfolio } from '$lib/components/Portfolios/portfolioActions';
 	import { toast } from 'svelte-sonner';
 	import { fetchTreemapData } from '$lib/portfolioFetch';
+	import ImportPortfolioFromTrading212 from '$lib/components/ImportPortfolioFromTrading212.svelte';
 	
 	let s = getContext<IState>('state');
 	let { items }: {items: IPortfolio[]} = $props();
@@ -48,15 +49,17 @@
 		isBeingProcessed = false;
 	}
 </script>
-
-<Button
-	variant="outline"
-	size="sm"
-	onclick={() => open = true}
->
-	<Plus /> Create Portfolio
-</Button>
-
+<div class="flex flex-row flex-wrap items-center gap-2">
+	<Button
+		variant="outline"
+		size="sm"
+		onclick={() => open = true}
+	>
+		<Plus /> Create Portfolio
+	</Button>
+	
+	<ImportPortfolioFromTrading212 />
+</div>
 <Dialog.Root bind:open>
 	<Dialog.Content class="sm:max-w-[425px]" onInteractOutside={() => resetCreateForm()}>
 		<form onsubmit={handleCreateSubmit}>
