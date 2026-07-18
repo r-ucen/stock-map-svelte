@@ -49,6 +49,18 @@
 		}
 		isBeingProcessed = false;
 	}
+	
+	function showImportSteps(){
+		toast("Import Portfolio Steps", {
+			description: "Get or generate the API KEY ID and SECRET KEY in the settings of your Trading212 account.\n" +
+				"Choose whether to import stocks from your demo or live account.\n" +
+				"When creating the API key, enable the \"Portfolio\" option in permissions.\n" +
+				"If you want to import stocks from the live account, make sure to generate the API key when on the live version.\n" +
+				"Some stocks can fail to be imported, check the created portfolio and manually add them if possible.",
+			duration: 60000,
+			descriptionClass: "whitespace-pre-line",
+		})
+	}
 </script>
 
 <Button
@@ -70,16 +82,10 @@
 				
 			<Dialog.Header class="mt-4">
 				<Dialog.Title>Import your portfolio from Trading212</Dialog.Title>
-				<Dialog.Description>
-					Get or generate the API KEY ID and SECRET KEY in the settings of your 
-					Trading212 account. Choose whether to import stocks from your demo or live account. 
-					When creating the API key, enable the "Portfolio" option in permissions. 
-					If you want to import stocks from the live account, 
-					make sure to generate the API key when on the live version.
-					Some stocks can fail to be imported, check the created portfolio and manually add them if possible.
-				</Dialog.Description>
 			</Dialog.Header>
-			
+				<Button type="button" variant="outline" size="sm" onclick={showImportSteps}>
+					Show Import Steps
+				</Button>
 				<Field>
 					<FieldLabel for="name">Portfolio Name</FieldLabel>
 					<Input
