@@ -14,6 +14,6 @@
 </script>
 
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
-<Toaster richColors position="top-right" />
+<Toaster richColors position="top-right" style="pointer-events: auto;"/>
 <ModeWatcher />
 {@render children()}
