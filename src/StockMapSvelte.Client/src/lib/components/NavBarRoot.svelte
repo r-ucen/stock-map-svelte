@@ -9,7 +9,7 @@
 	<div class="container mx-auto px-4 md:px-8 h-16 flex items-center justify-between">
 		<a href="/" class="flex items-center gap-2 transition-opacity hover:opacity-80">
 
-			<span class="font-bold text-xl tracking-tight">Equmap</span>
+			<span class="text-muted-foreground font-bold text-xl tracking-tight">Equmap</span>
 		</a>
 
 		<nav class="flex items-center gap-4">
