@@ -8,13 +8,6 @@ const authHandle: Handle = async ({ event, resolve }) => {
 		return resolve(event);
 	}
 
-	const token = event.cookies.get('.AspNetCore.Identity.Application');
-
-	if (!token) {
-		event.locals.user = undefined;
-		return resolve(event);
-	}
-
 	try {
 		const response = await apiFetch('/account/info', { event });
 
@@ -26,9 +19,10 @@ const authHandle: Handle = async ({ event, resolve }) => {
 			throw redirect(307, '/error');
 		}
 
-		if (response.ok) {
-			const data = await response.json();
+		const token = event.cookies.get('.AspNetCore.Identity.Application');
 
+		if (response.ok && token) {
+			const data = await response.json();
 			event.locals.user = {
 				email: data.email,
 				isAuthenticated: true,
@@ -53,8 +47,6 @@ const authHandle: Handle = async ({ event, resolve }) => {
 		) {
 			throw err;
 		}
-
-		console.error('Auth check failed:', err);
 		event.locals.user = undefined;
 	}
 
