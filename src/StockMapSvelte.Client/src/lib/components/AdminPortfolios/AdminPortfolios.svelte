@@ -7,43 +7,40 @@
 	import { apiFetch } from '$lib/apiFetch';
 	import { toast } from 'svelte-sonner';
 	import PaginationControls from '$lib/components/PaginationControls.svelte';
+	import { page } from '$app/state';
+	import { goto } from '$app/navigation';
 
 	let s = getContext<IAdminState>('stateAdmin');
 	let { items, initialTotal }: { items: IPortfolio[], initialTotal: number } = $props();
 
-	$effect(() => {
-		if (s.portfolios.length === 0 && items?.length > 0) {
-			s.portfolios = items;
-		}
-	});
+	let pageNumber = $state(Number(page.url.searchParams.get('PageNumber')) || 1);
+	let pageSize = $state(Number(page.url.searchParams.get('PageSize')) || 10);
 
-	let pageNumber = $state(1);
-	let pageSize = $state(10);
 	let totalRecords = $derived(initialTotal || 0);
 
+	let isFirstUrlSync = true;
+
 	$effect(() => {
-		async function fetchPagedPortfolios() {
-			try {
-				const params = new URLSearchParams({
-					PageNumber: pageNumber.toString(),
-					PageSize: pageSize.toString()
-				});
+		s.portfolios = items;
+	});
 
-				const res = await apiFetch(`/portfolios?${params.toString()}`);
+	$effect(() => {
+		const params = new URLSearchParams({
+			PageNumber: pageNumber.toString(),
+			PageSize: pageSize.toString()
+		});
 
-				if (res.ok) {
-					const result = await res.json();
-					s.portfolios = result.data;
-					totalRecords = result.totalRecords;
-				} else {
-					toast.error("Failed to fetch portfolios");
-				}
-			} catch (error) {
-				console.error("Error fetching portfolios:", error);
-			}
+		const newSearch = `?${params.toString()}`;
+
+		if (isFirstUrlSync) {
+			isFirstUrlSync = false;
+			return;
 		}
 
-		fetchPagedPortfolios();
+		if (newSearch === page.url.search) { return; }
+
+		// eslint-disable-next-line svelte/no-navigation-without-resolve
+		goto(newSearch, { replaceState: true, keepFocus: true, noScroll: true });
 	});
 
 </script>

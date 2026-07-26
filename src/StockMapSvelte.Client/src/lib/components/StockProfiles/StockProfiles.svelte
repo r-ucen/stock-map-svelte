@@ -5,45 +5,40 @@
 	import type { IAdminState } from '$lib/Abstractions/IAdminState';
 	import type { IStockProfile } from '$lib/Abstractions/IStockProfile';
 	import PaginationControls from '$lib/components/PaginationControls.svelte';
-	import { apiFetch } from '$lib/apiFetch';
-	import { toast } from 'svelte-sonner';
+	import { page } from '$app/state';
+	import { goto } from '$app/navigation';
 
 	let s = getContext<IAdminState>('stateAdmin');
 	let { items, initialTotal  }: { items: IStockProfile[], initialTotal: number } = $props();
 
-	$effect(() => {
-		if (s.stockProfiles.length === 0 && items.length > 0) {
-			s.stockProfiles = items;
-		}
-	});
+	let pageNumber = $state(Number(page.url.searchParams.get('PageNumber')) || 1);
+	let pageSize = $state(Number(page.url.searchParams.get('PageSize')) || 10);
 
-	let pageNumber = $state(1);
-	let pageSize = $state(10);
 	let totalRecords = $derived(initialTotal || 0);
 
+	let isFirstUrlSync = true;
+	
 	$effect(() => {
-		async function fetchPagedStocks() {
-			try {
-				const params = new URLSearchParams({
-					PageNumber: pageNumber.toString(),
-					PageSize: pageSize.toString()
-				});
+		s.stockProfiles = items;
+	});
 
-				const res = await apiFetch(`/stock-profiles?${params.toString()}`);
+	$effect(() => {
+		const params = new URLSearchParams({
+			PageNumber: pageNumber.toString(),
+			PageSize: pageSize.toString()
+		});
 
-				if (res.ok) {
-					const result = await res.json();
-					s.stockProfiles = result.data;
-					totalRecords = result.totalRecords;
-				} else {
-					toast.error("Failed to fetch stocks");
-				}
-			} catch (error) {
-				console.error("Error fetching stocks:", error);
-			}
+		const newSearch = `?${params.toString()}`;
+
+		if (isFirstUrlSync) {
+			isFirstUrlSync = false;
+			return;
 		}
 
-		fetchPagedStocks();
+		if (newSearch === page.url.search) { return; }
+
+		// eslint-disable-next-line svelte/no-navigation-without-resolve
+		goto(newSearch, { replaceState: true, keepFocus: true, noScroll: true });
 	});
 
 </script>
