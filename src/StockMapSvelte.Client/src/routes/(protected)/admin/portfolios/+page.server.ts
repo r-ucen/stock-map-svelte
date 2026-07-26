@@ -1,7 +1,12 @@
 import { apiFetch } from '$lib/apiFetch';
 
 export const load = async (event) => {
-	const res = await apiFetch('/portfolios?PageNumber=1&PageSize=10', { event });
+	const pageNumber = Number(event.url.searchParams.get('PageNumber')) || 1;
+	const pageSize = Number(event.url.searchParams.get('PageSize')) || 10;
+	
+	const res = await apiFetch(`/portfolios?PageNumber=${pageNumber}&PageSize=${pageSize}`, {
+		event
+	});
 
 	if (!res.ok) {
 		return {

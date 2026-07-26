@@ -5,9 +5,10 @@
 	let { data }: {
 		data: {
 			portfolios: IPortfolio[];
+			initialTotal: number;
 		};
 	} = $props();
 </script>
 
-<AdminPortfolios items={data.portfolios} />
+<AdminPortfolios items={data.portfolios} initialTotal={data.initialTotal} />
 
