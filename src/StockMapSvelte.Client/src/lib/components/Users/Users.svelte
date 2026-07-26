@@ -4,48 +4,52 @@
 	import { getContext } from 'svelte';
 	import type { IAdminState } from '$lib/Abstractions/IAdminState';
 	import type { IUser } from '$lib/Abstractions/IUser';
-	import { apiFetch } from '$lib/apiFetch';
-	import { toast } from 'svelte-sonner';
 	import PaginationControls from '$lib/components/PaginationControls.svelte';
+	import { page } from '$app/state';
+	import { goto, invalidateAll } from '$app/navigation';
 
 	let s = getContext<IAdminState>('stateAdmin');
 	let { items, initialTotal }: {items: IUser[], initialTotal: number} = $props()
 
+	let pageNumber = $state(Number(page.url.searchParams.get('PageNumber')) || 1);
+	let pageSize = $state(Number(page.url.searchParams.get('PageSize')) || 10);
+
+	let totalRecords = $derived(initialTotal || 0);
+
+	let isFirstUrlSync = true;
+	let isFirstRefresh = true;
+
 	$effect(() => {
-		if (s.users.length === 0 && items?.length > 0) {
-			s.users = items;
-		}
+		s.users = items;
 	});
 
-	let pageNumber = $state(1);
-	let pageSize = $state(10);
-	let totalRecords = $derived(initialTotal || 0);
+	$effect(() => {
+		const params = new URLSearchParams({
+			PageNumber: pageNumber.toString(),
+			PageSize: pageSize.toString()
+		});
+
+		const newSearch = `?${params.toString()}`;
+
+		if (isFirstUrlSync) {
+			isFirstUrlSync = false;
+			return;
+		}
+
+		if (newSearch === page.url.search) { return; }
+
+		// eslint-disable-next-line svelte/no-navigation-without-resolve
+		goto(newSearch, { replaceState: true, keepFocus: true, noScroll: true });
+	});
 
 	$effect(() => {
 		// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 		s.refreshUsers;
-		async function fetchPagedUsers() {
-			try {
-				const params = new URLSearchParams({
-					PageNumber: pageNumber.toString(),
-					PageSize: pageSize.toString()
-				});
-
-				const res = await apiFetch(`/users?${params.toString()}`);
-
-				if (res.ok) {
-					const result = await res.json();
-					s.users = result.data;
-					totalRecords = result.totalRecords;
-				} else {
-					toast.error("Failed to fetch users");
-				}
-			} catch (error) {
-				console.error("Error fetching users:", error);
-			}
+		if (isFirstRefresh) {
+			isFirstRefresh = false;
+			return;
 		}
-
-		fetchPagedUsers();
+		invalidateAll();
 	});
 
 </script>
