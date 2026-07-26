@@ -11,23 +11,25 @@
 	import type { IAdminState } from '$lib/Abstractions/IAdminState';
 	import type { IStock } from '$lib/Abstractions/IStock';
 	import { createMultipleStocks, createStock } from '$lib/components/Stocks/stockActions';
-	import { apiFetch } from '$lib/apiFetch';
 	import PaginationControls from '$lib/components/PaginationControls.svelte';
 	import { Spinner } from "$lib/components/ui/spinner/index.js";
 	import * as InputGroup from "$lib/components/ui/input-group/index.js";
+	import { page } from '$app/state';
+	import { goto, invalidateAll } from '$app/navigation';
 
 	let s = getContext<IAdminState>('stateAdmin');
 	let { items, initialTotal }: {items: IStock[], initialTotal: number} = $props();
 
-	$effect(() => {
-		if (s.stocks.length === 0 && items?.length > 0) {
-			s.stocks = items;
-		}
-	});
+	let pageNumber = $state(Number(page.url.searchParams.get('PageNumber')) || 1);
+	let pageSize = $state(Number(page.url.searchParams.get('PageSize')) || 10);
 	
-	let pageNumber = $state(1);
-	let pageSize = $state(10);
+	let stockSearchState = $state(page.url.searchParams.get('Search') ?? "");
+	let stockSearch = $state(stockSearchState);
+	
 	let totalRecords = $derived(initialTotal || 0);
+
+	let isFirstUrlSync = true;
+	let isFirstRefresh = true;
 
 	// create single stock
 	let open = $state(false);
@@ -38,36 +40,39 @@
 	let multipleOpen = $state(false);
 	let isMultipleBeingProcessed = $state(false);
 	let stockTickersBeingCreated = $state("");
-	
-	let stockSearch = "";
-	let stockSearchState = $state("");
 
+	$effect(() => {
+		s.stocks = items;
+	});
+	
+	$effect(() => {
+		const params = new URLSearchParams({
+			PageNumber: pageNumber.toString(),
+			PageSize: pageSize.toString(),
+			Search: stockSearchState
+		});
+
+		const newSearch = `?${params.toString()}`;
+
+		if (isFirstUrlSync) {
+			isFirstUrlSync = false;
+			return;
+		}
+		
+		if (newSearch === page.url.search) { return; }
+
+		// eslint-disable-next-line svelte/no-navigation-without-resolve
+		goto(newSearch, { replaceState: true, keepFocus: true, noScroll: true });
+	});
+	
 	$effect(() => {
 		// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 		s.refreshStocks;
-		async function fetchPagedStocks() {
-			try {
-				const params = new URLSearchParams({
-					PageNumber: pageNumber.toString(),
-					PageSize: pageSize.toString(),
-					Search: stockSearchState
-				});
-
-				const res = await apiFetch(`/stocks?${params.toString()}`);
-
-				if (res.ok) {
-					const result = await res.json();
-					s.stocks = result.data;
-					totalRecords = result.totalRecords;
-				} else {
-					toast.error("Failed to fetch stocks");
-				}
-			} catch (error) {
-				console.error("Error fetching stocks:", error);
-			}
+		if (isFirstRefresh) {
+			isFirstRefresh = false;
+			return;
 		}
-		
-		fetchPagedStocks();
+		invalidateAll();
 	});
 
 	function resetCreateForm() {
@@ -150,7 +155,14 @@
 <InputGroup.Root>
 	<InputGroup.Input placeholder="Type to search..." bind:value={stockSearch} />
 	<InputGroup.Addon align="inline-end">
-		<InputGroup.Button variant="secondary" onclick={() => stockSearchState = stockSearch}>Search</InputGroup.Button>
+		<InputGroup.Button
+			variant="secondary"
+			onclick={() => {
+				stockSearchState = stockSearch;
+				pageNumber = 1;
+			}}>
+				Search
+		</InputGroup.Button>
 	</InputGroup.Addon>
 </InputGroup.Root>
 
