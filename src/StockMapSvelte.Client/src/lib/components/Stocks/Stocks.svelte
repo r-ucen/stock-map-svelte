@@ -16,6 +16,8 @@
 	import * as InputGroup from "$lib/components/ui/input-group/index.js";
 	import { page } from '$app/state';
 	import { goto, invalidateAll } from '$app/navigation';
+	import * as ButtonGroup from "$lib/components/ui/button-group/index.js";
+	import Search from "@lucide/svelte/icons/search";
 
 	let s = getContext<IAdminState>('stateAdmin');
 	let { items, initialTotal }: {items: IStock[], initialTotal: number} = $props();
@@ -152,19 +154,19 @@
 	</Button>
 </div>
 
-<InputGroup.Root>
-	<InputGroup.Input placeholder="Type to search..." bind:value={stockSearch} />
-	<InputGroup.Addon align="inline-end">
-		<InputGroup.Button
-			variant="secondary"
-			onclick={() => {
+<ButtonGroup.Root class="w-full flex">
+	<Input placeholder="Search..." bind:value={stockSearch} class="flex-1" />
+	<Button
+		variant="outline"
+		size="icon"
+		aria-label="Search"
+		onclick={() => {
 				stockSearchState = stockSearch;
 				pageNumber = 1;
 			}}>
-				Search
-		</InputGroup.Button>
-	</InputGroup.Addon>
-</InputGroup.Root>
+		<Search />
+	</Button>
+</ButtonGroup.Root>
 
 <Dialog.Root bind:open>
 	<Dialog.Content class="sm:max-w-[425px]" onInteractOutside={() => resetCreateForm()}>
