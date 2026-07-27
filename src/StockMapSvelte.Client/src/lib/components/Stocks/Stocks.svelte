@@ -18,6 +18,7 @@
 	import { goto, invalidateAll } from '$app/navigation';
 	import * as ButtonGroup from "$lib/components/ui/button-group/index.js";
 	import Search from "@lucide/svelte/icons/search";
+	import { Textarea } from "$lib/components/ui/textarea/index.js";
 
 	let s = getContext<IAdminState>('stateAdmin');
 	let { items, initialTotal }: {items: IStock[], initialTotal: number} = $props();
@@ -217,9 +218,9 @@
 						Ticker Symbols (each on a new line)
 					</Label>
 
-					<textarea
+					<Textarea
+						placeholder={"AAPL\nGOOGL\nMSFT\nAMD"}
 						id="tickers"
-						class="border rounded-md p-2 min-h-[200px]"
 						bind:value={stockTickersBeingCreated}
 						disabled={isMultipleBeingProcessed}
 					/>
