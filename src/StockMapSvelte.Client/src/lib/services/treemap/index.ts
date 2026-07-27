@@ -128,6 +128,8 @@ export function getCellDescription(stock: TreemapNodeDto, metric: MapMetric | nu
 					return '\nPOST-MARKET';
 				case 'CLOSED':
 					return '\nCLOSED';
+				case 'PREPRE':
+					return '\nOVERNIGHT';
 				default:
 					return '\n-';
 			}
@@ -267,9 +269,11 @@ export function getCellColor(stock: TreemapNodeDto, metric: MapMetric | null): s
 				case 'REGULAR':
 					return 'rgba(41, 144, 59, 1)';
 				case 'PRE':
-					return 'rgba(41, 98, 255, 1)';
+					return 'rgb(255 144 59)';
+				case 'PREPRE':
+					return 'rgb(102 150 253)';
 				case 'POST':
-					return 'rgba(255, 152, 0, 1)';
+					return 'rgb(241 106 180)';
 				case 'CLOSED':
 					return 'rgba(75, 75, 75, 1)';
 				default:

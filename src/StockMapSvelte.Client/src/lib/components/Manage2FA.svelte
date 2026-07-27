@@ -13,9 +13,11 @@
 	import * as AlertDialog from "$lib/components/ui/alert-dialog/index.js";
 	import { buttonVariants } from '$lib/components/ui/button/index.js';
 	import ArrowRightIcon from "@lucide/svelte/icons/arrow-right";
+	import CopyIcon from "@lucide/svelte/icons/copy";
 	import OtpForm2 from '$lib/components/otp-form2.svelte';
 	import { getContext } from 'svelte';
 	import type { IState } from '$lib/Abstractions/IState';
+	import { Textarea } from "$lib/components/ui/textarea/index.js";
 
 	const s = getContext<IState>('state');
 	const isPaswordlessAccount = $derived(!s.hasPasswordConfigured);
@@ -211,11 +213,12 @@
 						</AlertDialog.Title>
 					</AlertDialog.Header>
 					<div class="space-y-4">
-						<textarea	value={recoveryCodes.join('\n')} readonly	class="w-full min-h-[200px] p-3 border rounded-md font-mono text-sm bg-muted"></textarea>
-						<Button type="button"	variant="default"
+						<Textarea	value={recoveryCodes.join('\n')} readonly	class="w-full min-h-[200px] p-3 border rounded-md font-mono text-sm bg-muted"></Textarea>
+						<Button type="button"	variant="default" class="w-full"
 						        onclick={() => { navigator.clipboard.writeText(recoveryCodes.join('\n'));
 								toast.success('Codes copied to clipboard');
 							}}>
+							<CopyIcon />
 							Copy codes
 						</Button>
 					</div>

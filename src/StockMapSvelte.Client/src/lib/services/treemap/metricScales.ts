@@ -272,8 +272,9 @@ export function getMetricScale(metric: MapMetric): MetricScale | null {
 				type: 'discrete',
 				bands: [
 					{ label: 'Open', color: 'rgba(41, 144, 59, 1)' },
-					{ label: 'Pre-Market', color: 'rgba(41, 98, 255, 1)' },
-					{ label: 'Post-Market', color: 'rgba(255, 152, 0, 1)' },
+					{ label: 'Pre-Market', color: 'rgb(255 144 59)' },
+					{ label: 'Overnight', color: 'rgb(102 150 253)' },
+					{ label: 'Post-Market', color: 'rgb(241 106 180)' },
 					{ label: 'Closed', color: 'rgba(75, 75, 75, 1)' }
 				]
 			};

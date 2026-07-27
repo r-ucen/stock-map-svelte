@@ -42,24 +42,26 @@
 			</div>
 		</div>
 
-		<AlertDialog.Root bind:open={confirmOpen}>
-			<AlertDialog.Trigger class={buttonVariants({ variant: "destructive" })}>
-				Delete account
-			</AlertDialog.Trigger>
-			<AlertDialog.Content>
-				<AlertDialog.Header>
-					<AlertDialog.Title>Click "delete" if you are sure you want to delete your account.</AlertDialog.Title>
-					<AlertDialog.Description>
-						This action cannot be undone.
-					</AlertDialog.Description>
-				</AlertDialog.Header>
-				<AlertDialog.Footer>
-					<AlertDialog.Cancel>Close</AlertDialog.Cancel>
-					<AlertDialog.Action onclick={deleteMyAccount}>
-						Delete
-					</AlertDialog.Action>
-				</AlertDialog.Footer>
-			</AlertDialog.Content>
-		</AlertDialog.Root>
+		<div class="ml-12 ">
+			<AlertDialog.Root bind:open={confirmOpen}>
+				<AlertDialog.Trigger class={buttonVariants({ variant: "destructive" })}>
+					Delete account
+				</AlertDialog.Trigger>
+				<AlertDialog.Content>
+					<AlertDialog.Header>
+						<AlertDialog.Title>Click "delete" if you are sure you want to delete your account.</AlertDialog.Title>
+						<AlertDialog.Description>
+							This action cannot be undone.
+						</AlertDialog.Description>
+					</AlertDialog.Header>
+					<AlertDialog.Footer>
+						<AlertDialog.Cancel>Close</AlertDialog.Cancel>
+						<AlertDialog.Action onclick={deleteMyAccount}>
+							Delete
+						</AlertDialog.Action>
+					</AlertDialog.Footer>
+				</AlertDialog.Content>
+			</AlertDialog.Root>
+		</div>
 	</div>
 </div>

@@ -5,7 +5,7 @@
 	import Link2Icon from '@lucide/svelte/icons/link-2';
 	import { Badge } from '$lib/components/ui/badge';
 	import RemoveGoogleExternalLogin from '$lib/components/RemoveGoogleExternalLogin.svelte';
-
+	import * as Item from "$lib/components/ui/item/index.js";
 	const s = getContext<IState>('state');
 	
 	const noLoginConfigured = $derived(!s.hasExternalLoginConfigured);
@@ -33,16 +33,23 @@
 		</div>
 
 		{#if !noLoginConfigured}
-			<div class="ml-12 flex flex-wrap gap-2 sm:ml-0 sm:justify-end">
+			<div class="ml-12 flex w-full max-w-md flex-col gap-6">
 				{#each s.externalLogins as item (item.loginProvider)}
-					<Badge
-						variant="outline"
-					>
-						{item.providerDisplayName}
-						{#if (item.loginProvider === 'GoogleOpenIdConnect') && hasPasswordConfigured}
-							<RemoveGoogleExternalLogin />
-						{/if}
-					</Badge>
+					<div class="mr-3 sm:mr-0">
+						<Item.Root variant="outline" size="sm">
+							<Item.Content>
+								<Item.Title>{item.providerDisplayName}</Item.Title>
+								<Item.Description
+								>{item.loginProvider}</Item.Description
+								>
+							</Item.Content>
+							<Item.Actions>
+								{#if (item.loginProvider === 'GoogleOpenIdConnect') && hasPasswordConfigured}
+									<RemoveGoogleExternalLogin />
+								{/if}
+							</Item.Actions>
+						</Item.Root>
+					</div>
 				{/each}
 			</div>
 		{/if}
