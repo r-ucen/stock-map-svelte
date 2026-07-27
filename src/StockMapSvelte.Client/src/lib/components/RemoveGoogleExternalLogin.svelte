@@ -10,7 +10,6 @@
 	import { resolve } from '$app/paths';
 
 	import * as AlertDialog from "$lib/components/ui/alert-dialog/index.js";
-	import { buttonVariants } from "$lib/components/ui/button/index.js";
 
 	const resolvedLogin = resolve('/login');
 	
@@ -56,6 +55,6 @@
 	</AlertDialog.Content>
 </AlertDialog.Root>
 
-<Button variant="ghost" size="icon-sm" disabled={!hasGoogleLoginConfigured} onclick={() => { showConfirmDialog = true}}>
+<Button variant="outline" size="sm" disabled={!hasGoogleLoginConfigured} onclick={() => { showConfirmDialog = true}}>
 	<Trash2 />
 </Button>
