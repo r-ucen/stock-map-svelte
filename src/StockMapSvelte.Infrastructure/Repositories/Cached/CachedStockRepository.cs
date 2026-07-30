@@ -3,6 +3,7 @@ using StockMapSvelte.Application.Abstractions.Repositories;
 using StockMapSvelte.Application.DTOs;
 using StockMapSvelte.Application.DTOs.Common;
 using StockMapSvelte.Domain.Entities;
+using StockMapSvelte.Infrastructure.Repositories.Cached.CacheManagement;
 
 namespace StockMapSvelte.Infrastructure.Repositories.Cached;
 
@@ -39,7 +40,7 @@ public class CachedStockRepository : IStockRepository
             .OrderBy(t => t));
         
         var normalizedFilter = filter.Trim().ToUpperInvariant();
-        var cacheKey = $"stocks:possible:f-{normalizedFilter}:p-{portfolioStocksSortedString}";
+        var cacheKey = CacheKeys.Stock.PossibleToAdd(normalizedFilter, portfolioStocksSortedString);
         
         var options = new HybridCacheEntryOptions
         {
