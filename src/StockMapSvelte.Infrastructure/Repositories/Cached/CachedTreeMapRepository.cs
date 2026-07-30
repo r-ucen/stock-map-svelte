@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Caching.Hybrid;
 using StockMapSvelte.Application.Abstractions.Repositories;
 using StockMapSvelte.Application.DTOs;
+using StockMapSvelte.Infrastructure.Repositories.Cached.CacheManagement;
 
 namespace StockMapSvelte.Infrastructure.Repositories.Cached;
 
@@ -17,8 +18,8 @@ public class CachedTreeMapRepository : ITreeMapRepository
     
     public async Task<TreemapDataDto> GetTreemapDataViewModelByIdAsync(Guid portfolioId, CancellationToken cancellationToken)
     {
-        var cacheKey = $"treemap-data:portfolio:{portfolioId}";
-        var tags = new[] { "tag-all-portfolios-treemap-data" };
+        var cacheKey = CacheKeys.Portfolio.TreemapData(portfolioId);
+        var tags = new[] { CacheTags.Portfolio.TreemapData };
         
         var options = new HybridCacheEntryOptions
         {

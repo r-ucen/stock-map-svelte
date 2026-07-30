@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using StockMapSvelte.Application.Abstractions;
+using StockMapSvelte.Infrastructure.Repositories.Cached.CacheManagement;
 using StockMapSvelte.Infrastructure.Services;
 
 namespace StockMapSvelte.Infrastructure.BackgroundServices;
@@ -66,7 +67,7 @@ public class StockDataUpdateTimedService : BackgroundService
         _logger.LogInformation("Starting stock update...");
         await stockUpdateService.UpdateAsync(cancellationToken);
         
-        await _cache.RemoveByTagAsync("tag-all-portfolios-treemap-data", cancellationToken);
+        await _cache.RemoveByTagAsync(CacheTags.Portfolio.TreemapData, cancellationToken);
         _treeMapUpdateNotifier.Publish();
         
         _logger.LogInformation("StockDataUpdateTimedService finished. Run total of: {Count} times", count);

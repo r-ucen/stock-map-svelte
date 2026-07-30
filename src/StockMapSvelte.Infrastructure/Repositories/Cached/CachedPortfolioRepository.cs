@@ -3,6 +3,7 @@ using StockMapSvelte.Application.Abstractions.Repositories;
 using StockMapSvelte.Application.DTOs;
 using StockMapSvelte.Application.DTOs.Common;
 using StockMapSvelte.Domain.Entities;
+using StockMapSvelte.Infrastructure.Repositories.Cached.CacheManagement;
 
 namespace StockMapSvelte.Infrastructure.Repositories.Cached;
 
@@ -56,7 +57,7 @@ public class CachedPortfolioRepository : IPortfolioRepository
     {
         var result = await _decorated.EditPortfolioAsync(portfolioId, portfolioName, tickerSymbols, cancellationToken);
         
-        await _cache.RemoveAsync($"treemap-data:portfolio:{portfolioId}", cancellationToken);
+        await _cache.RemoveAsync(CacheKeys.Portfolio.TreemapData(portfolioId), cancellationToken);
         
         return result;
     }
