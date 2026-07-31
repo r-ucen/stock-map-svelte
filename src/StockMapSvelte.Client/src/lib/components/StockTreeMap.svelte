@@ -4,7 +4,10 @@
 	import { calculateTreemapRectangles, getCellColor, getCellDescription } from '$lib/services/treemap';
 	import { mode } from 'mode-watcher';
 	import { toast } from 'svelte-sonner'
-	
+	import { Spinner } from '$lib/components/ui/spinner';
+	import { Button } from '$lib/components/ui/button';
+	import * as Empty from "$lib/components/ui/empty/index.js";
+
 	let { treemapData, selectedMetric }: {
 			treemapData: TreemapDataDto | null,
 			selectedMetric: MapMetric | null
@@ -17,12 +20,15 @@
 	let width = $state(0);
 	let height = $state(0);
 
-	let calculatedTreemapData: TreemapDataDto | null = $derived.by(() => {
+	let calculatedTreemapData: TreemapDataDto = $derived.by(() => {
 		if (treemapData && width > 0 && height > 0) {
 			const dataCopy = JSON.parse(JSON.stringify(treemapData));
 			return calculateTreemapRectangles(dataCopy, width, height);
 		}
-		return null;
+		return {
+			sectors: [],
+			totalMarketCap: 0
+		};
 	});
 
 	$effect(() => {
@@ -54,7 +60,8 @@
 	bind:this={container}
 	class="absolute inset-0 overflow-hidden"
 >
-	{#if calculatedTreemapData?.sectors && width > 100}
+	{#if treemapData}
+		{#if calculatedTreemapData.sectors.length > 0 && width > 100}
 		<svg {width} {height} viewBox="0 0 {width} {height}" preserveAspectRatio="none" style="display: block;">
 			{#each calculatedTreemapData.sectors as sector (sector.sectorName)}
 				{#each sector.stocks as stock (stock.tickerSymbol)}
@@ -120,5 +127,22 @@
 				{/each}
 			{/each}
 		</svg>
+		{:else }
+			<div class="flex items-center justify-center h-full">
+				<Empty.Root>
+					<Empty.Header>
+						<Empty.Title>No stocks</Empty.Title>
+						<Empty.Description>No stocks in this portfolio. To add some, edit the portfolio via clicking the three dots next to the portfolio.</Empty.Description>
+					</Empty.Header>
+					<Empty.Content>
+						<Button variant="link" href="/portfolios">Go to portfolio management</Button>
+					</Empty.Content>
+				</Empty.Root>
+			</div>
+		{/if}
+	{:else }
+		<div class="flex items-center justify-center h-full">
+			<Spinner />
+		</div>
 	{/if}
 </div>
