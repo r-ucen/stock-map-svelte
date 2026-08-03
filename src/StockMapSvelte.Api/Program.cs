@@ -1,4 +1,5 @@
 using Altairis.Services.Cloudflare;
+using Microsoft.AspNetCore.HttpOverrides;
 using Scalar.AspNetCore;
 using StockMapSvelte.Api;
 using StockMapSvelte.Api.Controllers;
@@ -27,7 +28,13 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 var app = builder.Build();
 
-app.UseCloudflare();
+var forwardedOptions = CloudflareForwardedHeadersConfigurator.GetForwardedHeadersOptions().Result;
+forwardedOptions.ForwardedHeaders |= ForwardedHeaders.XForwardedProto;
+
+forwardedOptions.KnownIPNetworks.Clear(); 
+forwardedOptions.KnownProxies.Clear();
+
+app.UseForwardedHeaders(forwardedOptions);
 
 app.UseMiddleware<GlobalExceptionMiddleware>();
 
