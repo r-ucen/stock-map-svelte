@@ -1,6 +1,6 @@
 import { createGuardHook } from 'svelte-guard';
 import { sequence } from '@sveltejs/kit/hooks';
-import { redirect, type Handle } from '@sveltejs/kit';
+import { redirect, type Handle, error } from '@sveltejs/kit';
 import { apiFetch } from '$lib/apiFetch';
 
 const authHandle: Handle = async ({ event, resolve }) => {
@@ -39,6 +39,10 @@ const authHandle: Handle = async ({ event, resolve }) => {
 			event.locals.user = undefined;
 		}
 	} catch (err) {
+		if (err instanceof Error && err.message === 'VIEW_429') {
+			throw error(429, 'Too many requests. Slow down and try again later.');
+		}
+
 		if (
 			err &&
 			typeof err === 'object' &&
