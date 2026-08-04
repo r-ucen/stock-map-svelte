@@ -95,6 +95,17 @@ public static class DependencyInjection
                         });
                     }
                     
+                    if (path.Contains("/login"))
+                    {
+                        return RateLimitPartition.GetFixedWindowLimiter(
+                            path +
+                            httpContext.Connection.RemoteIpAddress,_ => new FixedWindowRateLimiterOptions
+                            {
+                                PermitLimit = 5,
+                                Window = TimeSpan.FromMinutes(1)
+                            });
+                    }
+                    
                     return RateLimitPartition.GetFixedWindowLimiter(
                         partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
                         factory: _ => new FixedWindowRateLimiterOptions
