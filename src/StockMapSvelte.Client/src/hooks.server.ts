@@ -39,10 +39,6 @@ const authHandle: Handle = async ({ event, resolve }) => {
 			event.locals.user = undefined;
 		}
 	} catch (err) {
-		if (err instanceof Error && err.message === 'VIEW_429') {
-			throw error(429, 'Too many requests. Slow down and try again later.');
-		}
-
 		if (
 			err &&
 			typeof err === 'object' &&

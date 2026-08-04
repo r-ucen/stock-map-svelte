@@ -19,16 +19,9 @@ export async function apiFetch(endpoint: string, options: ApiFetchOptions = {}) 
 		}
 	}
 
-	const response = await nativeFetch(`${PUBLIC_API_BASE_URL}${endpoint}`, {
+	return await nativeFetch(`${PUBLIC_API_BASE_URL}${endpoint}`, {
 		...fetchOptions,
 		headers,
 		credentials: 'include'
 	});
-
-	const contentType = response.headers.get('content-type') || '';
-	if (response.status === 429 && contentType.includes('text/html')) {
-		throw new Error('VIEW_429');
-	}
-
-	return response;
 }
