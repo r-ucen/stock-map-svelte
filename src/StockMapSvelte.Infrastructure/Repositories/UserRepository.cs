@@ -63,10 +63,10 @@ public class UserRepository(UserManager<ApplicationUser> userManager) : IUserRep
         };
     }
 
-    public async Task<UserDto> GetByIdAsync(string id, CancellationToken cancellationToken)
+    public async Task<UserDto?> GetByIdAsync(string id, CancellationToken cancellationToken)
     {
         var user = await userManager.Users.FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
-        if (user == null) { return new UserDto(string.Empty, string.Empty, string.Empty, []); }
+        if (user == null) { return null; }
 
         return new UserDto
         (
