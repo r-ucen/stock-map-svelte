@@ -17,6 +17,9 @@
 	import * as AlertDialog from "$lib/components/ui/alert-dialog/index.js";
 	import { toast } from "svelte-sonner";
 	import { fetchTreemapData } from '$lib/portfolioFetch';
+	import Trash2 from '@lucide/svelte/icons/trash-2';
+	import Pen from '@lucide/svelte/icons/pen';
+	import Pin from '@lucide/svelte/icons/pin';
 
 	let { id }: { id: string } = $props();
 	let open = $state(false);
@@ -118,9 +121,18 @@
 		<DropdownMenu.Content>
 			<DropdownMenu.Group>
 				<DropdownMenu.Label>Actions</DropdownMenu.Label>
-				<DropdownMenu.Item onclick={() => onEditClick(id)}>Edit</DropdownMenu.Item>
-				<DropdownMenu.Item onclick={() => onSetAsDefaultClick(id)}>Set As Default</DropdownMenu.Item>
-				<DropdownMenu.Item onclick={() => onDeleteClick(id)}>Delete</DropdownMenu.Item>
+				<DropdownMenu.Item onclick={() => onEditClick(id)}>
+					<Pen />
+					Edit
+				</DropdownMenu.Item>
+				<DropdownMenu.Item onclick={() => onSetAsDefaultClick(id)}>
+					<Pin />
+					Set As Default
+				</DropdownMenu.Item>
+				<DropdownMenu.Item class="text-destructive" onclick={() => onDeleteClick(id)}>
+					<Trash2 class="text-destructive" />
+					Delete
+				</DropdownMenu.Item>
 			</DropdownMenu.Group>
 		</DropdownMenu.Content>
 	</DropdownMenu.Root>
