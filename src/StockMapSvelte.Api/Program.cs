@@ -51,6 +51,7 @@ app.UseRouting();
 app.UseCors("AllowSpecificOrigins");
 app.UseRateLimiter();
 app.UseAuthentication();
+app.UseMiddleware<BanCheckMiddleware>();
 app.UseAuthorization();
 
 app.MapIdentityApi<ApplicationUser>().RequireRateLimiting("IdentityPolicy");

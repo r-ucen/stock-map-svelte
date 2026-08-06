@@ -22,4 +22,7 @@ public interface IIdentityService
     public Task<bool> UpdateUserRoles(string userId, string[] roles);
     public Task<bool> IsUserTheLastAdminAsync(string userId);
     public Task<bool> UserExistsAsync(string userId);
+    public Task<bool> LockOutAsync(string userId);
+    public Task<bool> UnlockAsync(string userId);
+    public Task<bool> IsUserLockedOutAsync(string userId);
 }

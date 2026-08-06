@@ -1,9 +1,11 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Caching.Hybrid;
 using StockMapSvelte.Application.Abstractions;
 using StockMapSvelte.Application.DTOs;
 using StockMapSvelte.Application.Enums;
+using StockMapSvelte.Infrastructure.Repositories.Cached.CacheManagement;
 
 namespace StockMapSvelte.Infrastructure.Identity;
 
@@ -13,17 +15,20 @@ public class IdentityService : IIdentityService
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IUserClaimsPrincipalFactory<ApplicationUser> _principalFactory;
     private readonly IAuthorizationService _authorizationService;
+    private readonly HybridCache _cache;
 
     public IdentityService(
         SignInManager<ApplicationUser> signInManager,
         UserManager<ApplicationUser> userManager,
         IUserClaimsPrincipalFactory<ApplicationUser> principalFactory,
-        IAuthorizationService authorizationService)
+        IAuthorizationService authorizationService,
+        HybridCache cache)
     {
         _signInManager = signInManager;
         _userManager = userManager;
         _principalFactory = principalFactory;
         _authorizationService = authorizationService;
+        _cache = cache;
     }
     
     public async Task LogOutAsync()
@@ -296,5 +301,38 @@ public class IdentityService : IIdentityService
     public async Task<bool> UserExistsAsync(string userId)
     {
         return await _userManager.FindByIdAsync(userId) != null;
+    }
+
+    public async Task<bool> LockOutAsync(string userId)
+    {
+        var user = await GetUserById(userId);
+        if (user == null) { return false; }
+
+        var result = await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.MaxValue);
+        if (!result.Succeeded) { return false; }
+        
+        await _userManager.UpdateSecurityStampAsync(user);
+        await _cache.SetAsync(CacheKeys.User.Banned(userId), true);
+        return true;
+    }
+    
+    public async Task<bool> UnlockAsync(string userId)
+    {
+        var user = await GetUserById(userId);
+        if (user == null) { return false; }
+
+        var result = await _userManager.SetLockoutEndDateAsync(user, null);
+        if (!result.Succeeded) { return false; }
+        
+        await _cache.SetAsync(CacheKeys.User.Banned(userId), false);
+        return true;
+    }
+    
+    public async Task<bool> IsUserLockedOutAsync(string userId)
+    {
+        var user = await GetUserById(userId);
+        if (user == null) { return false; }
+
+        return await _userManager.IsLockedOutAsync(user);
     }
 }

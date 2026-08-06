@@ -49,7 +49,8 @@ public class UserRepository(UserManager<ApplicationUser> userManager) : IUserRep
                 u.Id, 
                 u.Email ?? string.Empty,  
                 u.UserName ?? string.Empty, 
-                roles
+                roles,
+                await userManager.IsLockedOutAsync(u)
             ));
         }
         
@@ -73,7 +74,8 @@ public class UserRepository(UserManager<ApplicationUser> userManager) : IUserRep
             user.Id,
             user.UserName ?? string.Empty,
             user.Email ?? string.Empty,
-            await userManager.GetRolesAsync(user)
+            await userManager.GetRolesAsync(user),
+            await userManager.IsLockedOutAsync(user)
         );
     }
 }
