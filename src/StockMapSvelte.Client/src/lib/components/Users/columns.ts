@@ -27,6 +27,14 @@ export const columns: ColumnDef<IUser>[] = [
 		}
 	},
 	{
+		accessorKey: 'isBanned',
+		header: 'Banned',
+		cell: ({ getValue }) => {
+			const isBanned = getValue() as boolean | undefined;
+			return isBanned ? 'Yes' : 'No';
+		}
+	},
+	{
 		accessorKey: 'id',
 		header: 'Id'
 	},

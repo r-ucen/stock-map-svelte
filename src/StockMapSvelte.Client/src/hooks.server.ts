@@ -11,6 +11,17 @@ const authHandle: Handle = async ({ event, resolve }) => {
 	try {
 		const response = await apiFetch('/account/info', { event });
 
+		if (response.status === 401) {
+			const body = await response
+				.clone()
+				.json()
+				.catch(() => ({}));
+			if (body?.detail === 'LockedOut') {
+				event.locals.user = undefined;
+				event.locals.isBanned = true;
+			}
+		}
+
 		if (response.status === 503) {
 			throw redirect(307, '/maintenance');
 		}

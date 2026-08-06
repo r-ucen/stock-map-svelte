@@ -1,7 +1,7 @@
 export interface IUser {
-    id: string;
-    email: string;
-    userName: string;
-    roles: string[];
+	id: string;
+	email: string;
+	userName: string;
+	roles: string[];
+	isBanned: boolean;
 }
-
