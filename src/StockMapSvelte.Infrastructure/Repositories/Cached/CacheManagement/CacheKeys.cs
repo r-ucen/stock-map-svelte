@@ -11,4 +11,9 @@ public class CacheKeys
     {
         public static string PossibleToAdd(string filter, string portfolioStocks) => $"stocks:possible:f-{filter}:p-{portfolioStocks}";
     }
+
+    public static class User
+    {
+        public static string Banned(string userId) => $"user:banned:{userId}";
+    }
 }

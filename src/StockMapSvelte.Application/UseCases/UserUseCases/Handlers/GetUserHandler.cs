@@ -1,6 +1,7 @@
 using StockMapSvelte.Application.Abstractions.Repositories;
 using StockMapSvelte.Application.UseCases.UserUseCases.Queries;
 using StockMapSvelte.Application.DTOs;
+using StockMapSvelte.Application.Exceptions.User;
 
 namespace StockMapSvelte.Application.UseCases.UserUseCases.Handlers;
 
@@ -15,6 +16,7 @@ public class GetUserHandler
     
     public async Task<UserDto> Handle(GetUserQuery query, CancellationToken cancellationToken)
     {
-        return await _userRepository.GetByIdAsync(query.UserId, cancellationToken);
+        var user = await _userRepository.GetByIdAsync(query.UserId, cancellationToken);
+        return user ?? throw new UserNotFoundException("User not found");
     }
 }

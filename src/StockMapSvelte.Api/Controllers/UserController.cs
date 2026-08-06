@@ -62,4 +62,26 @@ public class UserController : Controller
         await _userFacade.UpdateRolesAsync(cmd);
         return NoContent();
     }
+    
+    [HttpPost]
+    [Authorize(Roles = "Admin")]
+    [Route("ban/{userId}")]
+    public async Task<IActionResult> BanUser(string userId)
+    {
+        var cmd = new BanUserCommand(userId);
+        
+        await _userFacade.BanUserAsync(cmd);
+        return NoContent();
+    }
+
+    [HttpPost]
+    [Authorize(Roles = "Admin")]
+    [Route("unban/{userId}")]
+    public async Task<IActionResult> UnbanUser(string userId)
+    {
+        var cmd = new UnbanUserCommand(userId);
+        
+        await _userFacade.UnbanUserAsync(cmd);
+        return NoContent();
+    }
 }

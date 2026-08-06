@@ -19,6 +19,7 @@ declare global {
 				hasExternalLoginConfigured: boolean;
 				externalLogins: Array<Login>;
 			};
+			isBanned: boolean;
 		}
 		// interface PageData {}
 		// interface PageState {}

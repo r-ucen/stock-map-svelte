@@ -46,3 +46,33 @@ function deleteUserInState(state: IAdminState, id: string) {
 export function getUserById(users: IUser[], id: string): IUser | undefined {
 	return users.find((p) => p.id === id);
 }
+
+export async function banUser(state: IAdminState, id: string) {
+	const res = await apiFetch(`/users/ban/${id}`, {
+		method: 'POST'
+	});
+
+	if (res.ok) {
+		state.refreshUsers++;
+		return { success: true };
+	} else {
+		const errorData = await res.json().catch(() => ({}));
+		const error = errorData.message || 'Failed to ban user';
+		return { success: false, status: res.status, error };
+	}
+}
+
+export async function unbanUser(state: IAdminState, id: string) {
+	const res = await apiFetch(`/users/unban/${id}`, {
+		method: 'POST'
+	});
+
+	if (res.ok) {
+		state.refreshUsers++;
+		return { success: true };
+	} else {
+		const errorData = await res.json().catch(() => ({}));
+		const error = errorData.message || 'Failed to unban user';
+		return { success: false, status: res.status, error };
+	}
+}

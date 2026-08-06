@@ -49,7 +49,8 @@ public class UserRepository(UserManager<ApplicationUser> userManager) : IUserRep
                 u.Id, 
                 u.Email ?? string.Empty,  
                 u.UserName ?? string.Empty, 
-                roles
+                roles,
+                await userManager.IsLockedOutAsync(u)
             ));
         }
         
@@ -63,17 +64,18 @@ public class UserRepository(UserManager<ApplicationUser> userManager) : IUserRep
         };
     }
 
-    public async Task<UserDto> GetByIdAsync(string id, CancellationToken cancellationToken)
+    public async Task<UserDto?> GetByIdAsync(string id, CancellationToken cancellationToken)
     {
         var user = await userManager.Users.FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
-        if (user == null) { return new UserDto(string.Empty, string.Empty, string.Empty, []); }
+        if (user == null) { return null; }
 
         return new UserDto
         (
             user.Id,
             user.UserName ?? string.Empty,
             user.Email ?? string.Empty,
-            await userManager.GetRolesAsync(user)
+            await userManager.GetRolesAsync(user),
+            await userManager.IsLockedOutAsync(user)
         );
     }
 }

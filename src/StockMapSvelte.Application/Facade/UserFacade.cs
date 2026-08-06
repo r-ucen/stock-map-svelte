@@ -15,19 +15,25 @@ public class UserFacade : IUserFacade
     private readonly GetUserHandler _getUserHandler;
     private readonly  IIdentityService _identityService;
     private readonly UpdateRolesHandler _updateRolesHandler;
+    private readonly BanUserHandler _banUserHandler;
+    private readonly UnbanUserHandler _unbanUserHandler;
     
     public UserFacade(
         DeleteUserHandler deleteUserHandler,
         GetAllUsersQueriedHandler getAllUsersQueriedHandler,
         GetUserHandler getUserHandler,
         IIdentityService identityService,
-        UpdateRolesHandler updateRolesHandler)
+        UpdateRolesHandler updateRolesHandler,
+        BanUserHandler banUserHandler,
+        UnbanUserHandler unbanUserHandler)
     {
         _deleteUserHandler = deleteUserHandler;
         _getAllUsersQueriedHandler = getAllUsersQueriedHandler;
         _getUserHandler = getUserHandler;
         _identityService = identityService;
         _updateRolesHandler = updateRolesHandler;
+        _banUserHandler = banUserHandler;
+        _unbanUserHandler = unbanUserHandler;
     }
 
     public async Task LogOutAsync()
@@ -53,5 +59,15 @@ public class UserFacade : IUserFacade
     public async Task<UserDto> GetUserAsync(GetUserQuery query, CancellationToken cancellationToken)
     {
         return await _getUserHandler.Handle(query, cancellationToken);
+    }
+    
+    public async Task BanUserAsync(BanUserCommand cmd)
+    {
+        await _banUserHandler.Handle(cmd);
+    }
+    
+    public async Task UnbanUserAsync(UnbanUserCommand cmd)
+    {
+        await _unbanUserHandler.Handle(cmd);
     }
 }

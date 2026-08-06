@@ -131,7 +131,9 @@ class AuthManager {
 					msg = 'RequiresTwoFactor';
 					return { success: false, status: res.status, error: msg, requiresTwoFactor: true };
 				} else if (body.detail === 'LockedOut') {
-					msg = 'Too many login attempts. Please try again later.';
+					msg = 'This account has been banned.';
+				} else {
+					msg = 'Invalid credentials';
 				}
 				// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			} catch (err) {

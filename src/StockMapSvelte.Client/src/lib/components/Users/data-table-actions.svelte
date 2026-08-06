@@ -3,8 +3,9 @@
 	import { Button } from "$lib/components/ui/button";
 	import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
 	import {
+		banUser,
 		deleteUser,
-		getUserById, updateUserRoles
+		getUserById, unbanUser, updateUserRoles
 	} from '$lib/components/Users/userActions';
 	import { getContext } from 'svelte';
 	import * as AlertDialog from "$lib/components/ui/alert-dialog";
@@ -12,6 +13,8 @@
 	import type { IAdminState } from '$lib/Abstractions/IAdminState';
 	import Trash2 from '@lucide/svelte/icons/trash-2';
 	import UserKey  from '@lucide/svelte/icons/user-key';
+	import Ban  from '@lucide/svelte/icons/ban';
+	import UserCheck  from '@lucide/svelte/icons/user-check';
 
 	let { id, roles }: { id: string, roles: string[] } = $props();
 	let deleteOpen = $state(false);
@@ -20,12 +23,43 @@
 
 	let isBeingProcessed = $state(false);
 	let isRoleUpdating = $state(false);
+	let isUserBeingBannedUnbanned = $state(false);
 
 	let userIdBeingDeleted = $state("");
 	let userEmailBeingDeleted = $state("");
 
 	let hasAdminRole = $derived(roles.includes('Admin'));
 	let hasManagerRole = $derived(roles.includes('Manager'));
+	
+	async function handleBanSubmit(id: string) {
+		isUserBeingBannedUnbanned = true;
+		
+		let result = await banUser(s, id);
+
+		if (!result.success) {
+			toast.error(result.error ?? "An error occurred while banning the user");
+		} else {
+			toast.success("User banned successfully");
+			deleteOpen = false;
+		}
+
+		isUserBeingBannedUnbanned = false
+	}
+	
+	async function handleUnbanSubmit(id: string) {
+		isUserBeingBannedUnbanned = true;
+
+		let result = await unbanUser(s, id);
+
+		if (!result.success) {
+			toast.error(result.error ?? "An error occurred while unbanning the user");
+		} else {
+			toast.success("User unbanned successfully");
+			deleteOpen = false;
+		}
+
+		isUserBeingBannedUnbanned = false
+	}
 
 	async function handleDeleteSubmit() {
 		isBeingProcessed = true;
@@ -110,6 +144,16 @@
 				</DropdownMenu.Group>
 			</DropdownMenu.SubContent>
 		</DropdownMenu.Sub>
+
+		<DropdownMenu.Item onclick={() => handleBanSubmit(id)}>
+			<Ban />
+			Ban
+		</DropdownMenu.Item>
+
+		<DropdownMenu.Item onclick={() => handleUnbanSubmit(id)}>
+			<UserCheck />
+			Unban
+		</DropdownMenu.Item>
 		
 		<DropdownMenu.Item class="text-destructive" onclick={() => onDeleteClick(id)}>
 			<Trash2 class="text-destructive" />
