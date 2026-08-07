@@ -15,6 +15,8 @@ public class StockDataUpdateTimedService : BackgroundService
     private int _executionCount;
     private readonly ITreeMapUpdateNotifier _treeMapUpdateNotifier;
     private readonly HybridCache _cache;
+    private bool _isFirstRun = true;
+    private bool _isFirstWeekendRun = true;
 
     public StockDataUpdateTimedService(
         ILogger<StockDataUpdateTimedService> logger,
@@ -36,7 +38,7 @@ public class StockDataUpdateTimedService : BackgroundService
         {
             try
             {
-                var (shouldExecute, delayMinutes) = StockUpdateJitter.GetVariableDelayInMinutes();
+                var (shouldExecute, delayMinutes) = StockUpdateJitter.GetVariableDelayInMinutes(ref _isFirstRun, ref _isFirstWeekendRun);
 
                 if (shouldExecute)
                 {
