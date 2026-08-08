@@ -274,6 +274,7 @@ export function getCellColor(stock: TreemapNodeDto, metric: MapMetric | null): s
 				case 'PREPRE':
 					return 'rgb(102 150 253)';
 				case 'POST':
+				case 'POSTPOST':
 					return 'rgb(241 106 180)';
 				case 'CLOSED':
 					return 'rgba(75, 75, 75, 1)';
