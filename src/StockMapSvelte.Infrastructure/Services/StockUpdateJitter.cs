@@ -1,8 +1,8 @@
 namespace StockMapSvelte.Infrastructure.Services;
 
-public class StockUpdateJitter
+public static class StockUpdateJitter
 {
-    public static ValueTuple<bool, int> GetVariableDelayInMinutes(ref bool isFirstRun, ref bool isFirstWeekendRun)
+    public static ValueTuple<bool, int> GetVariableDelayInMinutes(DateTimeOffset date, ref bool isFirstRun)
     {
         var delayMinutes = Random.Shared.Next(25, 45);
         var executeWork = !(IsWeekend(DateTimeOffset.UtcNow) || IsDeepNight(DateTimeOffset.UtcNow));
