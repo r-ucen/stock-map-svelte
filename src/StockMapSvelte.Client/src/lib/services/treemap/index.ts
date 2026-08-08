@@ -125,6 +125,7 @@ export function getCellDescription(stock: TreemapNodeDto, metric: MapMetric | nu
 				case 'PRE':
 					return '\nPRE-MARKET';
 				case 'POST':
+				case 'POSTPOST':
 					return '\nPOST-MARKET';
 				case 'CLOSED':
 					return '\nCLOSED';
