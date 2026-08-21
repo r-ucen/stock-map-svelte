@@ -68,6 +68,8 @@ public static class DependencyInjection
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddScoped<IStockUpdateService, StockUpdateService>();
         
+        services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+        
         services.AddScoped<StockRepository>();
         services.AddScoped<IStockRepository>(
             provider => new CachedStockRepository(
