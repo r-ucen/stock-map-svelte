@@ -39,15 +39,12 @@ public class GetPortfoliosByUserIdHandler
             
             portfolios = [defaultPortfolio];
 
-            if (defaultPortfolioId == null)
+            var setDefaultResult = await _userSettingRepository.SetPortfolioAsDefaultAsync(query.UserId, defaultPortfolio.Id);
+            if (setDefaultResult <= 0)
             {
-                var setDefaultResult = await _userSettingRepository.SetPortfolioAsDefaultAsync(query.UserId, defaultPortfolio.Id);
-                if (setDefaultResult <= 0)
-                {
-                    throw new FailedToSetDefaultPortfolioException("Failed to set default portfolio.");
-                }
-                defaultPortfolioId = defaultPortfolio.Id;
+                throw new FailedToSetDefaultPortfolioException("Failed to set default portfolio.");
             }
+            defaultPortfolioId = defaultPortfolio.Id;
         }
         
         return portfolios
