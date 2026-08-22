@@ -89,6 +89,28 @@ public class PortfolioIntegrationTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
     }
     
+    [Fact]
+    public async Task CreatePortfolio_WithGivenStocks_ShouldContainTheStocks()
+    {
+        // Arrange
+        await _factory.SeedStocksAsync("AAPL", "MSFT", "GOOGL", "AMD");
+        var portfolioToCreate = new CreatePortfolioRequest("Name1", ["AAPL",  "MSFT", "GOOGL", "AMD"]);
+
+        // Act
+        var response = await _customerClient.PostAsJsonAsync("/portfolios", portfolioToCreate);
+        
+        // Assert
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        
+        var result = await response.Content.ReadFromJsonAsync<PortfolioStockDto>();
+        Assert.NotNull(result);
+        Assert.Equal("Name1", result.PortfolioName);
+        Assert.Contains("AAPL", result.TickerSymbols);
+        Assert.Contains("MSFT", result.TickerSymbols);
+        Assert.Contains("GOOGL", result.TickerSymbols);
+        Assert.Contains("AMD", result.TickerSymbols);
+    }
+    
     // DELETE
     
     [Fact]
@@ -197,6 +219,8 @@ public class PortfolioIntegrationTests : IAsyncLifetime
         await _factory.SeedStocksAsync("AAPL");
         await _customerClient.PostAsJsonAsync("/portfolios", new CreatePortfolioRequest("First Portfolio", ["AAPL"]));
         var createResponse = await _customerClient.PostAsJsonAsync("/portfolios", new CreatePortfolioRequest("Second Portfolio", ["AAPL"]));
+        Assert.Equal(HttpStatusCode.Created, createResponse.StatusCode);
+        
         var secondPortfolio = await createResponse.Content.ReadFromJsonAsync<PortfolioStockDto>();
         Assert.NotNull(secondPortfolio);
 
@@ -337,6 +361,90 @@ public class PortfolioIntegrationTests : IAsyncLifetime
         // Assert
         Assert.NotNull(result);
         Assert.Single(result);
+    }
+    
+    // OTHER
+    
+    [Fact]
+    public async Task CreateThreePortfolios_FirstShouldBeDefault()
+    {
+        // Arrange
+        await _factory.SeedStocksAsync("AAPL");
+        await _customerClient.PostAsJsonAsync("/portfolios", new CreatePortfolioRequest("Name1", ["AAPL"]));
+        await _customerClient.PostAsJsonAsync("/portfolios", new CreatePortfolioRequest("Name2", ["AAPL"]));
+        await _customerClient.PostAsJsonAsync("/portfolios", new CreatePortfolioRequest("Name3", ["AAPL"]));
+
+        // Act
+        var portfolioCount = await _customerClient.GetAsync("/portfolios/me");
+        var result = await portfolioCount.Content.ReadFromJsonAsync<List<PortfolioStockDto>>();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(3, result.Count);
+        Assert.True(result[0].IsDefault);
+        Assert.False(result[1].IsDefault);
+        Assert.False(result[2].IsDefault);
+    }
+    
+    [Fact]
+    public async Task CreateFivePortfolios_ShouldHaveFivePortfolios()
+    {
+        // Arrange
+        await _factory.SeedStocksAsync("AAPL");
+        await _customerClient.PostAsJsonAsync("/portfolios", new CreatePortfolioRequest("Name1", ["AAPL"]));
+        await _customerClient.PostAsJsonAsync("/portfolios", new CreatePortfolioRequest("Name2", ["AAPL"]));
+        await _customerClient.PostAsJsonAsync("/portfolios", new CreatePortfolioRequest("Name3", ["AAPL"]));
+        await _customerClient.PostAsJsonAsync("/portfolios", new CreatePortfolioRequest("Name4", ["AAPL"]));
+        await _customerClient.PostAsJsonAsync("/portfolios", new CreatePortfolioRequest("Name5", ["AAPL"]));
+
+        // Act
+        var portfolioCount = await _customerClient.GetAsync("/portfolios/me");
+        var result = await portfolioCount.Content.ReadFromJsonAsync<List<PortfolioStockDto>>();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(5, result.Count);
+    }
+    
+    [Fact]
+    public async Task CreateFivePortfolios_WithTwoValid_ShouldHaveTwoPortfolios()
+    {
+        // Arrange
+        await _factory.SeedStocksAsync("AAPL");
+        await _customerClient.PostAsJsonAsync("/portfolios", new CreatePortfolioRequest("Name1", ["AAPL"]));
+        await _customerClient.PostAsJsonAsync("/portfolios", new CreatePortfolioRequest("Name2", ["AAPL"]));
+        await _customerClient.PostAsJsonAsync("/portfolios", new CreatePortfolioRequest("Name2", ["AAPL"]));
+        await _customerClient.PostAsJsonAsync("/portfolios", new CreatePortfolioRequest("Name2", ["AAPL"]));
+        await _customerClient.PostAsJsonAsync("/portfolios", new CreatePortfolioRequest("Name2", ["AAPL"]));
+
+        // Act
+        var portfolioCount = await _customerClient.GetAsync("/portfolios/me");
+        var result = await portfolioCount.Content.ReadFromJsonAsync<List<PortfolioStockDto>>();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(2, result.Count);
+    }
+    
+    [Fact]
+    public async Task CreateSixPortfolios_HoweverExceedingLimitOfFive_ShouldHaveFivePortfolios()
+    {
+        // Arrange
+        await _factory.SeedStocksAsync("AAPL");
+        await _customerClient.PostAsJsonAsync("/portfolios", new CreatePortfolioRequest("Name1", ["AAPL"]));
+        await _customerClient.PostAsJsonAsync("/portfolios", new CreatePortfolioRequest("Name2", ["AAPL"]));
+        await _customerClient.PostAsJsonAsync("/portfolios", new CreatePortfolioRequest("Name3", ["AAPL"]));
+        await _customerClient.PostAsJsonAsync("/portfolios", new CreatePortfolioRequest("Name4", ["AAPL"]));
+        await _customerClient.PostAsJsonAsync("/portfolios", new CreatePortfolioRequest("Name5", ["AAPL"]));
+        await _customerClient.PostAsJsonAsync("/portfolios", new CreatePortfolioRequest("Name6", ["AAPL"]));
+
+        // Act
+        var portfolioCount = await _customerClient.GetAsync("/portfolios/me");
+        var result = await portfolioCount.Content.ReadFromJsonAsync<List<PortfolioStockDto>>();
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(5, result.Count);
     }
     
     public async Task InitializeAsync()
