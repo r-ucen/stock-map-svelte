@@ -1,3 +1,5 @@
+using StockMapSvelte.Domain.Entities;
+
 namespace StockMapSvelte.Application.Abstractions.Repositories;
 
 public interface IUserSettingRepository
@@ -8,4 +10,9 @@ public interface IUserSettingRepository
     Task<bool?> GetToastAutoHideValueAsync(string userId);
     Task<int?> GetToastAutoHideDelayMs(string userId);
     Task<int> SetToastAutoHideDelayMsAsync(string userId, int delayMs);
+    
+    // REFACTORED
+
+    public Task<UserSetting?> GetAsync(string userId, CancellationToken cancellationToken = default);
+    public Task<UserSetting> AddAsync(UserSetting entity, CancellationToken cancellationToken = default);
 }

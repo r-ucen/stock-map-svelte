@@ -81,4 +81,18 @@ public class UserSettingRepository(ApplicationDbContext dbContext) : IUserSettin
 
         return await dbContext.SaveChangesAsync();
     }
+    
+    // REFACTORED
+    
+    public async Task<UserSetting?> GetAsync(string userId, CancellationToken cancellationToken = default)
+    {
+        return await dbContext.UserSettings
+            .FirstOrDefaultAsync(us => us.UserId == userId, cancellationToken: cancellationToken);
+    }
+
+    public async Task<UserSetting> AddAsync(UserSetting entity, CancellationToken cancellationToken = default)
+    {
+        await dbContext.UserSettings.AddAsync(entity, cancellationToken);
+        return entity;
+    }
 }

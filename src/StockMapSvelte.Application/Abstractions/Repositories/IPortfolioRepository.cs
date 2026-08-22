@@ -4,7 +4,7 @@ using StockMapSvelte.Domain.Entities;
 
 namespace StockMapSvelte.Application.Abstractions.Repositories;
 
-public interface IPortfolioRepository
+public interface IPortfolioRepository : IRepository<Portfolio>
 {
     Task<PagedResponse<PortfolioStockDto>> GetAllPortfolioStockViewModelsAsync(QueryFilter filter, CancellationToken cancellationToken);
     Task<int> CreatePortfolioAsync(Portfolio portfolio, IList<string> tickerSymbols, CancellationToken cancellationToken);
@@ -17,4 +17,7 @@ public interface IPortfolioRepository
     Task<IReadOnlyList<Portfolio>> GetAllPortfoliosAsync();
     Task<bool> PortfolioNameExistsAsync(string userId, string portfolioName, CancellationToken cancellationToken);
     Task<int> GetPortfolioCountByUserIdAsync(string userId, CancellationToken cancellationToken);
+
+    public Task<int> GetCountByUserIdAsync(string userId, CancellationToken cancellationToken);
+    public Task<bool> NameExistsAsync(string userId, string portfolioName, CancellationToken cancellationToken);
 }

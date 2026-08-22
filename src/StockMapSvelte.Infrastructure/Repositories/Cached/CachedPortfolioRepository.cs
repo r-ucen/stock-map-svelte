@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Microsoft.Extensions.Caching.Hybrid;
 using StockMapSvelte.Application.Abstractions.Repositories;
 using StockMapSvelte.Application.DTOs;
@@ -21,13 +22,13 @@ public class CachedPortfolioRepository : IPortfolioRepository
     // getting
     
     public Task<PagedResponse<PortfolioStockDto>> GetAllPortfolioStockViewModelsAsync(QueryFilter filter, CancellationToken cancellationToken)
-    => _decorated.GetAllPortfolioStockViewModelsAsync(filter, cancellationToken);
+        => _decorated.GetAllPortfolioStockViewModelsAsync(filter, cancellationToken);
 
     public Task<int> CreatePortfolioAsync(Portfolio portfolio, IList<string> tickerSymbols, CancellationToken cancellationToken)
-    => _decorated.CreatePortfolioAsync(portfolio, tickerSymbols, cancellationToken);
+        => _decorated.CreatePortfolioAsync(portfolio, tickerSymbols, cancellationToken);
 
     public Task<IReadOnlyList<Portfolio>?> GetPortfoliosByUserIdAsync(string userId, CancellationToken cancellationToken)
-    => _decorated.GetPortfoliosByUserIdAsync(userId, cancellationToken);
+        => _decorated.GetPortfoliosByUserIdAsync(userId, cancellationToken);
     
     public Task<Portfolio?> GetPortfolioByIdAsync(Guid portfolioId, CancellationToken cancellationToken)
         => _decorated.GetPortfolioByIdAsync(portfolioId, cancellationToken);
@@ -48,7 +49,7 @@ public class CachedPortfolioRepository : IPortfolioRepository
 
     public Task<bool> PortfolioNameExistsAsync(string userId, Guid portfolioId, string portfolioName,
         CancellationToken cancellationToken)
-    => _decorated.PortfolioNameExistsAsync(userId, portfolioId, portfolioName, cancellationToken);
+        => _decorated.PortfolioNameExistsAsync(userId, portfolioId, portfolioName, cancellationToken);
     
     // modifying
 
@@ -63,5 +64,37 @@ public class CachedPortfolioRepository : IPortfolioRepository
     }
 
     public Task<int> DeletePortfolioAsync(Guid portfolioId, CancellationToken cancellationToken)
-    => _decorated.DeletePortfolioAsync(portfolioId, cancellationToken);
+        => _decorated.DeletePortfolioAsync(portfolioId, cancellationToken);
+
+    public Task<Portfolio?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+        => _decorated.GetByIdAsync(id, cancellationToken);
+
+    public Task<IReadOnlyList<Portfolio>> GetAllAsync(CancellationToken cancellationToken = default)
+        => _decorated.GetAllAsync(cancellationToken);
+
+    public Task<IReadOnlyList<Portfolio>> FindAsync(Expression<Func<Portfolio, bool>> predicate, CancellationToken cancellationToken = default)
+        => _decorated.FindAsync(predicate, cancellationToken);
+
+    public Task<IReadOnlyList<Portfolio>> FindTrackedAsync(Expression<Func<Portfolio, bool>> predicate, CancellationToken cancellationToken = default)
+        => _decorated.FindTrackedAsync(predicate, cancellationToken);
+
+    public Task<Portfolio> AddAsync(Portfolio entity, CancellationToken cancellationToken = default)
+        => _decorated.AddAsync(entity, cancellationToken);
+
+    public void Update(Portfolio entity)
+        => _decorated.Update(entity);
+
+    public void Remove(Portfolio entity)
+        => _decorated.Remove(entity);
+
+    public Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken = default)
+        => _decorated.ExistsAsync(id, cancellationToken);
+    
+    //  REFACTOR
+    
+    public Task<int> GetCountByUserIdAsync(string userId, CancellationToken cancellationToken)
+        => _decorated.GetCountByUserIdAsync(userId, cancellationToken);
+
+    public Task<bool> NameExistsAsync(string userId, string portfolioName, CancellationToken cancellationToken)
+        => _decorated.NameExistsAsync(userId, portfolioName, cancellationToken);
 }

@@ -40,6 +40,15 @@ public class Repository<T> : IRepository<T> where T : Entity<Guid>
             .Where(predicate)
             .ToListAsync(cancellationToken);
     }
+    
+    public async Task<IReadOnlyList<T>> FindTrackedAsync(
+        Expression<Func<T, bool>> predicate,
+        CancellationToken cancellationToken = default)
+    {
+        return await DbSet
+            .Where(predicate)
+            .ToListAsync(cancellationToken);
+    }
 
     public async Task<T> AddAsync(
         T entity, CancellationToken cancellationToken = default)

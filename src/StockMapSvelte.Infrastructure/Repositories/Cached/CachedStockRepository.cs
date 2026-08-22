@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Microsoft.Extensions.Caching.Hybrid;
 using StockMapSvelte.Application.Abstractions.Repositories;
 using StockMapSvelte.Application.DTOs;
@@ -80,4 +81,36 @@ public class CachedStockRepository : IStockRepository
 
     public Task<bool> StockExistsAsync(Guid stockId, CancellationToken cancellationToken)
         => _decorated.StockExistsAsync(stockId, cancellationToken);
+
+    public Task<Stock?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+        => _decorated.GetByIdAsync(id, cancellationToken);
+
+    public Task<IReadOnlyList<Stock>> GetAllAsync(CancellationToken cancellationToken = default)
+        => _decorated.GetAllAsync(cancellationToken);
+
+    public Task<IReadOnlyList<Stock>> FindAsync(Expression<Func<Stock, bool>> predicate, CancellationToken cancellationToken = default)
+        => _decorated.FindAsync(predicate, cancellationToken);
+
+    public Task<Stock> AddAsync(Stock entity, CancellationToken cancellationToken = default)
+        => _decorated.AddAsync(entity, cancellationToken);
+
+    public void Update(Stock entity)
+        => _decorated.Update(entity);
+
+    public void Remove(Stock entity)
+        => _decorated.Remove(entity);
+
+    public Task<bool> ExistsAsync(Guid id, CancellationToken cancellationToken = default)
+        => _decorated.ExistsAsync(id, cancellationToken);
+    
+    // REFACTORED
+    
+    public Task<IReadOnlyList<Stock>> FindTrackedAsync(Expression<Func<Stock, bool>> predicate, CancellationToken cancellationToken = default)
+        => _decorated.FindTrackedAsync(predicate, cancellationToken);
+    
+    public Task<IReadOnlyList<string>> GetMissingTickerSymbolsAsync(IList<string> tickerSymbols, CancellationToken cancellationToken)
+        => _decorated.GetMissingTickerSymbolsAsync(tickerSymbols, cancellationToken);
+
+    public Task<IList<string>> GetUninitializedTickerSymbols(IList<string> tickerSymbols, CancellationToken cancellationToken)
+        => _decorated.GetUninitializedTickerSymbols(tickerSymbols, cancellationToken);
 }
