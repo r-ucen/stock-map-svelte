@@ -97,4 +97,7 @@ public class CachedPortfolioRepository : IPortfolioRepository
 
     public Task<bool> NameExistsAsync(string userId, string portfolioName, CancellationToken cancellationToken)
         => _decorated.NameExistsAsync(userId, portfolioName, cancellationToken);
+
+    public Task<bool> NameExistsAsync(string userId, Guid portfolioId, string portfolioName, CancellationToken cancellationToken)
+        => _decorated.NameExistsAsync(userId, portfolioId, portfolioName, cancellationToken);
 }

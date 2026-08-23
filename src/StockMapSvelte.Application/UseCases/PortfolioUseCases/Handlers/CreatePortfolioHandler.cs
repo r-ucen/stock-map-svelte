@@ -43,7 +43,7 @@ public class CreatePortfolioHandler
         if (missingStocks.Count != 0) { throw new StocksNotInDatabaseException(missingStocks); }
 
         var uninitializedStocks = await _unitOfWork.Stocks.
-            GetUninitializedTickerSymbols(upperTickerSymbols, cancellationToken);
+            GetUninitializedTickerSymbolsAsync(upperTickerSymbols, cancellationToken);
         if (uninitializedStocks.Count != 0) { throw new StocksNotInitializedException(uninitializedStocks); }
         
         var stocksInPortfolio = await _unitOfWork.Stocks

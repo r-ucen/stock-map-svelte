@@ -111,6 +111,6 @@ public class CachedStockRepository : IStockRepository
     public Task<IReadOnlyList<string>> GetMissingTickerSymbolsAsync(IList<string> tickerSymbols, CancellationToken cancellationToken)
         => _decorated.GetMissingTickerSymbolsAsync(tickerSymbols, cancellationToken);
 
-    public Task<IList<string>> GetUninitializedTickerSymbols(IList<string> tickerSymbols, CancellationToken cancellationToken)
-        => _decorated.GetUninitializedTickerSymbols(tickerSymbols, cancellationToken);
+    public Task<IList<string>> GetUninitializedTickerSymbolsAsync(IList<string> tickerSymbols, CancellationToken cancellationToken)
+        => _decorated.GetUninitializedTickerSymbolsAsync(tickerSymbols, cancellationToken);
 }

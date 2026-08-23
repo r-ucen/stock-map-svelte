@@ -22,5 +22,5 @@ public interface IStockRepository : IRepository<Stock>
     
     // REFACTOR
     public Task<IReadOnlyList<string>> GetMissingTickerSymbolsAsync(IList<string> tickerSymbols, CancellationToken cancellationToken);
-    public Task<IList<string>> GetUninitializedTickerSymbols(IList<string> tickerSymbols, CancellationToken cancellationToken);
+    public Task<IList<string>> GetUninitializedTickerSymbolsAsync(IList<string> tickerSymbols, CancellationToken cancellationToken);
 }

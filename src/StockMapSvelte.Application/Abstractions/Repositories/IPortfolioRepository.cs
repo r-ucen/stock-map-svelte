@@ -18,6 +18,10 @@ public interface IPortfolioRepository : IRepository<Portfolio>
     Task<bool> PortfolioNameExistsAsync(string userId, string portfolioName, CancellationToken cancellationToken);
     Task<int> GetPortfolioCountByUserIdAsync(string userId, CancellationToken cancellationToken);
 
+    // REFACTORED
+    
     public Task<int> GetCountByUserIdAsync(string userId, CancellationToken cancellationToken);
     public Task<bool> NameExistsAsync(string userId, string portfolioName, CancellationToken cancellationToken);
+    public Task<bool> NameExistsAsync(string userId, Guid portfolioId, string portfolioName, CancellationToken cancellationToken);
+    public new Task<Portfolio?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
 }

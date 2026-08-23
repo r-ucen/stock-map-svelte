@@ -169,4 +169,17 @@ public class PortfolioRepository : Repository<Portfolio>, IPortfolioRepository
         return await DbSet
             .AnyAsync(p => p.Name == portfolioName && p.UserId == userId, cancellationToken);
     }
+    
+    public async Task<bool> NameExistsAsync(string userId, Guid portfolioId, string portfolioName, CancellationToken cancellationToken)
+    {
+        return await DbSet
+            .AnyAsync(p => p.UserId == userId &&  p.Id != portfolioId && p.Name == portfolioName, cancellationToken);
+    }
+    
+    public new async Task<Portfolio?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return await DbSet
+            .Include(p => p.Stocks)
+            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
+    }
 }

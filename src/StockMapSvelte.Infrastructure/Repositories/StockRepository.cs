@@ -174,7 +174,7 @@ public class StockRepository : Repository<Stock>, IStockRepository
             .ToList();
     }
 
-    public async Task<IList<string>> GetUninitializedTickerSymbols(IList<string> tickerSymbols,
+    public async Task<IList<string>> GetUninitializedTickerSymbolsAsync(IList<string> tickerSymbols,
         CancellationToken cancellationToken)
     {
         return await DbSet
