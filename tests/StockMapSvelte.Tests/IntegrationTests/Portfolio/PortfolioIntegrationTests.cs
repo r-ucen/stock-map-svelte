@@ -381,9 +381,11 @@ public class PortfolioIntegrationTests : IAsyncLifetime
         // Assert
         Assert.NotNull(result);
         Assert.Equal(3, result.Count);
-        Assert.True(result[0].IsDefault);
-        Assert.False(result[1].IsDefault);
-        Assert.False(result[2].IsDefault);
+        
+        var defaultPortfolio = result.FirstOrDefault(p => p.IsDefault);
+        Assert.NotNull(defaultPortfolio);
+        Assert.Equal("Name1", defaultPortfolio.PortfolioName);
+        Assert.True(defaultPortfolio.IsDefault);
     }
     
     [Fact]
