@@ -1,5 +1,4 @@
 using StockMapSvelte.Application.Abstractions;
-using StockMapSvelte.Application.Abstractions.Repositories;
 using StockMapSvelte.Application.Exceptions.Portfolio;
 using StockMapSvelte.Application.UseCases.PortfolioUseCases.Commands;
 
@@ -7,32 +6,27 @@ namespace StockMapSvelte.Application.UseCases.PortfolioUseCases.Handlers;
 
 public class DeletePortfolioHandler
 {
-    private readonly IPortfolioRepository _portfolioRepository;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IUserContext _userContext;
     
-    public DeletePortfolioHandler(IUserContext userContext, IPortfolioRepository portfolioRepository)
+    public DeletePortfolioHandler(IUserContext userContext, IUnitOfWork unitOfWork)
     {
         _userContext = userContext;
-        _portfolioRepository = portfolioRepository;
+        _unitOfWork = unitOfWork;
     }
     
     public async Task Handle(DeletePortfolioCommand cmd, CancellationToken cancellationToken)
     {
         var currentUserId = await _userContext.GetCurrentUserIdAsync();
 
-        var existing = await _portfolioRepository.GetPortfolioByIdAsync(cmd.PortfolioId, cancellationToken);
-        if (existing == null)
-        {
-            throw new PortfolioNotFoundException("Portfolio not found.");
-        }
-            
+        var existing = await _unitOfWork.Portfolios.GetByIdAsync(cmd.PortfolioId, cancellationToken);
+        if (existing == null) { throw new PortfolioNotFoundException("Portfolio not found."); }
+        
         existing.ValidateOwnership(currentUserId);
         
-        var result = await _portfolioRepository.DeletePortfolioAsync(existing.Id, cancellationToken);
+        _unitOfWork.Portfolios.Remove(existing);
         
-        if (result <= 0)
-        {
-            throw new PortfolioDeletionFailedException("Failed to delete portfolio.");
-        }
+        var result = await _unitOfWork.CommitAsync(cancellationToken);
+        if (result <= 0) { throw new PortfolioDeletionFailedException("Failed to delete portfolio."); }
     }
 }

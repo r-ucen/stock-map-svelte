@@ -128,6 +128,9 @@ public class PortfolioIntegrationTests : IAsyncLifetime
         
         // Assert
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+
+        var getResponse = await _customerClient.GetAsync($"portfolios/{createdPortfolio.PortfolioId}");
+        Assert.Equal(HttpStatusCode.NotFound, getResponse.StatusCode);
     }
     
     [Fact]
@@ -141,7 +144,7 @@ public class PortfolioIntegrationTests : IAsyncLifetime
     }
     
     [Fact]
-    public async Task DeletePortfolio_WithOtherUsersPortfolioId_ShouldReturnNoContent()
+    public async Task DeletePortfolio_WithOtherUsersPortfolioId_ShouldReturnForbidden()
     {
         // Arrange
         await _factory.SeedStocksAsync("AAPL");
