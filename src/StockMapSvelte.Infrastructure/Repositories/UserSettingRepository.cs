@@ -22,15 +22,6 @@ public class UserSettingRepository(ApplicationDbContext dbContext) : IUserSettin
 
         return await dbContext.SaveChangesAsync();
     }
-    
-    public async Task<Guid?> GetDefaultPortfolioIdAsync(string userId, CancellationToken cancellationToken)
-    {
-        var userSetting = await dbContext.UserSettings
-            .AsNoTracking()
-            .FirstOrDefaultAsync(us => us.UserId == userId, cancellationToken);
-
-        return userSetting?.DefaultPortfolioId;
-    }
 
     public async Task<int> SetToastAutoHideValueAsync(string userId, bool autoHide)
     {
@@ -94,5 +85,14 @@ public class UserSettingRepository(ApplicationDbContext dbContext) : IUserSettin
     {
         await dbContext.UserSettings.AddAsync(entity, cancellationToken);
         return entity;
+    }
+    
+    public async Task<Guid?> GetDefaultPortfolioIdAsync(string userId, CancellationToken cancellationToken)
+    {
+        var userSetting = await dbContext.UserSettings
+            .AsNoTracking()
+            .FirstOrDefaultAsync(us => us.UserId == userId, cancellationToken);
+
+        return userSetting?.DefaultPortfolioId;
     }
 }

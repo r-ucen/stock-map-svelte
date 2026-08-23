@@ -84,9 +84,9 @@ public class ImportPortfolioFromTrading212Handler
 
         return new PortfolioDto()
         {
-            PortfolioId = portfolio.Id,
+            Id = portfolio.Id,
             UserId = portfolio.UserId,
-            PortfolioName = portfolio.Name,
+            Name = portfolio.Name,
             TickerSymbols = validTickerSymbols
         };
     }

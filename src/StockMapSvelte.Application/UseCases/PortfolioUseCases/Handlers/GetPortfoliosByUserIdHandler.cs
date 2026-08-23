@@ -50,9 +50,9 @@ public class GetPortfoliosByUserIdHandler
         return portfolios
             .Select(p => new PortfolioDto
             {
-                PortfolioId = p.Id,
+                Id = p.Id,
                 UserId = p.UserId,
-                PortfolioName = p.Name,
+                Name = p.Name,
                 IsDefault = p.Id == defaultPortfolioId,
                 TickerSymbols = p.Stocks.Select(s => s.TickerSymbol).ToList()
             }).ToList();

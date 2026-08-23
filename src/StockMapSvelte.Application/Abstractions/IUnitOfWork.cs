@@ -5,7 +5,7 @@ namespace StockMapSvelte.Application.Abstractions;
 public interface IUnitOfWork : IDisposable
 {
     IPortfolioRepository Portfolios { get; }
-    IStockProfileRepository StockProfile { get; }
+    IStockProfileRepository StockProfiles { get; }
     IStockRepository Stocks { get; }
     ITreeMapRepository TreeMaps { get; }
     IUserRepository Users { get; }

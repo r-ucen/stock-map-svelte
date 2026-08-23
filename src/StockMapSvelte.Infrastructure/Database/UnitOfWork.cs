@@ -26,7 +26,7 @@ public class UnitOfWork : IUnitOfWork
     public IPortfolioRepository Portfolios =>
         _portfolios ??= new PortfolioRepository(_context);
     
-    public IStockProfileRepository StockProfile =>
+    public IStockProfileRepository StockProfiles =>
         _stockProfiles ??= new StockProfileRepository(_context);
     
     public IStockRepository Stocks =>

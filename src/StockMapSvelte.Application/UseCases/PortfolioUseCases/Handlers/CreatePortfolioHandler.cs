@@ -71,9 +71,9 @@ public class CreatePortfolioHandler
         
         return new PortfolioDto()
         {
-            PortfolioId = portfolio.Id,
+            Id = portfolio.Id,
             UserId = portfolio.UserId,
-            PortfolioName = portfolio.Name,
+            Name = portfolio.Name,
             TickerSymbols = cmd.TickerSymbols ?? []
         };
     }

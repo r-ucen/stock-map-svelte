@@ -39,7 +39,7 @@ public class CachedPortfolioRepository : IPortfolioRepository
     
     public Task<int> GetPortfolioCountByUserIdAsync(string userId, CancellationToken cancellationToken)
         => _decorated.GetPortfolioCountByUserIdAsync(userId, cancellationToken);
-    
+
     // helpers
     
     public Task<bool> PortfolioNameExistsAsync(string userId, string portfolioName, CancellationToken cancellationToken)
@@ -101,4 +101,7 @@ public class CachedPortfolioRepository : IPortfolioRepository
 
     public Task<bool> NameExistsAsync(string userId, Guid portfolioId, string portfolioName, CancellationToken cancellationToken)
         => _decorated.NameExistsAsync(userId, portfolioId, portfolioName, cancellationToken);
+    
+    public Task<Portfolio?> GetByIdAsync(string userId, Guid portfolioId, CancellationToken cancellationToken)
+        => _decorated.GetByIdAsync(userId, portfolioId, cancellationToken);
 }
