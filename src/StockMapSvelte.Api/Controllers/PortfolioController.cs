@@ -94,7 +94,7 @@ public class PortfolioController : Controller
         
         return CreatedAtAction(
             nameof(GetPortfolioById),
-            new { portfolioId = portfolio.Id },
+            new { portfolioId = portfolio.PortfolioId },
             portfolio
         );
     }
@@ -115,7 +115,7 @@ public class PortfolioController : Controller
         
         return CreatedAtAction(
             nameof(GetPortfolioById),
-            new { portfolioId = portfolio.Id },
+            new { portfolioId = portfolio.PortfolioId },
             portfolio
         );
     }

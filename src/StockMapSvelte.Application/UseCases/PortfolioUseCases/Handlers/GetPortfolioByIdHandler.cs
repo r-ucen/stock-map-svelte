@@ -27,9 +27,9 @@ public class GetPortfolioByIdHandler
         
         return new PortfolioDto()
         {
-            Id = portfolio.Id,
+            PortfolioId = portfolio.Id,
             UserId = portfolio.UserId,
-            Name = portfolio.Name,
+            PortfolioName = portfolio.Name,
             IsDefault = portfolio.Id == defaultPortfolioId,
             TickerSymbols = portfolio.Stocks.Select(s => s.TickerSymbol).ToList()
         };

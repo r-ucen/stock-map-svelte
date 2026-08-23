@@ -57,9 +57,9 @@ public class EditPortfolioHandler
         
         return new PortfolioDto
         {
-            Id = existing.Id,
+            PortfolioId = existing.Id,
             UserId = existing.UserId,
-            Name = cmd.PortfolioName.Trim(),
+            PortfolioName = cmd.PortfolioName.Trim(),
             TickerSymbols = cmd.TickerSymbols
         };
     }

@@ -1,58 +1,53 @@
-using StockMapSvelte.Application.Abstractions.Repositories;
+using StockMapSvelte.Application.Abstractions;
 using StockMapSvelte.Application.UseCases.PortfolioUseCases.Queries;
 using StockMapSvelte.Application.DTOs;
 using StockMapSvelte.Application.Exceptions.Portfolio;
-using StockMapSvelte.Application.Exceptions.UserSetting;
 using StockMapSvelte.Domain.Entities;
 
 namespace StockMapSvelte.Application.UseCases.PortfolioUseCases.Handlers;
 
 public class GetPortfoliosByUserIdHandler
 {
-    private readonly IPortfolioRepository _portfolioRepository;
-    private readonly IUserSettingRepository _userSettingRepository;
+    private readonly IUnitOfWork _unitOfWork;
     
-    public GetPortfoliosByUserIdHandler(IPortfolioRepository portfolioRepository, IUserSettingRepository userSettingRepository)
+    public GetPortfoliosByUserIdHandler(IUnitOfWork unitOfWork)
     {
-        _portfolioRepository = portfolioRepository;
-        _userSettingRepository = userSettingRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<IReadOnlyList<PortfolioDto>> Handle(GetPortfoliosByUserIdQuery query, CancellationToken cancellationToken)
     {
-        var portfolios = await _portfolioRepository.GetPortfoliosByUserIdAsync(query.UserId, cancellationToken);
-        var defaultPortfolioId = await _userSettingRepository.GetDefaultPortfolioIdAsync(query.UserId, cancellationToken);
-
-        if (portfolios == null)
-        {
-            return new List<PortfolioDto>();
-        }
+        var portfolios = await _unitOfWork.Portfolios.GetForUserAsync(query.UserId, cancellationToken);
+        var defaultPortfolioId = await _unitOfWork.UserSettings.GetDefaultPortfolioIdAsync(query.UserId, cancellationToken);
 
         if (portfolios.Count == 0)
         {
             var defaultPortfolio = Portfolio.Create(query.UserId, "Default portfolio");
-            var createResult = await _portfolioRepository.CreatePortfolioAsync(defaultPortfolio, [], cancellationToken);
-            if (createResult <= 0)
-            {
-                throw new PortfolioCreationFailedException("Failed to create default portfolio.");
-            }
+            await _unitOfWork.Portfolios.AddAsync(defaultPortfolio, cancellationToken);
             
             portfolios = [defaultPortfolio];
-
-            var setDefaultResult = await _userSettingRepository.SetPortfolioAsDefaultAsync(query.UserId, defaultPortfolio.Id);
-            if (setDefaultResult <= 0)
+            
+            var userSetting = await _unitOfWork.UserSettings.GetAsync(query.UserId, cancellationToken);
+            if (userSetting == null)
             {
-                throw new FailedToSetDefaultPortfolioException("Failed to set default portfolio.");
+                userSetting = UserSetting.CreateForUser(query.UserId);
+                await _unitOfWork.UserSettings.AddAsync(userSetting, cancellationToken);
             }
+            
+            userSetting.SetDefaultPortfolio(defaultPortfolio.Id);
+
             defaultPortfolioId = defaultPortfolio.Id;
+            
+            var result = await _unitOfWork.CommitAsync(cancellationToken);
+            if (result <= 0) { throw new PortfolioCreationFailedException("Failed to create default portfolio."); }
         }
         
         return portfolios
             .Select(p => new PortfolioDto
             {
-                Id = p.Id,
+                PortfolioId = p.Id,
                 UserId = p.UserId,
-                Name = p.Name,
+                PortfolioName = p.Name,
                 IsDefault = p.Id == defaultPortfolioId,
                 TickerSymbols = p.Stocks.Select(s => s.TickerSymbol).ToList()
             }).ToList();

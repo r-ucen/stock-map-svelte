@@ -105,7 +105,7 @@ public class PortfolioIntegrationTests : IAsyncLifetime
         
         var result = await response.Content.ReadFromJsonAsync<PortfolioDto>();
         Assert.NotNull(result);
-        Assert.Equal("Name1", result.Name);
+        Assert.Equal("Name1", result.PortfolioName);
         Assert.Contains("AAPL", result.TickerSymbols);
         Assert.Contains("MSFT", result.TickerSymbols);
         Assert.Contains("GOOGL", result.TickerSymbols);
@@ -125,12 +125,12 @@ public class PortfolioIntegrationTests : IAsyncLifetime
         Assert.NotNull(createdPortfolio);
         
         // Act
-        var response = await _customerClient.DeleteAsync($"portfolios/{createdPortfolio.Id}");
+        var response = await _customerClient.DeleteAsync($"portfolios/{createdPortfolio.PortfolioId}");
         
         // Assert
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
 
-        var getResponse = await _customerClient.GetAsync($"portfolios/{createdPortfolio.Id}");
+        var getResponse = await _customerClient.GetAsync($"portfolios/{createdPortfolio.PortfolioId}");
         Assert.Equal(HttpStatusCode.NotFound, getResponse.StatusCode);
     }
     
@@ -155,7 +155,7 @@ public class PortfolioIntegrationTests : IAsyncLifetime
         Assert.NotNull(createdPortfolio);
         
         // Act
-        var response = await _customerClient.DeleteAsync($"portfolios/{createdPortfolio.Id}");
+        var response = await _customerClient.DeleteAsync($"portfolios/{createdPortfolio.PortfolioId}");
         
         // Assert
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
@@ -175,13 +175,13 @@ public class PortfolioIntegrationTests : IAsyncLifetime
         var editRequest = new EditPortfolioRequest("Updated Name", ["AAPL", "MSFT"]);
 
         // Act
-        var response = await _customerClient.PutAsJsonAsync($"/portfolios/{createdPortfolio.Id}", editRequest);
+        var response = await _customerClient.PutAsJsonAsync($"/portfolios/{createdPortfolio.PortfolioId}", editRequest);
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var result = await response.Content.ReadFromJsonAsync<PortfolioDto>();
         Assert.NotNull(result);
-        Assert.Equal("Updated Name", result.Name);
+        Assert.Equal("Updated Name", result.PortfolioName);
         Assert.Contains("MSFT", result.TickerSymbols);
     }
 
@@ -197,7 +197,7 @@ public class PortfolioIntegrationTests : IAsyncLifetime
         var editRequest = new EditPortfolioRequest("", ["AAPL"]);
 
         // Act
-        var response = await _customerClient.PutAsJsonAsync($"/portfolios/{createdPortfolio.Id}", editRequest);
+        var response = await _customerClient.PutAsJsonAsync($"/portfolios/{createdPortfolio.PortfolioId}", editRequest);
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -231,7 +231,7 @@ public class PortfolioIntegrationTests : IAsyncLifetime
         var editRequest = new EditPortfolioRequest("First Portfolio", ["AAPL"]);
 
         // Act
-        var response = await _customerClient.PutAsJsonAsync($"/portfolios/{secondPortfolio.Id}", editRequest);
+        var response = await _customerClient.PutAsJsonAsync($"/portfolios/{secondPortfolio.PortfolioId}", editRequest);
 
         // Assert
         Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
@@ -249,7 +249,7 @@ public class PortfolioIntegrationTests : IAsyncLifetime
         var editRequest = new EditPortfolioRequest("Original Name", ["AAPL"]);
 
         // Act
-        var response = await _customerClient.PutAsJsonAsync($"/portfolios/{createdPortfolio.Id}", editRequest);
+        var response = await _customerClient.PutAsJsonAsync($"/portfolios/{createdPortfolio.PortfolioId}", editRequest);
 
         // Assert
         Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
@@ -267,7 +267,7 @@ public class PortfolioIntegrationTests : IAsyncLifetime
         var editRequest = new EditPortfolioRequest("Other User Portfolio Name", ["MSFT"]);
 
         // Act
-        var response = await _customerClient.PutAsJsonAsync($"/portfolios/{managerPortfolio.Id}", editRequest);
+        var response = await _customerClient.PutAsJsonAsync($"/portfolios/{managerPortfolio.PortfolioId}", editRequest);
 
         // Assert
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
@@ -286,7 +286,7 @@ public class PortfolioIntegrationTests : IAsyncLifetime
         var result = await response.Content.ReadFromJsonAsync<List<PortfolioDto>>();
         Assert.NotNull(result);
         Assert.Single(result);
-        Assert.Equal("Default portfolio", result[0].Name);
+        Assert.Equal("Default portfolio", result[0].PortfolioName);
     }
 
     [Fact]
@@ -351,7 +351,7 @@ public class PortfolioIntegrationTests : IAsyncLifetime
         // Assert
         Assert.NotNull(result);
         Assert.Single(result);
-        Assert.Equal("Customer Portfolio", result[0].Name);
+        Assert.Equal("Customer Portfolio", result[0].PortfolioName);
     }
 
     [Fact]
@@ -388,7 +388,7 @@ public class PortfolioIntegrationTests : IAsyncLifetime
         
         var defaultPortfolio = result.FirstOrDefault(p => p.IsDefault);
         Assert.NotNull(defaultPortfolio);
-        Assert.Equal("Name1", defaultPortfolio.Name);
+        Assert.Equal("Name1", defaultPortfolio.PortfolioName);
         Assert.True(defaultPortfolio.IsDefault);
     }
     
@@ -478,17 +478,17 @@ public class PortfolioIntegrationTests : IAsyncLifetime
         Assert.NotNull(result);
         Assert.Equal(3, result.TotalRecords);
         
-        var firstPortfolio = result.Data.FirstOrDefault(p => p.Name == "First Portfolio");
-        var secondPortfolio = result.Data.FirstOrDefault(p => p.Name == "Second Portfolio");
-        var thirdPortfolio = result.Data.FirstOrDefault(p => p.Name == "Third Portfolio");
+        var firstPortfolio = result.Data.FirstOrDefault(p => p.PortfolioName == "First Portfolio");
+        var secondPortfolio = result.Data.FirstOrDefault(p => p.PortfolioName == "Second Portfolio");
+        var thirdPortfolio = result.Data.FirstOrDefault(p => p.PortfolioName == "Third Portfolio");
         
         Assert.NotNull(firstPortfolio);
         Assert.NotNull(secondPortfolio);
         Assert.NotNull(thirdPortfolio);
         
-        Assert.Equal("First Portfolio", firstPortfolio.Name);
-        Assert.Equal("Second Portfolio", secondPortfolio.Name);
-        Assert.Equal("Third Portfolio", thirdPortfolio.Name);
+        Assert.Equal("First Portfolio", firstPortfolio.PortfolioName);
+        Assert.Equal("Second Portfolio", secondPortfolio.PortfolioName);
+        Assert.Equal("Third Portfolio", thirdPortfolio.PortfolioName);
         
         Assert.Equal(stocks1, firstPortfolio.TickerSymbols.OrderBy(s => s).ToList());
         Assert.Equal(stocks2, secondPortfolio.TickerSymbols.OrderBy(s => s).ToList());

@@ -104,4 +104,7 @@ public class CachedPortfolioRepository : IPortfolioRepository
     
     public Task<Portfolio?> GetByIdAsync(string userId, Guid portfolioId, CancellationToken cancellationToken)
         => _decorated.GetByIdAsync(userId, portfolioId, cancellationToken);
+    
+    public Task<IReadOnlyList<Portfolio>> GetForUserAsync(string userId, CancellationToken cancellationToken)
+        => _decorated.GetForUserAsync(userId, cancellationToken);
 }

@@ -102,9 +102,9 @@ public class PortfolioRepository : Repository<Portfolio>, IPortfolioRepository
             .Include(p => p.Stocks.Where(s => s.IsInitialized))
             .Select(p => new PortfolioDto
             {
-                Id = p.Id,
+                PortfolioId = p.Id,
                 UserId = p.UserId,
-                Name = p.Name,
+                PortfolioName = p.Name,
                 IsDefault = p.Id == defaultPortfolioId,
                 TickerSymbols = p.Stocks.Select(s => s.TickerSymbol).ToList()
             })
@@ -173,9 +173,9 @@ public class PortfolioRepository : Repository<Portfolio>, IPortfolioRepository
             .ApplyPagination(pageNumber, pageSize)
             .Select(p => new PortfolioDto
             {
-                Id = p.Id,
+                PortfolioId = p.Id,
                 UserId = p.UserId,
-                Name = p.Name,
+                PortfolioName = p.Name,
                 TickerSymbols = p.Stocks.Select(s => s.TickerSymbol).ToList()
                 
             })
@@ -189,5 +189,13 @@ public class PortfolioRepository : Repository<Portfolio>, IPortfolioRepository
             TotalRecords = totalRecords,
             TotalPages = (int)Math.Ceiling(totalRecords / (double)pageSize)
         };
+    }
+    
+    public async Task<IReadOnlyList<Portfolio>> GetForUserAsync(string userId, CancellationToken cancellationToken)
+    {
+        return await DbSet
+            .Where(p => p.UserId == userId)
+            .Include(p => p.Stocks.Where(s => s.IsInitialized))
+            .ToListAsync(cancellationToken);
     }
 }
