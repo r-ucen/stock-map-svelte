@@ -21,8 +21,6 @@ public class CachedPortfolioRepository : IPortfolioRepository
     
     // getting
     
-    public Task<PagedResponse<PortfolioStockDto>> GetAllPortfolioStockViewModelsAsync(QueryFilter filter, CancellationToken cancellationToken)
-        => _decorated.GetAllPortfolioStockViewModelsAsync(filter, cancellationToken);
 
     public Task<int> CreatePortfolioAsync(Portfolio portfolio, IList<string> tickerSymbols, CancellationToken cancellationToken)
         => _decorated.CreatePortfolioAsync(portfolio, tickerSymbols, cancellationToken);
@@ -33,7 +31,7 @@ public class CachedPortfolioRepository : IPortfolioRepository
     public Task<Portfolio?> GetPortfolioByIdAsync(Guid portfolioId, CancellationToken cancellationToken)
         => _decorated.GetPortfolioByIdAsync(portfolioId, cancellationToken);
     
-    public Task<PortfolioStockDto?> GetPortfolioByIdForUserAsync(string userId, Guid portfolioId, CancellationToken cancellationToken)
+    public Task<PortfolioDto?> GetPortfolioByIdForUserAsync(string userId, Guid portfolioId, CancellationToken cancellationToken)
         => _decorated.GetPortfolioByIdForUserAsync(userId, portfolioId, cancellationToken);
     
     public Task<IReadOnlyList<Portfolio>> GetAllPortfoliosAsync()
@@ -91,6 +89,9 @@ public class CachedPortfolioRepository : IPortfolioRepository
         => _decorated.ExistsAsync(id, cancellationToken);
     
     //  REFACTOR
+    
+    public Task<PagedResponse<PortfolioDto>> GetAllAsync(QueryFilter filter, CancellationToken cancellationToken)
+        => _decorated.GetAllAsync(filter, cancellationToken);
     
     public Task<int> GetCountByUserIdAsync(string userId, CancellationToken cancellationToken)
         => _decorated.GetCountByUserIdAsync(userId, cancellationToken);

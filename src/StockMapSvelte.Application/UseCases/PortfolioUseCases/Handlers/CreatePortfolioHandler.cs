@@ -21,7 +21,7 @@ public class CreatePortfolioHandler
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<PortfolioStockDto> Handle(CreatePortfolioCommand cmd, CancellationToken cancellationToken)
+    public async Task<PortfolioDto> Handle(CreatePortfolioCommand cmd, CancellationToken cancellationToken)
     {
         var userId = await _userContext.GetCurrentUserIdAsync();
         
@@ -69,7 +69,7 @@ public class CreatePortfolioHandler
         var result = await _unitOfWork.CommitAsync(cancellationToken);
         if (result <= 0) { throw new PortfolioCreationFailedException("Failed to create portfolio."); }
         
-        return new PortfolioStockDto()
+        return new PortfolioDto()
         {
             PortfolioId = portfolio.Id,
             UserId = portfolio.UserId,

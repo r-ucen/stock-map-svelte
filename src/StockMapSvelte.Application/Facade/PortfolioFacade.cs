@@ -38,27 +38,27 @@ public class PortfolioFacade : IPortfolioFacade
         _importPortfolioFromTrading212Handler = importPortfolioFromTrading212Handler;
     }
     
-    public async Task<PortfolioStockDto> CreatePortfolioAsync(CreatePortfolioCommand cmd, CancellationToken cancellationToken)
+    public async Task<PortfolioDto> CreatePortfolioAsync(CreatePortfolioCommand cmd, CancellationToken cancellationToken)
     {
         return await _createPortfolioHandler.Handle(cmd, cancellationToken);
     }
     
-    public async Task<PortfolioStockDto> ImportPortfolioFromTrading212(ImportPortfolioFromTrading212Command cmd, CancellationToken cancellationToken)
+    public async Task<PortfolioDto> ImportPortfolioFromTrading212(ImportPortfolioFromTrading212Command cmd, CancellationToken cancellationToken)
     {
         return await _importPortfolioFromTrading212Handler.Handle(cmd, cancellationToken);
     }
 
-    public async Task<PagedResponse<PortfolioStockDto>> GetAllPortfolioStockViewModelsQueriedAsync(QueryFilter filter, CancellationToken cancellationToken)
+    public async Task<PagedResponse<PortfolioDto>> GetAllPortfolioStockViewModelsQueriedAsync(QueryFilter filter, CancellationToken cancellationToken)
     {
         return await _getAllPortfoliosHandler.Handle(filter, cancellationToken);
     }
 
-    public async Task<IReadOnlyList<PortfolioStockDto>> GetPortfoliosByUserIdAsync(GetPortfoliosByUserIdQuery query, CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<PortfolioDto>> GetPortfoliosByUserIdAsync(GetPortfoliosByUserIdQuery query, CancellationToken cancellationToken)
     {
         return await _getPortfoliosByUserIdHandler.Handle(query, cancellationToken);
     }
 
-    public async Task<PortfolioStockDto> EditPortfolioAsync(EditPortfolioCommand cmd, CancellationToken cancellationToken)
+    public async Task<PortfolioDto> EditPortfolioAsync(EditPortfolioCommand cmd, CancellationToken cancellationToken)
     {
         return await _editPortfolioHandler.Handle(cmd, cancellationToken);
     }
@@ -68,7 +68,7 @@ public class PortfolioFacade : IPortfolioFacade
         await _deletePortfolioHandler.Handle(cmd, cancellationToken);
     }
 
-    public async Task<PortfolioStockDto> GetPortfolioStockByIdAsync(GetPortfolioByIdQuery query, CancellationToken cancellationToken)
+    public async Task<PortfolioDto> GetPortfolioStockByIdAsync(GetPortfolioByIdQuery query, CancellationToken cancellationToken)
     {
         return await _getPortfolioByIdHandler.Handle(query, cancellationToken);
     }

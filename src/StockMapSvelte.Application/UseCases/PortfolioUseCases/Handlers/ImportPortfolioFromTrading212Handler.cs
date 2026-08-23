@@ -32,7 +32,7 @@ public class ImportPortfolioFromTrading212Handler
         _stockClient = stockClient;
     }
     
-    public async Task<PortfolioStockDto> Handle(ImportPortfolioFromTrading212Command cmd, CancellationToken cancellationToken)
+    public async Task<PortfolioDto> Handle(ImportPortfolioFromTrading212Command cmd, CancellationToken cancellationToken)
     {
         var userId = await _userContext.GetCurrentUserIdAsync();
         
@@ -82,7 +82,7 @@ public class ImportPortfolioFromTrading212Handler
             }
         }
 
-        return new PortfolioStockDto()
+        return new PortfolioDto()
         {
             PortfolioId = portfolio.Id,
             UserId = portfolio.UserId,

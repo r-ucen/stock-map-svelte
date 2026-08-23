@@ -13,45 +13,6 @@ public class PortfolioRepository : Repository<Portfolio>, IPortfolioRepository
 {
     public PortfolioRepository(ApplicationDbContext dbContext) : base(dbContext) { }
     
-    public async Task<PagedResponse<PortfolioStockDto>> GetAllPortfolioStockViewModelsAsync(QueryFilter filter, CancellationToken cancellationToken)
-    {
-        var pageNumber = Math.Max(1, filter.PageNumber);
-        var pageSize = Math.Clamp(filter.PageSize, 1, 50);
-
-        var query = DbSet
-            .Include(p => p.Stocks)
-            .AsNoTracking()
-            .AsQueryable();
-
-        query = query.ApplySearch(filter.Search, filter.SearchBy);
-        
-        var totalRecords = await query.CountAsync(cancellationToken);
-        
-        query = query.ApplySort(
-            string.IsNullOrWhiteSpace(filter.SortBy) ? "Name" : filter.SortBy);
-        
-        var portfolios = await query
-            .ApplyPagination(pageNumber, pageSize)
-            .Select(p => new PortfolioStockDto
-            {
-                PortfolioId = p.Id,
-                UserId = p.UserId,
-                PortfolioName = p.Name,
-                TickerSymbols = p.Stocks.Select(s => s.TickerSymbol).ToList()
-                
-            })
-            .ToListAsync(cancellationToken);
-        
-        return new PagedResponse<PortfolioStockDto>
-        {
-            Data = portfolios,
-            PageNumber = pageNumber,
-            PageSize = pageSize,
-            TotalRecords = totalRecords,
-            TotalPages = (int)Math.Ceiling(totalRecords / (double)pageSize)
-        };
-    }
-    
     public async Task<IReadOnlyList<Portfolio>> GetAllPortfoliosAsync()
     {
         return await DbSet
@@ -129,7 +90,7 @@ public class PortfolioRepository : Repository<Portfolio>, IPortfolioRepository
             .FirstOrDefaultAsync(p => p.Id == portfolioId, cancellationToken);
     }
     
-    public async Task<PortfolioStockDto?> GetPortfolioByIdForUserAsync(string userId, Guid portfolioId, CancellationToken cancellationToken)
+    public async Task<PortfolioDto?> GetPortfolioByIdForUserAsync(string userId, Guid portfolioId, CancellationToken cancellationToken)
     {
         var userSetting = await Context.UserSettings
             .FirstOrDefaultAsync(us => us.UserId == userId, cancellationToken);
@@ -139,7 +100,7 @@ public class PortfolioRepository : Repository<Portfolio>, IPortfolioRepository
         return await DbSet
             .Where(p => p.Id == portfolioId && p.UserId == userId)
             .Include(p => p.Stocks.Where(s => s.IsInitialized))
-            .Select(p => new PortfolioStockDto
+            .Select(p => new PortfolioDto
             {
                 PortfolioId = p.Id,
                 UserId = p.UserId,
@@ -181,5 +142,44 @@ public class PortfolioRepository : Repository<Portfolio>, IPortfolioRepository
         return await DbSet
             .Include(p => p.Stocks)
             .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
+    }
+    
+    public async Task<PagedResponse<PortfolioDto>> GetAllAsync(QueryFilter filter, CancellationToken cancellationToken)
+    {
+        var pageNumber = Math.Max(1, filter.PageNumber);
+        var pageSize = Math.Clamp(filter.PageSize, 1, 50);
+
+        var query = DbSet
+            .Include(p => p.Stocks)
+            .AsNoTracking()
+            .AsQueryable();
+
+        query = query.ApplySearch(filter.Search, filter.SearchBy);
+        
+        var totalRecords = await query.CountAsync(cancellationToken);
+        
+        query = query.ApplySort(
+            string.IsNullOrWhiteSpace(filter.SortBy) ? "Name" : filter.SortBy);
+        
+        var portfolios = await query
+            .ApplyPagination(pageNumber, pageSize)
+            .Select(p => new PortfolioDto
+            {
+                PortfolioId = p.Id,
+                UserId = p.UserId,
+                PortfolioName = p.Name,
+                TickerSymbols = p.Stocks.Select(s => s.TickerSymbol).ToList()
+                
+            })
+            .ToListAsync(cancellationToken);
+        
+        return new PagedResponse<PortfolioDto>
+        {
+            Data = portfolios,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalRecords = totalRecords,
+            TotalPages = (int)Math.Ceiling(totalRecords / (double)pageSize)
+        };
     }
 }

@@ -18,7 +18,7 @@ public class EditPortfolioHandler
         _unitOfWork = unitOfWork;
     }
     
-    public async Task<PortfolioStockDto> Handle(EditPortfolioCommand cmd, CancellationToken cancellationToken)
+    public async Task<PortfolioDto> Handle(EditPortfolioCommand cmd, CancellationToken cancellationToken)
     {
         var currentUserId = await _userContext.GetCurrentUserIdAsync();
 
@@ -55,7 +55,7 @@ public class EditPortfolioHandler
         var result = await _unitOfWork.CommitAsync(cancellationToken);
         if (result <= 0) { throw new PortfolioEditFailedException("Failed to edit portfolio."); }
         
-        return new PortfolioStockDto
+        return new PortfolioDto
         {
             PortfolioId = existing.Id,
             UserId = existing.UserId,

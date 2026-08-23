@@ -17,7 +17,7 @@ public class GetPortfolioByIdHandler
         _userContext = userContext;
     }
     
-    public async Task<PortfolioStockDto> Handle(GetPortfolioByIdQuery query, CancellationToken cancellationToken)
+    public async Task<PortfolioDto> Handle(GetPortfolioByIdQuery query, CancellationToken cancellationToken)
     {
         var currentUserId = await _userContext.GetCurrentUserIdAsync();
         

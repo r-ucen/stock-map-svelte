@@ -18,14 +18,14 @@ public class GetPortfoliosByUserIdHandler
         _userSettingRepository = userSettingRepository;
     }
 
-    public async Task<IReadOnlyList<PortfolioStockDto>> Handle(GetPortfoliosByUserIdQuery query, CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<PortfolioDto>> Handle(GetPortfoliosByUserIdQuery query, CancellationToken cancellationToken)
     {
         var portfolios = await _portfolioRepository.GetPortfoliosByUserIdAsync(query.UserId, cancellationToken);
         var defaultPortfolioId = await _userSettingRepository.GetDefaultPortfolioIdAsync(query.UserId, cancellationToken);
 
         if (portfolios == null)
         {
-            return new List<PortfolioStockDto>();
+            return new List<PortfolioDto>();
         }
 
         if (portfolios.Count == 0)
@@ -48,7 +48,7 @@ public class GetPortfoliosByUserIdHandler
         }
         
         return portfolios
-            .Select(p => new PortfolioStockDto
+            .Select(p => new PortfolioDto
             {
                 PortfolioId = p.Id,
                 UserId = p.UserId,
