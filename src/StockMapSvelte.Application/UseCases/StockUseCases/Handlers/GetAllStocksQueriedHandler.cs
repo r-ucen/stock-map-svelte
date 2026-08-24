@@ -1,21 +1,20 @@
-using StockMapSvelte.Application.Abstractions.Repositories;
+using StockMapSvelte.Application.Abstractions;
 using StockMapSvelte.Application.DTOs;
 using StockMapSvelte.Application.DTOs.Common;
-
 
 namespace StockMapSvelte.Application.UseCases.StockUseCases.Handlers;
 
 public class GetAllStocksQueriedHandler
 {
-    private readonly IStockRepository _stockRepository;
+    private readonly IUnitOfWork _unitOfWork;
     
-    public GetAllStocksQueriedHandler(IStockRepository stockRepository)
+    public GetAllStocksQueriedHandler(IUnitOfWork unitOfWork)
     {
-        _stockRepository = stockRepository;
+        _unitOfWork = unitOfWork;
     }
     
     public async Task<PagedResponse<StockDto>> Handle(QueryFilter filter, CancellationToken cancellationToken)
     {
-        return await _stockRepository.GetAllStocksAsyncQueried(filter, cancellationToken);
+        return await _unitOfWork.Stocks.GetAllAsync(filter, cancellationToken);
     }
 }

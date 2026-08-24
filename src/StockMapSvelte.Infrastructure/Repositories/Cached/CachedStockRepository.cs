@@ -30,8 +30,8 @@ public class CachedStockRepository : IStockRepository
     public async Task<IList<string>> GetUninitializedStocks(IList<string> tickerSymbols, CancellationToken cancellationToken)
         => await _decorated.GetUninitializedStocks(tickerSymbols, cancellationToken);
 
-    public async Task<PagedResponse<StockDto>> GetAllStocksAsyncQueried(QueryFilter filter, CancellationToken cancellationToken)
-        => await _decorated.GetAllStocksAsyncQueried(filter, cancellationToken);
+    public async Task<PagedResponse<StockDto>> GetAllAsync(QueryFilter filter, CancellationToken cancellationToken)
+        => await _decorated.GetAllAsync(filter, cancellationToken);
 
     public async Task<IReadOnlyList<StockDto>> GetPossibleToAddStocksAsync(string filter, IList<string> stocksInPortfolio, CancellationToken cancellationToken = default)
     {

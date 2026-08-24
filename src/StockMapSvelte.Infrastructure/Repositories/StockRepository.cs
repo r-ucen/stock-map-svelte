@@ -67,39 +67,6 @@ public class StockRepository : Repository<Stock>, IStockRepository
         return await Context.SaveChangesAsync(cancellationToken);
     }
     
-    public async Task<PagedResponse<StockDto>> GetAllStocksAsyncQueried(QueryFilter filter, CancellationToken cancellationToken)
-    {
-        var pageNumber = Math.Max(1, filter.PageNumber);
-        var pageSize = Math.Clamp(filter.PageSize, 1, 50);
-
-        var query = DbSet.AsNoTracking().AsQueryable();
-        
-        // apply search filter
-        query = query.ApplySearch(filter.Search);
-
-        // count total records AFTER filtering, BEFORE pagination
-        var totalRecords = await query.CountAsync(cancellationToken);
-
-        // apply sorting (default to TickerSymbol if not specified)
-        query = query.ApplySort(
-            string.IsNullOrWhiteSpace(filter.SortBy) ? "TickerSymbol" : filter.SortBy);
-
-        // apply pagination and project to DTOs
-        var stocks = await query
-            .ApplyPagination(pageNumber, pageSize)
-            .Select(m => new StockDto(m.Id, m.TickerSymbol))
-            .ToListAsync(cancellationToken);
-
-        return new PagedResponse<StockDto>
-        {
-            Data = stocks,
-            PageNumber = pageNumber,
-            PageSize = pageSize,
-            TotalRecords = totalRecords,
-            TotalPages = (int)Math.Ceiling(totalRecords / (double)pageSize)
-        };
-    }
-    
     public async Task<IReadOnlyList<StockDto>> GetPossibleToAddStocksAsync(string filter, IList<string> stocksInPortfolio, CancellationToken cancellationToken)
     {
         var upperTickersInPortfolio = stocksInPortfolio
@@ -160,6 +127,39 @@ public class StockRepository : Repository<Stock>, IStockRepository
     }
     
     // REFACTORED
+    
+    public async Task<PagedResponse<StockDto>> GetAllAsync(QueryFilter filter, CancellationToken cancellationToken)
+    {
+        var pageNumber = Math.Max(1, filter.PageNumber);
+        var pageSize = Math.Clamp(filter.PageSize, 1, 50);
+
+        var query = DbSet.AsNoTracking().AsQueryable();
+        
+        // apply search filter
+        query = query.ApplySearch(filter.Search);
+
+        // count total records AFTER filtering, BEFORE pagination
+        var totalRecords = await query.CountAsync(cancellationToken);
+
+        // apply sorting (default to TickerSymbol if not specified)
+        query = query.ApplySort(
+            string.IsNullOrWhiteSpace(filter.SortBy) ? "TickerSymbol" : filter.SortBy);
+
+        // apply pagination and project to DTOs
+        var stocks = await query
+            .ApplyPagination(pageNumber, pageSize)
+            .Select(m => new StockDto(m.Id, m.TickerSymbol))
+            .ToListAsync(cancellationToken);
+
+        return new PagedResponse<StockDto>
+        {
+            Data = stocks,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalRecords = totalRecords,
+            TotalPages = (int)Math.Ceiling(totalRecords / (double)pageSize)
+        };
+    }
 
     public async Task<IReadOnlyList<string>> GetMissingTickerSymbolsAsync(IList<string> tickerSymbols, CancellationToken cancellationToken)
     {
