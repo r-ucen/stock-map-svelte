@@ -20,7 +20,7 @@ public interface IPortfolioRepository : IRepository<Portfolio>
     // REFACTORED
     public Task<Portfolio?> GetByIdAsync(string userId, Guid portfolioId, CancellationToken cancellationToken);
     Task<PagedResponse<PortfolioDto>> GetAllAsync(QueryFilter filter, CancellationToken cancellationToken);
-    public Task<int> GetCountByUserIdAsync(string userId, CancellationToken cancellationToken);
+    public Task<int> GetCountForUserAsync(string userId, CancellationToken cancellationToken);
     public Task<bool> NameExistsAsync(string userId, string portfolioName, CancellationToken cancellationToken);
     public Task<bool> NameExistsAsync(string userId, Guid portfolioId, string portfolioName, CancellationToken cancellationToken);
     public new Task<Portfolio?> GetByIdAsync(Guid id, CancellationToken cancellationToken);

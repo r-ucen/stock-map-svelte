@@ -127,18 +127,20 @@ public class PortfolioRepository : Repository<Portfolio>, IPortfolioRepository
             .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async Task<int> GetCountByUserIdAsync(string userId, CancellationToken cancellationToken)
+    public async Task<int> GetCountForUserAsync(string userId, CancellationToken cancellationToken)
     {
         return await DbSet
             .CountAsync(p => p.UserId == userId, cancellationToken);
     }
 
+    // when creating a portfolio
     public async Task<bool> NameExistsAsync(string userId, string portfolioName, CancellationToken cancellationToken)
     {
         return await DbSet
             .AnyAsync(p => p.Name == portfolioName && p.UserId == userId, cancellationToken);
     }
     
+    // when editing a portfolio
     public async Task<bool> NameExistsAsync(string userId, Guid portfolioId, string portfolioName, CancellationToken cancellationToken)
     {
         return await DbSet

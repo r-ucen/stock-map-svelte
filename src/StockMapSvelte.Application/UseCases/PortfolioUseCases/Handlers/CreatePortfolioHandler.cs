@@ -25,7 +25,7 @@ public class CreatePortfolioHandler
     {
         var userId = await _userContext.GetCurrentUserIdAsync();
         
-        var portfolioCount = await _unitOfWork.Portfolios.GetCountByUserIdAsync(userId, cancellationToken);
+        var portfolioCount = await _unitOfWork.Portfolios.GetCountForUserAsync(userId, cancellationToken);
         if (portfolioCount >= 5) { throw new MaxPortfoliosReachedException(5); }
         
         var portfolio = Portfolio.Create(userId, cmd.PortfolioName);

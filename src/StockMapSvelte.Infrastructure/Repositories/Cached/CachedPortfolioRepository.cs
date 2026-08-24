@@ -93,8 +93,8 @@ public class CachedPortfolioRepository : IPortfolioRepository
     public Task<PagedResponse<PortfolioDto>> GetAllAsync(QueryFilter filter, CancellationToken cancellationToken)
         => _decorated.GetAllAsync(filter, cancellationToken);
     
-    public Task<int> GetCountByUserIdAsync(string userId, CancellationToken cancellationToken)
-        => _decorated.GetCountByUserIdAsync(userId, cancellationToken);
+    public Task<int> GetCountForUserAsync(string userId, CancellationToken cancellationToken)
+        => _decorated.GetCountForUserAsync(userId, cancellationToken);
 
     public Task<bool> NameExistsAsync(string userId, string portfolioName, CancellationToken cancellationToken)
         => _decorated.NameExistsAsync(userId, portfolioName, cancellationToken);
