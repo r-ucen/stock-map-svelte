@@ -36,7 +36,7 @@ public class YahooStockClient(
         return !string.IsNullOrWhiteSpace(ticker) ? ticker : string.Empty;
     }
     
-    public async Task<bool> TickerExists(string ticker)
+    public async Task<bool> TickerSymbolExists(string ticker)
     {
         var snapshots = await yahooQuotes.GetSnapshotAsync([ticker]);
 

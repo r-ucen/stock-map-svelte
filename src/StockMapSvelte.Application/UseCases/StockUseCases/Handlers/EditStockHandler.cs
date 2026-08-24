@@ -32,7 +32,7 @@ public class EditStockHandler
             throw new TickerSymbolAlreadyExists($"Stock with ticker symbol '{normalizedTicker}' already exists.");
         }
         
-        if (!await _stockClient.TickerExists(normalizedTicker))
+        if (!await _stockClient.TickerSymbolExists(normalizedTicker))
         {
             throw new InvalidTickerSymbolException($"This ticker symbol: '{normalizedTicker}' is not valid.");
         }

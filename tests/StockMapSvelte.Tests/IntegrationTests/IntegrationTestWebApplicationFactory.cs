@@ -55,7 +55,7 @@ public class IntegrationTestWebApplicationFactory : WebApplicationFactory<Progra
             
             // mock, set default behavior and register
             StockClientMock
-                .Setup(x => x.TickerExists(It.IsAny<string>()))
+                .Setup(x => x.TickerSymbolExists(It.IsAny<string>()))
                 .ReturnsAsync(true);
             services.AddSingleton(StockClientMock.Object);
             
@@ -88,13 +88,13 @@ public class IntegrationTestWebApplicationFactory : WebApplicationFactory<Progra
         if (ticker is null)
         {
             StockClientMock
-                .Setup(x => x.TickerExists(It.IsAny<string>()))
+                .Setup(x => x.TickerSymbolExists(It.IsAny<string>()))
                 .ReturnsAsync(exists);
         }
         else
         {
             StockClientMock
-                .Setup(x => x.TickerExists(ticker))
+                .Setup(x => x.TickerSymbolExists(ticker))
                 .ReturnsAsync(exists);
         }
     }

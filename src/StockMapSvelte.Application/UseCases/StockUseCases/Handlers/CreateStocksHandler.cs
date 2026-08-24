@@ -43,7 +43,7 @@ public class CreateStocksHandler
         {
             try
             {
-                if (!await _stockClient.TickerExists(tickerSymbol))
+                if (!await _stockClient.TickerSymbolExists(tickerSymbol))
                 {
                     failed.Add(new StockCreationFailure(tickerSymbol, "Not a valid ticker symbol"));
                     continue;

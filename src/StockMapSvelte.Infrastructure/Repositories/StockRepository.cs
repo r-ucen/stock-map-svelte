@@ -183,4 +183,10 @@ public class StockRepository : Repository<Stock>, IStockRepository
             .Select(s => s.TickerSymbol)
             .ToListAsync(cancellationToken);
     }
+    
+    public async Task<bool> ExistsAsync(string ticker, CancellationToken cancellationToken)
+    {
+        return await DbSet
+            .AnyAsync(s => s.TickerSymbol == ticker, cancellationToken);
+    }
 }
