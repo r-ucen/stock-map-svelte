@@ -116,4 +116,28 @@ public class CachedStockRepository : IStockRepository
 
     public Task<bool> ExistsAsync(string ticker, CancellationToken cancellationToken)
         => _decorated.ExistsAsync(ticker, cancellationToken);
+
+    public async Task<IReadOnlyList<StockDto>> GetPossibleToAddAsync(string filter, IList<string> stocksInPortfolio, CancellationToken cancellationToken)
+    {
+        var portfolioStocksSortedString = string.Join(",", stocksInPortfolio
+            .Where(t => !string.IsNullOrWhiteSpace(t))
+            .Select(t => t.Trim().ToUpperInvariant())
+            .OrderBy(t => t));
+        
+        var normalizedFilter = filter.Trim().ToUpperInvariant();
+        var cacheKey = CacheKeys.Stock.PossibleToAdd(normalizedFilter, portfolioStocksSortedString);
+        
+        var options = new HybridCacheEntryOptions
+        {
+            Expiration = TimeSpan.FromMinutes(3),
+            LocalCacheExpiration = TimeSpan.FromMinutes(1)
+        };
+
+        return await _cache.GetOrCreateAsync(
+            cacheKey,
+            async cancel => await _decorated.GetPossibleToAddAsync(filter, stocksInPortfolio, cancel),
+            options: options,
+            cancellationToken: cancellationToken
+        );
+    }
 }

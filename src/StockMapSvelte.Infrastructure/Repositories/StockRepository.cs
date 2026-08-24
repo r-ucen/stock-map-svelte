@@ -189,4 +189,21 @@ public class StockRepository : Repository<Stock>, IStockRepository
         return await DbSet
             .AnyAsync(s => s.TickerSymbol == ticker, cancellationToken);
     }
+    
+    public async Task<IReadOnlyList<StockDto>> GetPossibleToAddAsync(string filter, IList<string> stocksInPortfolio, CancellationToken cancellationToken)
+    {
+        return await DbSet
+            .AsNoTracking()
+            .Where(s => s.IsInitialized == true)
+            .Where(s => !stocksInPortfolio.Contains(s.TickerSymbol))
+            .Where(s => s.TickerSymbol.Contains(filter))
+            .OrderBy(s => s.TickerSymbol)
+            .Take(20)
+            .Select(s => new StockDto
+            (
+                s.Id,
+                s.TickerSymbol
+            ))
+            .ToListAsync(cancellationToken);
+    }
 }

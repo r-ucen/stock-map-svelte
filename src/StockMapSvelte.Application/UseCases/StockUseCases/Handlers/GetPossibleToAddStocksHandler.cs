@@ -1,5 +1,4 @@
 using StockMapSvelte.Application.Abstractions;
-using StockMapSvelte.Application.Abstractions.Repositories;
 using StockMapSvelte.Application.DTOs;
 using StockMapSvelte.Application.UseCases.StockUseCases.Queries;
 
@@ -7,15 +6,22 @@ namespace StockMapSvelte.Application.UseCases.StockUseCases.Handlers;
 
 public class GetPossibleToAddStocksHandler
 {
-    private readonly IStockRepository _stockRepository;
+    private readonly IUnitOfWork  _unitOfWork;
     
-    public GetPossibleToAddStocksHandler(IStockRepository stockRepository)
+    public GetPossibleToAddStocksHandler(IUnitOfWork unitOfWork)
     {
-        _stockRepository = stockRepository;
+        _unitOfWork = unitOfWork;
     }
     
     public async Task<IReadOnlyList<StockDto>> Handle(GetPossibleToAddStocksQuery query, CancellationToken cancellationToken)
     {
-        return await _stockRepository.GetPossibleToAddStocksAsync(query.Filter.ToUpper(), query.StocksInPortfolio, cancellationToken);
+        var filter = query.Filter.ToUpper();
+        
+        var upperTickersInPortfolio = query.StocksInPortfolio
+            .Where(t => !string.IsNullOrWhiteSpace(t))
+            .Select(t => t.Trim().ToUpperInvariant())
+            .ToList();
+        
+        return await _unitOfWork.Stocks.GetPossibleToAddAsync(filter, upperTickersInPortfolio, cancellationToken);
     }
 }
