@@ -328,6 +328,8 @@ public class StockIntegrationTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
     
+    // CREATE MULTIPLE STOCKS
+    
     [Fact]
     public async Task CreateStocksBatch_WithValidTickers_ShouldReturnOkWithCreatedAndNoFailed()
     {
@@ -360,7 +362,7 @@ public class StockIntegrationTests : IAsyncLifetime
         var result = await response.Content.ReadFromJsonAsync<CreateStocksResponse>();
         Assert.NotNull(result);
         Assert.Empty(result.CreatedStocks );
-        Assert.Equal(2, result.FailedToCreateStocks .Length);
+        Assert.Equal(2, result.FailedToCreateStocks.Length);
     }
 
     [Fact]
