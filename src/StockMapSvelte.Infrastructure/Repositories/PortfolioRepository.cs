@@ -154,6 +154,14 @@ public class PortfolioRepository : Repository<Portfolio>, IPortfolioRepository
             .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
     }
     
+    public async Task<Portfolio?> GetWithStockProfilesByIdAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return await DbSet
+            .Include(p => p.Stocks.Where(s => s.IsInitialized))
+            .ThenInclude(s => s.StockProfile)
+            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
+    }
+    
     public async Task<PagedResponse<PortfolioDto>> GetAllAsync(QueryFilter filter, CancellationToken cancellationToken)
     {
         var pageNumber = Math.Max(1, filter.PageNumber);

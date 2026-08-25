@@ -25,4 +25,5 @@ public interface IPortfolioRepository : IRepository<Portfolio>
     public Task<bool> NameExistsAsync(string userId, Guid portfolioId, string portfolioName, CancellationToken cancellationToken);
     public new Task<Portfolio?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
     public Task<IReadOnlyList<Portfolio>> GetForUserAsync(string userId, CancellationToken cancellationToken);
+    public Task<Portfolio?> GetWithStockProfilesByIdAsync(Guid id, CancellationToken cancellationToken);
 }
