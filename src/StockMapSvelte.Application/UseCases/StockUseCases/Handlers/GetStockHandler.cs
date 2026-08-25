@@ -1,5 +1,5 @@
+using StockMapSvelte.Application.Abstractions;
 using StockMapSvelte.Application.UseCases.StockUseCases.Queries;
-using StockMapSvelte.Application.Abstractions.Repositories;
 using StockMapSvelte.Application.DTOs;
 using StockMapSvelte.Application.Exceptions.Stock;
 
@@ -7,16 +7,18 @@ namespace StockMapSvelte.Application.UseCases.StockUseCases.Handlers;
 
 public class GetStockHandler
 {
-    private readonly IStockRepository _stockRepository;
+    private readonly IUnitOfWork _unitOfWork;
     
-    public GetStockHandler(IStockRepository stockRepository)
+    public GetStockHandler(IUnitOfWork unitOfWork)
     {
-        _stockRepository = stockRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<StockDto> Handle(GetStockQuery query, CancellationToken cancellationToken)
     {
-        return await _stockRepository.GetStockViewModelByIdAsync(query.StockId, cancellationToken) 
-               ?? throw new StockNotFoundException($"Stock with id '{query.StockId}' was not found.", query.StockId.ToString());
+        var stock = await _unitOfWork.Stocks.GetByIdAsync(query.StockId, cancellationToken);
+        if (stock == null) { throw new StockNotFoundException($"Stock with id '{query.StockId}' was not found."); }
+
+        return new StockDto(stock.Id, stock.TickerSymbol);
     }
 }
