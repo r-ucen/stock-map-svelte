@@ -1,23 +1,24 @@
 using StockMapSvelte.Application.Abstractions;
-using StockMapSvelte.Application.Abstractions.Repositories;
+using StockMapSvelte.Application.Exceptions.UserSetting;
 
 namespace StockMapSvelte.Application.UseCases.UserSettingUseCases.Handlers;
 
 public class GetDefaultPortfolioIdHandler
 {
-    private readonly IUserSettingRepository _userSettingRepository;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IUserContext _userContext;
     
-    public GetDefaultPortfolioIdHandler(IUserSettingRepository userSettingRepository, IUserContext userContext)
+    public GetDefaultPortfolioIdHandler(IUnitOfWork unitOfWork, IUserContext userContext)
     {
-        _userSettingRepository = userSettingRepository;
+        _unitOfWork = unitOfWork;
         _userContext = userContext;
     }
     
     public async Task<Guid> Handle(CancellationToken cancellationToken)
     {
         var currentUserId = await _userContext.GetCurrentUserIdAsync();
-        
-        return await _userSettingRepository.GetDefaultPortfolioIdAsync(currentUserId, cancellationToken) ?? Guid.Empty;
+
+        var defaultPortfolioId = await _unitOfWork.UserSettings.GetDefaultPortfolioIdAsync(currentUserId, cancellationToken);
+        return defaultPortfolioId ?? throw new GetDefaultPortfolioIdFailedException();
     }
 }
