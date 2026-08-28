@@ -1,7 +1,10 @@
+using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Mvc.Testing;
+using StockMapSvelte.Api.Requests.Portfolio;
 using StockMapSvelte.Application.DTOs;
+using StockMapSvelte.Application.UseCases.UserSettingUseCases.Commands;
 
 namespace StockMapSvelte.Tests.IntegrationTests.UserSetting;
 
@@ -44,6 +47,43 @@ public class UserSettingIntegrationTests : IAsyncLifetime
         
         // Assert
         Assert.Equal(portfolio.PortfolioId,  defaultPortfolioId);
+    }
+
+    [Fact]
+    public async Task SetPortfolioAsDefault_ShouldSetDefaultPortfolio()
+    {
+        // Arrange
+        var getPortfoliosResponse = await _customerClient.GetAsync("/portfolios/me");
+        var portfolios = await getPortfoliosResponse.Content.ReadFromJsonAsync<List<PortfolioDto>>();
+        Assert.NotNull(portfolios);
+
+        var defaultPortfolio = portfolios.FirstOrDefault(p => p.PortfolioName == "Default portfolio");
+        Assert.NotNull(defaultPortfolio);
+        Assert.True(defaultPortfolio.IsDefault);
+
+        var createdPortfolioResponse = await _customerClient.PostAsJsonAsync("/portfolios", new CreatePortfolioRequest("ToBeSetAsDefault", []));
+        var createdPortfolio = await createdPortfolioResponse.Content.ReadFromJsonAsync<PortfolioDto>();
+        Assert.NotNull(createdPortfolio);
+        Assert.False(createdPortfolio.IsDefault);
+
+        // Act
+        var cmd = new SetPortfolioAsDefaultCommand(createdPortfolio.PortfolioId);
+        var response = await _customerClient.PutAsJsonAsync("/user-settings/default-portfolio", cmd);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+
+        getPortfoliosResponse = await _customerClient.GetAsync("/portfolios/me");
+        var newPortfolios = await getPortfoliosResponse.Content.ReadFromJsonAsync<List<PortfolioDto>>();
+        Assert.NotNull(newPortfolios);
+
+        var previouslyDefaultPortfolio = newPortfolios.FirstOrDefault(p => p.PortfolioName == "Default portfolio");
+        Assert.NotNull(previouslyDefaultPortfolio);
+        Assert.False(previouslyDefaultPortfolio.IsDefault);
+
+        var newDefaultPortfolio = newPortfolios.FirstOrDefault(p => p.PortfolioName == "ToBeSetAsDefault");
+        Assert.NotNull(newDefaultPortfolio);
+        Assert.True(newDefaultPortfolio.IsDefault);
     }
     
     public async Task InitializeAsync()
