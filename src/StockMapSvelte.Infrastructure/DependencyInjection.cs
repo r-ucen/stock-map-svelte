@@ -94,8 +94,6 @@ public static class DependencyInjection
             )
         );
         
-        services.AddScoped<IUserRepository, UserRepository>();
-        
         services.AddScoped<TreeMapRepository>();
         services.AddScoped<ITreeMapRepository>(
             provider => new CachedTreeMapRepository(

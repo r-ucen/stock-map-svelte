@@ -6,15 +6,15 @@ namespace StockMapSvelte.Application.UseCases.UserUseCases.Handlers;
 
 public class GetAllUsersQueriedHandler
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IIdentityService  _identityService;
 
-    public GetAllUsersQueriedHandler(IUnitOfWork unitOfWork)
+    public GetAllUsersQueriedHandler(IIdentityService identityService)
     {
-        _unitOfWork = unitOfWork;
+        _identityService =  identityService;
     }
     
     public async Task<PagedResponse<UserDto>> Handle(QueryFilter filter, CancellationToken cancellationToken)
     {
-        return await _unitOfWork.Users.GetAllAsyncQueried(filter, cancellationToken);
+        return await _identityService.GetAllUsersAsync(filter, cancellationToken);
     }
 }

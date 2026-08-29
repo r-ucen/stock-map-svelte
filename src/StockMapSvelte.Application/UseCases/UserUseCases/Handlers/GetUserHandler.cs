@@ -7,16 +7,16 @@ namespace StockMapSvelte.Application.UseCases.UserUseCases.Handlers;
 
 public class GetUserHandler
 {
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IIdentityService _identityService;
 
-    public GetUserHandler(IUnitOfWork unitOfWork)
+    public GetUserHandler(IIdentityService identityService)
     {
-        _unitOfWork = unitOfWork;
+        _identityService = identityService;
     }
     
     public async Task<UserDto> Handle(GetUserQuery query, CancellationToken cancellationToken)
     {
-        var user = await _unitOfWork.Users.GetByIdAsync(query.UserId, cancellationToken);
+        var user = await _identityService.GetUserByIdAsync(query.UserId, cancellationToken);
         return user ?? throw new UserNotFoundException("User not found");
     }
 }

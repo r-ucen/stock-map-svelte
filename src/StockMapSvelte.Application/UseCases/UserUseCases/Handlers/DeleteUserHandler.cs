@@ -6,15 +6,13 @@ namespace StockMapSvelte.Application.UseCases.UserUseCases.Handlers;
 
 public class DeleteUserHandler
 {
-    private readonly IUnitOfWork _unitOfWork;
     private readonly IUserContext _userContext;
     private readonly IIdentityService  _identityService;
 
-    public DeleteUserHandler(IUnitOfWork unitOfWork, IUserContext userContext, IIdentityService identityService)
+    public DeleteUserHandler(IUserContext userContext, IIdentityService identityService)
     {
         _userContext = userContext;
         _identityService = identityService;
-        _unitOfWork = unitOfWork;
     }
     
     public async Task Handle(DeleteUserCommand cmd, CancellationToken cancellationToken)
@@ -30,7 +28,7 @@ public class DeleteUserHandler
         if (currentUserId == cmd.UserId)
         { throw new DeleteYourselfNotPossibleException("Cannot delete yourself."); }
 
-        var result = await _unitOfWork.Users.DeleteAsync(cmd.UserId, cancellationToken);
+        var result = await _identityService.DeleteUserAsync(cmd.UserId, cancellationToken);
         if (!result) { throw new DeleteUserFailException($"Failed to delete user with id: {cmd.UserId}"); }
     }
 }

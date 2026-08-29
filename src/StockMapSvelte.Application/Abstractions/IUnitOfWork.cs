@@ -7,8 +7,6 @@ public interface IUnitOfWork : IDisposable
     IPortfolioRepository Portfolios { get; }
     IStockProfileRepository StockProfiles { get; }
     IStockRepository Stocks { get; }
-    ITreeMapRepository TreeMaps { get; }
-    IUserRepository Users { get; }
     IUserSettingRepository UserSettings { get; }
     
     Task<int> CommitAsync(CancellationToken cancellationToken = default);

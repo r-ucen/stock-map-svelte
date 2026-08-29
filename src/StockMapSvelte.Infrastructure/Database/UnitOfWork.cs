@@ -13,8 +13,6 @@ public class UnitOfWork : IUnitOfWork
     private IPortfolioRepository? _portfolios;
     private IStockProfileRepository? _stockProfiles;
     private IStockRepository? _stocks;
-    private ITreeMapRepository? _treeMaps;
-    private IUserRepository? _users;
     private IUserSettingRepository? _userSettings;
     
     public UnitOfWork(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
@@ -31,12 +29,6 @@ public class UnitOfWork : IUnitOfWork
     
     public IStockRepository Stocks =>
         _stocks ??= new StockRepository(_context);
-
-    public ITreeMapRepository TreeMaps =>
-        _treeMaps ??= new TreeMapRepository(_context);
-
-    public IUserRepository Users =>
-        _users ??= new UserRepository(_userManager);
 
     public IUserSettingRepository UserSettings =>
         _userSettings ??= new UserSettingRepository(_context);
