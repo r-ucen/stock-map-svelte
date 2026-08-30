@@ -2,7 +2,6 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Hybrid;
 using StockMapSvelte.Application.Abstractions;
 using StockMapSvelte.Application.DTOs;
 using StockMapSvelte.Application.DTOs.Common;
@@ -19,14 +18,14 @@ public class IdentityService : IIdentityService
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IUserClaimsPrincipalFactory<ApplicationUser> _principalFactory;
     private readonly IAuthorizationService _authorizationService;
-    private readonly HybridCache _cache;
+    private readonly ICacheService _cache;
 
     public IdentityService(
         SignInManager<ApplicationUser> signInManager,
         UserManager<ApplicationUser> userManager,
         IUserClaimsPrincipalFactory<ApplicationUser> principalFactory,
         IAuthorizationService authorizationService,
-        HybridCache cache)
+        ICacheService cache)
     {
         _signInManager = signInManager;
         _userManager = userManager;
