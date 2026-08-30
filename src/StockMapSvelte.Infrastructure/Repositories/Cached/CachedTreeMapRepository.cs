@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Caching.Hybrid;
 using StockMapSvelte.Application.Abstractions.Repositories;
 using StockMapSvelte.Application.DTOs;
-using StockMapSvelte.Infrastructure.Repositories.Cached.CacheManagement;
+using StockMapSvelte.Infrastructure.Cache;
 
 namespace StockMapSvelte.Infrastructure.Repositories.Cached;
 

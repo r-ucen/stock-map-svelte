@@ -12,6 +12,7 @@ using StockMapSvelte.Application.Abstractions;
 using StockMapSvelte.Application.Abstractions.Repositories;
 using StockMapSvelte.Application.Services;
 using StockMapSvelte.Infrastructure.BackgroundServices;
+using StockMapSvelte.Infrastructure.Cache;
 using StockMapSvelte.Infrastructure.Identity;
 using StockMapSvelte.Infrastructure.Repositories;
 using StockMapSvelte.Infrastructure.Repositories.Cached;
@@ -158,6 +159,7 @@ public static class DependencyInjection
         }
 
         services.AddHybridCache();
+        services.AddScoped<ICacheService, HybridCacheService>();
         
         return services;
     }

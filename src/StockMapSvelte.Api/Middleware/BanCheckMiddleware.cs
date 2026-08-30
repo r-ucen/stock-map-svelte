@@ -1,8 +1,8 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Caching.Hybrid;
+using StockMapSvelte.Infrastructure.Cache;
 using StockMapSvelte.Infrastructure.Identity;
-using StockMapSvelte.Infrastructure.Repositories.Cached.CacheManagement;
 
 namespace StockMapSvelte.Api.Middleware;
 

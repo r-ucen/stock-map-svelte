@@ -7,9 +7,9 @@ using StockMapSvelte.Application.Abstractions;
 using StockMapSvelte.Application.DTOs;
 using StockMapSvelte.Application.DTOs.Common;
 using StockMapSvelte.Application.Enums;
+using StockMapSvelte.Infrastructure.Cache;
 using StockMapSvelte.Infrastructure.Extensions;
 using StockMapSvelte.Infrastructure.Extensions.User;
-using StockMapSvelte.Infrastructure.Repositories.Cached.CacheManagement;
 
 namespace StockMapSvelte.Infrastructure.Identity;
 

@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using StockMapSvelte.Application.Abstractions;
-using StockMapSvelte.Infrastructure.Repositories.Cached.CacheManagement;
+using StockMapSvelte.Infrastructure.Cache;
 using StockMapSvelte.Infrastructure.Services;
 
 namespace StockMapSvelte.Infrastructure.BackgroundServices;
