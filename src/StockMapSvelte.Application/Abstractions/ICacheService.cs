@@ -2,6 +2,8 @@ namespace StockMapSvelte.Application.Abstractions;
 
 public interface ICacheService
 {
+    ICacheKeys Keys { get; }
+    
     Task<T> GetOrCreateAsync<T>(
         string key,
         Func<CancellationToken, Task<T>> factory,

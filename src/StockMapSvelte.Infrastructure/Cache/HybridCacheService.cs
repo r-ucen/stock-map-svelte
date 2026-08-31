@@ -6,10 +6,14 @@ namespace StockMapSvelte.Infrastructure.Cache;
 public class HybridCacheService : ICacheService
 {
     private readonly HybridCache _cache;
+    public ICacheKeys Keys { get; }
+    public ICacheTags Tags { get; }
     
-    public HybridCacheService(HybridCache cache)
+    public HybridCacheService(HybridCache cache, ICacheKeys keys, ICacheTags tags)
     {
         _cache = cache;
+        Keys = keys;
+        Tags = tags;
     }
     
     public async Task<T> GetOrCreateAsync<T>(string key, Func<CancellationToken, Task<T>> factory, TimeSpan? expiration = null, TimeSpan? localCacheExpiration = null,
