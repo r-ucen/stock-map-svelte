@@ -9,13 +9,16 @@ public class EditPortfolioHandler
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IUserContext _userContext;
+    private readonly ICacheService _cache;
     
     public EditPortfolioHandler(
         IUserContext userContext,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        ICacheService cache)
     {
         _userContext = userContext;
         _unitOfWork = unitOfWork;
+        _cache = cache;
     }
     
     public async Task<PortfolioDto> Handle(EditPortfolioCommand cmd, CancellationToken cancellationToken)
@@ -54,6 +57,8 @@ public class EditPortfolioHandler
 
         var result = await _unitOfWork.CommitAsync(cancellationToken);
         if (result <= 0) { throw new PortfolioEditFailedException("Failed to edit portfolio."); }
+
+        await _cache.RemoveByKeyAsync(_cache.Keys.TreemapData(existing.Id), cancellationToken);
         
         return new PortfolioDto
         {
