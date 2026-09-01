@@ -161,7 +161,7 @@ public static class DependencyInjection
         services.AddHybridCache();
         services.AddSingleton<ICacheKeys, CacheKeyProvider>();
         services.AddSingleton<ICacheTags, CacheTagsProvider>();
-        services.AddScoped<ICacheService, HybridCacheService>();
+        services.AddSingleton<ICacheService, HybridCacheService>();
         
         return services;
     }
