@@ -1,9 +1,8 @@
-using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using StockMapSvelte.Application.Abstractions;
-using StockMapSvelte.Infrastructure.Repositories.Cached.CacheManagement;
+using StockMapSvelte.Infrastructure.Cache;
 using StockMapSvelte.Infrastructure.Services;
 
 namespace StockMapSvelte.Infrastructure.BackgroundServices;
@@ -14,14 +13,14 @@ public class StockDataUpdateTimedService : BackgroundService
     private readonly IServiceScopeFactory _scopeFactory;
     private int _executionCount;
     private readonly ITreeMapUpdateNotifier _treeMapUpdateNotifier;
-    private readonly HybridCache _cache;
+    private readonly ICacheService _cache;
     private bool _isFirstRun = true;
 
     public StockDataUpdateTimedService(
         ILogger<StockDataUpdateTimedService> logger,
         IServiceScopeFactory scopeFactory,
         ITreeMapUpdateNotifier treeMapUpdateNotifier,
-        HybridCache cache)
+        ICacheService cache)
     {
         _logger = logger;
         _scopeFactory = scopeFactory;

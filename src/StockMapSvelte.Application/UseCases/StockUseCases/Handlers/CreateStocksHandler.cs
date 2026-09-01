@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Logging;
 using StockMapSvelte.Application.Abstractions;
-using StockMapSvelte.Application.Abstractions.Repositories;
 using StockMapSvelte.Application.DTOs;
 using StockMapSvelte.Application.UseCases.StockUseCases.Commands;
 using StockMapSvelte.Domain.Entities;
@@ -9,18 +8,18 @@ namespace StockMapSvelte.Application.UseCases.StockUseCases.Handlers;
 
 public class CreateStocksHandler
 {
-    private readonly IStockRepository _stockRepository;
     private readonly IStockClient _stockClient;
     private readonly ILogger<CreateStocksHandler> _logger;
+    private readonly IUnitOfWork _unitOfWork;
     
     public CreateStocksHandler(
-        IStockRepository stockRepository,
         IStockClient stockClient,
-        ILogger<CreateStocksHandler> logger)
+        ILogger<CreateStocksHandler> logger,
+        IUnitOfWork unitOfWork)
     {
-        _stockRepository = stockRepository;
         _stockClient = stockClient;
         _logger = logger;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<CreateStocksResponse> Handle(CreateStocksCommand cmd, CancellationToken cancellationToken)
@@ -29,12 +28,9 @@ public class CreateStocksHandler
             .Where(s => !string.IsNullOrWhiteSpace(s))
             .Select(s => s.Trim().ToUpperInvariant())
             .Where(s => s.Length > 0 && char.IsLetterOrDigit(s[0]))
-            .ToArray() ?? Array.Empty<string>();
+            .ToArray() ?? [];
 
-        if (tickers.Length == 0)
-        {
-            return new CreateStocksResponse([], []);
-        }
+        if (tickers.Length == 0) { return new CreateStocksResponse([], []); }
         
         var created = new List<string>();
         var failed = new List<StockCreationFailure>();
@@ -43,13 +39,13 @@ public class CreateStocksHandler
         {
             try
             {
-                if (!await _stockClient.TickerExists(tickerSymbol))
+                if (!await _stockClient.TickerSymbolExists(tickerSymbol))
                 {
                     failed.Add(new StockCreationFailure(tickerSymbol, "Not a valid ticker symbol"));
                     continue;
                 }
 
-                var exists = await _stockRepository.StockExistsAsync(tickerSymbol, cancellationToken);
+                var exists = await _unitOfWork.Stocks.ExistsAsync(tickerSymbol, cancellationToken);
                 if (exists)
                 {
                     failed.Add(new StockCreationFailure(tickerSymbol, "Already exists"));
@@ -57,14 +53,8 @@ public class CreateStocksHandler
                 }
 
                 var stock = Stock.Create(tickerSymbol);
-
-                var createStockResult = await _stockRepository.CreateStockAsync(stock);
-                if (createStockResult <= 0)
-                {
-                    failed.Add(new StockCreationFailure(tickerSymbol, "Unknown error"));
-                    continue;
-                }
-
+                
+                await _unitOfWork.Stocks.AddAsync(stock, cancellationToken);
                 created.Add(stock.TickerSymbol);
             }
             catch (ArgumentException ex)
@@ -73,6 +63,8 @@ public class CreateStocksHandler
                 _logger.LogWarning(ex, "Malformed symbol format: {msg}",  ex.Message);
             }
         }
+        
+        await _unitOfWork.CommitAsync(cancellationToken);
         
         return new CreateStocksResponse(created.ToArray(), failed.ToArray());
     }

@@ -1,17 +1,17 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Caching.Hybrid;
+using StockMapSvelte.Application.Abstractions;
+using StockMapSvelte.Infrastructure.Cache;
 using StockMapSvelte.Infrastructure.Identity;
-using StockMapSvelte.Infrastructure.Repositories.Cached.CacheManagement;
 
 namespace StockMapSvelte.Api.Middleware;
 
 public class BanCheckMiddleware
 {
     private readonly RequestDelegate _next;
-    private readonly HybridCache _cache;
+    private readonly ICacheService _cache;
 
-    public BanCheckMiddleware(RequestDelegate next, HybridCache cache)
+    public BanCheckMiddleware(RequestDelegate next, ICacheService cache)
     {
         _next = next;
         _cache = cache;
@@ -32,20 +32,15 @@ public class BanCheckMiddleware
 
             if (!string.IsNullOrWhiteSpace(userId))
             {
-                var options = new HybridCacheEntryOptions
-                {
-                    Expiration = TimeSpan.FromMinutes(15),
-                    LocalCacheExpiration = TimeSpan.FromMinutes(15)
-                };
-                
                 var isBanned = await _cache.GetOrCreateAsync(
                     CacheKeys.User.Banned(userId),
-                    async cancel =>
+                    async _ =>
                     {
                         var user = await userManager.FindByIdAsync(userId);
                         return user is not null && await userManager.IsLockedOutAsync(user);
                     },
-                    options: options
+                    expiration: TimeSpan.FromMinutes(15),
+                    localCacheExpiration: TimeSpan.FromMinutes(15)
                 );
 
                 if (isBanned)

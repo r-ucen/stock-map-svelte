@@ -1,4 +1,4 @@
-using StockMapSvelte.Application.Abstractions.Repositories;
+using StockMapSvelte.Application.Abstractions;
 using StockMapSvelte.Application.DTOs;
 using StockMapSvelte.Application.DTOs.Common;
 
@@ -6,15 +6,15 @@ namespace StockMapSvelte.Application.UseCases.UserUseCases.Handlers;
 
 public class GetAllUsersQueriedHandler
 {
-    private readonly IUserRepository _userRepository;
+    private readonly IIdentityService  _identityService;
 
-    public GetAllUsersQueriedHandler(IUserRepository userRepository)
+    public GetAllUsersQueriedHandler(IIdentityService identityService)
     {
-        _userRepository = userRepository;
+        _identityService =  identityService;
     }
     
     public async Task<PagedResponse<UserDto>> Handle(QueryFilter filter, CancellationToken cancellationToken)
     {
-        return await _userRepository.GetAllAsyncQueried(filter, cancellationToken);
+        return await _identityService.GetAllUsersAsync(filter, cancellationToken);
     }
 }

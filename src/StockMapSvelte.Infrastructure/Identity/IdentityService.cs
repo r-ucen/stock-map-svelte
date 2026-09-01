@@ -1,11 +1,14 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Caching.Hybrid;
+using Microsoft.EntityFrameworkCore;
 using StockMapSvelte.Application.Abstractions;
 using StockMapSvelte.Application.DTOs;
+using StockMapSvelte.Application.DTOs.Common;
 using StockMapSvelte.Application.Enums;
-using StockMapSvelte.Infrastructure.Repositories.Cached.CacheManagement;
+using StockMapSvelte.Infrastructure.Cache;
+using StockMapSvelte.Infrastructure.Extensions;
+using StockMapSvelte.Infrastructure.Extensions.User;
 
 namespace StockMapSvelte.Infrastructure.Identity;
 
@@ -15,14 +18,14 @@ public class IdentityService : IIdentityService
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IUserClaimsPrincipalFactory<ApplicationUser> _principalFactory;
     private readonly IAuthorizationService _authorizationService;
-    private readonly HybridCache _cache;
+    private readonly ICacheService _cache;
 
     public IdentityService(
         SignInManager<ApplicationUser> signInManager,
         UserManager<ApplicationUser> userManager,
         IUserClaimsPrincipalFactory<ApplicationUser> principalFactory,
         IAuthorizationService authorizationService,
-        HybridCache cache)
+        ICacheService cache)
     {
         _signInManager = signInManager;
         _userManager = userManager;
@@ -334,5 +337,73 @@ public class IdentityService : IIdentityService
         if (user == null) { return false; }
 
         return await _userManager.IsLockedOutAsync(user);
+    }
+
+    public async Task<bool> DeleteUserAsync(string userId, CancellationToken cancellationToken)
+    {
+        if (userId == null) { throw new ArgumentNullException(userId); }
+        var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
+        if (user == null) { throw new InvalidOperationException($"The user with id: {userId} was not found"); }
+
+        var result = await _userManager.DeleteAsync(user);
+        return result.Succeeded;
+    }
+
+    public async Task<UserDto?> GetUserByIdAsync(string userId, CancellationToken cancellationToken)
+    {
+        var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
+        if (user == null) { return null; }
+
+        return new UserDto
+        (
+            user.Id,
+            user.UserName ?? string.Empty,
+            user.Email ?? string.Empty,
+            await _userManager.GetRolesAsync(user),
+            await _userManager.IsLockedOutAsync(user)
+        );
+    }
+
+    public async Task<PagedResponse<UserDto>> GetAllUsersAsync(QueryFilter filter, CancellationToken cancellationToken)
+    {
+        var pageNumber = Math.Max(1, filter.PageNumber);
+        var pageSize = Math.Clamp(filter.PageSize, 1, 50);
+        
+        var query = _userManager.Users.AsNoTracking().AsQueryable();
+        
+        query = query.ApplySearch(filter.Search, filter.SearchBy);
+        
+        var totalRecords = await query.CountAsync(cancellationToken);
+        
+        query = query.ApplySort(
+            string.IsNullOrWhiteSpace(filter.SortBy) ? "Email" : filter.SortBy);
+        
+        var usersList = await query
+            .ApplyPagination(pageNumber, pageSize)
+            .ToListAsync(cancellationToken);
+        
+        var users = new List<UserDto>();
+        
+        foreach (var u in usersList)
+        {
+            var roles = await _userManager.GetRolesAsync(u);
+    
+            users.Add(new UserDto(
+                u.Id, 
+                u.Email ?? string.Empty,  
+                u.UserName ?? string.Empty, 
+                roles,
+                await _userManager.IsLockedOutAsync(u)
+            ));
+        }
+        
+        return new PagedResponse<UserDto>
+        {
+            Data = users,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalRecords = totalRecords,
+            TotalPages = (int)Math.Ceiling(totalRecords / (double)pageSize)
+        };
     }
 }

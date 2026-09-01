@@ -1,5 +1,4 @@
 using StockMapSvelte.Application.Abstractions;
-using StockMapSvelte.Application.Abstractions.Repositories;
 using StockMapSvelte.Application.DTOs;
 using StockMapSvelte.Application.Exceptions.Portfolio;
 using StockMapSvelte.Application.Exceptions.Stock;
@@ -8,29 +7,26 @@ namespace StockMapSvelte.Application.UseCases.PortfolioUseCases.Handlers;
 
 public class EditPortfolioHandler
 {
-    private readonly IPortfolioRepository _portfolioRepository;
-    private readonly IStockRepository _stockRepository;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IUserContext _userContext;
+    private readonly ICacheService _cache;
     
     public EditPortfolioHandler(
         IUserContext userContext,
-        IPortfolioRepository portfolioRepository,
-        IStockRepository stockRepository)
+        IUnitOfWork unitOfWork,
+        ICacheService cache)
     {
         _userContext = userContext;
-        _portfolioRepository = portfolioRepository;
-        _stockRepository = stockRepository;
+        _unitOfWork = unitOfWork;
+        _cache = cache;
     }
     
-    public async Task<PortfolioStockDto> Handle(EditPortfolioCommand cmd, CancellationToken cancellationToken)
+    public async Task<PortfolioDto> Handle(EditPortfolioCommand cmd, CancellationToken cancellationToken)
     {
         var currentUserId = await _userContext.GetCurrentUserIdAsync();
 
-        var existing = await _portfolioRepository.GetPortfolioByIdAsync(cmd.PortfolioId, cancellationToken);
-        if (existing == null)
-        {
-            throw new PortfolioNotFoundException("Portfolio not found.");
-        }
+        var existing = await _unitOfWork.Portfolios.GetByIdAsync(cmd.PortfolioId, cancellationToken);
+        if (existing == null) { throw new PortfolioNotFoundException("Portfolio not found."); }
             
         existing.ValidateOwnership(currentUserId);
         
@@ -39,25 +35,32 @@ public class EditPortfolioHandler
             throw new PortfolioUnchangedException("Portfolio name and stocks are unchanged.");
         }
         
-        var nameExists = await _portfolioRepository.PortfolioNameExistsAsync(currentUserId, cmd.PortfolioId, cmd.PortfolioName, cancellationToken);
-        if (nameExists)
-        {
-            throw new PortfolioNameAlreadyExistsException(cmd.PortfolioName);
-        }
+        var nameExists = await _unitOfWork.Portfolios.NameExistsAsync(currentUserId, cmd.PortfolioId, cmd.PortfolioName, cancellationToken);
+        if (nameExists) { throw new PortfolioNameAlreadyExistsException(cmd.PortfolioName); }
         
-        var uninitializedStocks = await _stockRepository.GetUninitializedStocks(cmd.TickerSymbols, cancellationToken);
-        if (uninitializedStocks.Count != 0)
-        {
-            throw new StocksNotInitializedException(uninitializedStocks);
-        }
+        var upperTickerSymbols = cmd.TickerSymbols
+            .Where(t => !string.IsNullOrWhiteSpace(t))
+            .Select(t => t.Trim().ToUpperInvariant())
+            .ToList();
+        
+        var uninitializedStocks = await _unitOfWork.Stocks.
+            GetUninitializedTickerSymbolsAsync(upperTickerSymbols, cancellationToken);
+        
+        if (uninitializedStocks.Count != 0) { throw new StocksNotInitializedException(uninitializedStocks); }
+        
+        var stocks = await _unitOfWork.Stocks.FindTrackedAsync(s => upperTickerSymbols.Contains(s.TickerSymbol), cancellationToken);
 
-        var result = await _portfolioRepository.EditPortfolioAsync(cmd.PortfolioId, cmd.PortfolioName, cmd.TickerSymbols, cancellationToken);
-        if (result <= 0)
-        {
-            throw new PortfolioEditFailedException("Failed to edit portfolio.");
-        }
+        existing.UpdateStocks(stocks);
+        existing.UpdateName(cmd.PortfolioName);
         
-        return new PortfolioStockDto
+        _unitOfWork.Portfolios.Update(existing);
+
+        var result = await _unitOfWork.CommitAsync(cancellationToken);
+        if (result <= 0) { throw new PortfolioEditFailedException("Failed to edit portfolio."); }
+
+        await _cache.RemoveByKeyAsync(_cache.Keys.Portfolio.TreemapData(existing.Id), cancellationToken);
+        
+        return new PortfolioDto
         {
             PortfolioId = existing.Id,
             UserId = existing.UserId,

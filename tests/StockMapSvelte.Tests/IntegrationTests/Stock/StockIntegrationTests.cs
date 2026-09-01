@@ -164,6 +164,27 @@ public class StockIntegrationTests : IAsyncLifetime
         Assert.NotEqual(HttpStatusCode.Unauthorized, response.StatusCode);
     }
     
+    [Fact]
+    public async Task GetPossibleToAddStocks_ShouldReturnRightStocks()
+    {
+        // Arrange
+        await _factory.SeedStocksAsync("AAPL", "MSFT", "AMD");
+        var request = new HttpRequestMessage(HttpMethod.Get, "/stocks/possible-to-add?filter=A&stocksInPortfolio=AAPL");
+        
+        // Act
+        var response = await _customerClient.SendAsync(request);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var stocks = await response.Content.ReadFromJsonAsync<List<StockDto>>();
+        var amd = stocks.FirstOrDefault(s => s.TickerSymbol == "AMD");
+        var msft = stocks.FirstOrDefault(s => s.TickerSymbol == "MSFT");
+        var aapl = stocks.FirstOrDefault(s => s.TickerSymbol == "AAPL");
+        Assert.NotNull(amd);
+        Assert.Null(msft);
+        Assert.Null(aapl);
+    }
+    
     // CREATE STOCK
 
     [Fact]
@@ -328,6 +349,8 @@ public class StockIntegrationTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
     
+    // CREATE MULTIPLE STOCKS
+    
     [Fact]
     public async Task CreateStocksBatch_WithValidTickers_ShouldReturnOkWithCreatedAndNoFailed()
     {
@@ -360,7 +383,7 @@ public class StockIntegrationTests : IAsyncLifetime
         var result = await response.Content.ReadFromJsonAsync<CreateStocksResponse>();
         Assert.NotNull(result);
         Assert.Empty(result.CreatedStocks );
-        Assert.Equal(2, result.FailedToCreateStocks .Length);
+        Assert.Equal(2, result.FailedToCreateStocks.Length);
     }
 
     [Fact]

@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Configuration;
 using StockMapSvelte.Infrastructure.Database;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,9 +11,9 @@ using StockMapSvelte.Application.Abstractions;
 using StockMapSvelte.Application.Abstractions.Repositories;
 using StockMapSvelte.Application.Services;
 using StockMapSvelte.Infrastructure.BackgroundServices;
+using StockMapSvelte.Infrastructure.Cache;
 using StockMapSvelte.Infrastructure.Identity;
 using StockMapSvelte.Infrastructure.Repositories;
-using StockMapSvelte.Infrastructure.Repositories.Cached;
 using StockMapSvelte.Infrastructure.Services;
 using StockMapSvelte.Infrastructure.Services.Trading212;
 using StockMapSvelte.Infrastructure.Services.Yahoo;
@@ -68,38 +67,17 @@ public static class DependencyInjection
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddScoped<IStockUpdateService, StockUpdateService>();
         
-        services.AddScoped<StockRepository>();
-        services.AddScoped<IStockRepository>(
-            provider => new CachedStockRepository(
-                provider.GetRequiredService<StockRepository>(),
-                provider.GetRequiredService<HybridCache>()
-            )
-        );
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
         
         services.AddHttpClient("YahooSearchClient", client =>
         {
             client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36");
         });
         services.AddScoped<IStockClient, YahooStockClient>();
-        
-        services.AddScoped<PortfolioRepository>();
-        services.AddScoped<IPortfolioRepository>(
-            provider => new CachedPortfolioRepository(
-                provider.GetRequiredService<PortfolioRepository>(),
-                provider.GetRequiredService<HybridCache>()
-            )
-        );
-        
-        services.AddScoped<IUserRepository, UserRepository>();
-        
-        services.AddScoped<TreeMapRepository>();
-        services.AddScoped<ITreeMapRepository>(
-            provider => new CachedTreeMapRepository(
-                provider.GetRequiredService<TreeMapRepository>(),
-                provider.GetRequiredService<HybridCache>()
-            )
-        );
-        
+
+        services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+        services.AddScoped<IStockRepository, StockRepository>();
+        services.AddScoped<IPortfolioRepository, PortfolioRepository>();
         services.AddScoped<IStockProfileRepository, StockProfileRepository>();
         services.AddScoped<IUserSettingRepository, UserSettingRepository>();
         
@@ -156,6 +134,9 @@ public static class DependencyInjection
         }
 
         services.AddHybridCache();
+        services.AddSingleton<ICacheKeys, CacheKeyProvider>();
+        services.AddSingleton<ICacheTags, CacheTagsProvider>();
+        services.AddSingleton<ICacheService, HybridCacheService>();
         
         return services;
     }

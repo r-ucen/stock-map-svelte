@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using StockMapSvelte.Application.DTOs;
+using StockMapSvelte.Application.DTOs.Common;
 
 namespace StockMapSvelte.Application.Abstractions;
 
@@ -25,4 +26,7 @@ public interface IIdentityService
     public Task<bool> LockOutAsync(string userId);
     public Task<bool> UnlockAsync(string userId);
     public Task<bool> IsUserLockedOutAsync(string userId);
+    Task<bool> DeleteUserAsync(string userId, CancellationToken cancellationToken);
+    Task<UserDto?> GetUserByIdAsync(string userId, CancellationToken cancellationToken);
+    Task<PagedResponse<UserDto>> GetAllUsersAsync(QueryFilter filter, CancellationToken cancellationToken);
 }

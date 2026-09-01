@@ -1,4 +1,4 @@
-namespace StockMapSvelte.Infrastructure.Repositories.Cached.CacheManagement;
+namespace StockMapSvelte.Infrastructure.Cache;
 
 public class CacheTags
 {

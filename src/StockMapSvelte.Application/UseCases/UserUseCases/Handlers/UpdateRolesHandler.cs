@@ -21,11 +21,10 @@ public class UpdateRolesHandler
         if (currentUserId == cmd.UserId) { throw new UnableToSetRoleException("You cannot modify your own roles"); }
         
         var currentRoles = await _identityService.GetUserRolesAsync(cmd.UserId);
+        
         var isRemovingAdmin = currentRoles.Contains("Admin") && !cmd.NewRoles.Contains("Admin");
         if (isRemovingAdmin && await _identityService.IsUserTheLastAdminAsync(cmd.UserId))
-        {
-            throw new UnableToSetRoleException("Cannot remove the last admin");
-        }
+        { throw new UnableToSetRoleException("Cannot remove the last admin"); }
         
         var result = await _identityService.UpdateUserRoles(cmd.UserId, cmd.NewRoles);
         if (!result) { throw new UnableToSetRoleException("An error occured while updating the roles"); }

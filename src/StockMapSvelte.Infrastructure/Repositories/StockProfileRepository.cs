@@ -9,14 +9,60 @@ using StockMapSvelte.Infrastructure.Extensions.StockProfile;
 
 namespace StockMapSvelte.Infrastructure.Repositories;
 
-public class StockProfileRepository(ApplicationDbContext dbContext) : IStockProfileRepository
+public class StockProfileRepository : Repository<StockProfile>, IStockProfileRepository
 {
+    public StockProfileRepository(ApplicationDbContext dbContext) : base(dbContext) { }
+    
+    public async Task<int> SaveAsync(IEnumerable<StockProfile> profiles, CancellationToken cancellationToken)
+    {
+        var profileList = profiles
+            .GroupBy(p => p.StockId)
+            .Select(g => g.OrderByDescending(p => p.Date).First())
+            .ToList();
+
+        if (profileList.Count == 0)
+        {
+            return 0;
+        }
+
+        var stockIds = profileList.Select(p => p.StockId).Distinct().ToList();
+
+        // existing profiles for the profiles being saved
+        var existingProfiles = await DbSet
+            .Where(sp => stockIds.Contains(sp.StockId))
+            .ToListAsync(cancellationToken);
+
+        var existingByStockId = existingProfiles.ToDictionary(sp => sp.StockId);
+
+        foreach (var incoming in profileList)
+        {
+            if (existingByStockId.TryGetValue(incoming.StockId, out var existing))
+            {
+                incoming.Id = existing.Id;
+                incoming.StockId = existing.StockId;
+
+                DbSet.Entry(existing).CurrentValues.SetValues(incoming);
+            }
+            else
+            {
+                if (incoming.Id == Guid.Empty)
+                {
+                    incoming.Id = Guid.NewGuid();
+                }
+
+                DbSet.Add(incoming);
+            }
+        }
+
+        return await Context.SaveChangesAsync(cancellationToken);
+    }
+    
     public async Task<PagedResponse<StockStockProfileDto>> GetAllStockProfilesAsync(QueryFilter filter, CancellationToken cancellationToken)
     {
         var pageNumber = Math.Max(1, filter.PageNumber);
         var pageSize = Math.Clamp(filter.PageSize, 1, 50);
 
-        var query = dbContext.Stocks
+        var query = Context.Stocks
             .Include(s => s.StockProfile)
             .AsNoTracking()
             .AsQueryable();
@@ -75,49 +121,5 @@ public class StockProfileRepository(ApplicationDbContext dbContext) : IStockProf
             TotalRecords = totalRecords,
             TotalPages = (int)Math.Ceiling(totalRecords / (double)pageSize)
         };
-    }
-    
-    public async Task<int> SaveStockProfilesAsync(IEnumerable<StockProfile> profiles, CancellationToken cancellationToken)
-    {
-        var profileList = profiles
-            .GroupBy(p => p.StockId)
-            .Select(g => g.OrderByDescending(p => p.Date).First())
-            .ToList();
-
-        if (profileList.Count == 0)
-        {
-            return 0;
-        }
-
-        var stockIds = profileList.Select(p => p.StockId).Distinct().ToList();
-
-        // existing profiles for the profiles being saved
-        var existingProfiles = await dbContext.StockProfiles
-            .Where(sp => stockIds.Contains(sp.StockId))
-            .ToListAsync(cancellationToken);
-
-        var existingByStockId = existingProfiles.ToDictionary(sp => sp.StockId);
-
-        foreach (var incoming in profileList)
-        {
-            if (existingByStockId.TryGetValue(incoming.StockId, out var existing))
-            {
-                incoming.Id = existing.Id;
-                incoming.StockId = existing.StockId;
-
-                dbContext.Entry(existing).CurrentValues.SetValues(incoming);
-            }
-            else
-            {
-                if (incoming.Id == Guid.Empty)
-                {
-                    incoming.Id = Guid.NewGuid();
-                }
-
-                dbContext.StockProfiles.Add(incoming);
-            }
-        }
-
-        return await dbContext.SaveChangesAsync(cancellationToken);
     }
 }

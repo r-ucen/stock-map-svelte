@@ -1,5 +1,4 @@
 using StockMapSvelte.Application.Abstractions;
-using StockMapSvelte.Application.Abstractions.Repositories;
 using StockMapSvelte.Application.DTOs;
 using StockMapSvelte.Application.Exceptions.Portfolio;
 using StockMapSvelte.Application.UseCases.PortfolioUseCases.Queries;
@@ -8,21 +7,31 @@ namespace StockMapSvelte.Application.UseCases.PortfolioUseCases.Handlers;
 
 public class GetPortfolioByIdHandler
 {
-    private readonly IPortfolioRepository _portfolioRepository;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IUserContext _userContext;
     
-    public GetPortfolioByIdHandler(IUserContext userContext, IPortfolioRepository portfolioRepository)
+    public GetPortfolioByIdHandler(IUserContext userContext, IUnitOfWork unitOfWork)
     {
-        _portfolioRepository = portfolioRepository;
         _userContext = userContext;
+        _unitOfWork = unitOfWork;
     }
     
-    public async Task<PortfolioStockDto> Handle(GetPortfolioByIdQuery query, CancellationToken cancellationToken)
+    public async Task<PortfolioDto> Handle(GetPortfolioByIdQuery query, CancellationToken cancellationToken)
     {
         var currentUserId = await _userContext.GetCurrentUserIdAsync();
         
-        var portfolio = await _portfolioRepository.GetPortfolioByIdForUserAsync(currentUserId, query.PortfolioId, cancellationToken);
+        var portfolio = await _unitOfWork.Portfolios.GetByIdAsync(currentUserId, query.PortfolioId, cancellationToken);
+        if (portfolio == null) { throw new PortfolioNotFoundException("Portfolio not found."); }
         
-        return portfolio ?? throw new PortfolioNotFoundException("Portfolio not found.");
+        var defaultPortfolioId = await _unitOfWork.UserSettings.GetDefaultPortfolioIdAsync(currentUserId, cancellationToken);
+        
+        return new PortfolioDto()
+        {
+            PortfolioId = portfolio.Id,
+            UserId = portfolio.UserId,
+            PortfolioName = portfolio.Name,
+            IsDefault = portfolio.Id == defaultPortfolioId,
+            TickerSymbols = portfolio.Stocks.Select(s => s.TickerSymbol).ToList()
+        };
     }
 }

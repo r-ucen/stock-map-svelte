@@ -55,6 +55,19 @@ public class Portfolio : Entity<Guid>
 
     public bool HasChanges(string name, IList<string> tickerSymbols)
     {
-        return Name != name || !Stocks.Select(s => s.TickerSymbol).SequenceEqual(tickerSymbols);
+        var current = Stocks
+            .Where(s => !string.IsNullOrWhiteSpace(s.TickerSymbol))
+            .Select(s => s.TickerSymbol.Trim())
+            .OrderBy(s => s, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        var incoming = (tickerSymbols ?? [])
+            .Where(t => !string.IsNullOrWhiteSpace(t))
+            .Select(t => t.Trim())
+            .OrderBy(t => t, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        return !string.Equals(Name.Trim(), name.Trim(), StringComparison.OrdinalIgnoreCase)
+               || !current.SequenceEqual(incoming, StringComparer.OrdinalIgnoreCase);
     }
 }

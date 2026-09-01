@@ -1,5 +1,4 @@
 using StockMapSvelte.Application.Abstractions;
-using StockMapSvelte.Application.Abstractions.Repositories;
 using StockMapSvelte.Application.DTOs;
 using StockMapSvelte.Application.Exceptions.Portfolio;
 using StockMapSvelte.Application.Exceptions.Stock;
@@ -10,65 +9,67 @@ namespace StockMapSvelte.Application.UseCases.PortfolioUseCases.Handlers;
 
 public class CreatePortfolioHandler
 {
-    private readonly IPortfolioRepository _portfolioRepository;
-    private readonly IStockRepository _stockRepository;
-    private readonly IUserSettingRepository _userSettingRepository;
     private readonly IUserContext _userContext;
+    
+    private readonly IUnitOfWork _unitOfWork;
 
     public CreatePortfolioHandler(
         IUserContext userContext,
-        IPortfolioRepository portfolioRepository,
-        IUserSettingRepository userSettingRepository,
-        IStockRepository stockRepository)
+        IUnitOfWork unitOfWork)
     {
         _userContext = userContext;
-        _portfolioRepository = portfolioRepository;
-        _userSettingRepository = userSettingRepository;
-        _stockRepository = stockRepository;
+        _unitOfWork = unitOfWork;
     }
 
-    public async Task<PortfolioStockDto> Handle(CreatePortfolioCommand cmd, CancellationToken cancellationToken)
+    public async Task<PortfolioDto> Handle(CreatePortfolioCommand cmd, CancellationToken cancellationToken)
     {
         var userId = await _userContext.GetCurrentUserIdAsync();
-        var portfolioCount = await _portfolioRepository.GetPortfolioCountByUserIdAsync(userId, cancellationToken);
+        
+        var portfolioCount = await _unitOfWork.Portfolios.GetCountForUserAsync(userId, cancellationToken);
         if (portfolioCount >= 5) { throw new MaxPortfoliosReachedException(5); }
         
         var portfolio = Portfolio.Create(userId, cmd.PortfolioName);
         
-        var nameExists = await _portfolioRepository.PortfolioNameExistsAsync(userId, portfolio.Name, cancellationToken);
-        if (nameExists)
-        {
-            throw new PortfolioNameAlreadyExistsException(cmd.PortfolioName);
-        }
+        var nameExists = await _unitOfWork.Portfolios.NameExistsAsync(userId, cmd.PortfolioName, cancellationToken);
+        if (nameExists) { throw new PortfolioNameAlreadyExistsException(cmd.PortfolioName); }
         
         var upperTickerSymbols = cmd.TickerSymbols
             .Where(t => !string.IsNullOrWhiteSpace(t))
             .Select(t => t.Trim().ToUpperInvariant())
             .ToList();
         
-        var missingStocks = await _stockRepository.GetMissingStocksAsync(upperTickerSymbols, cancellationToken);
+        var missingStocks = await _unitOfWork.Stocks.
+            GetMissingTickerSymbolsAsync(upperTickerSymbols, cancellationToken);
         if (missingStocks.Count != 0) { throw new StocksNotInDatabaseException(missingStocks); }
 
-        var uninitializedStocks = await _stockRepository.GetUninitializedStocks(upperTickerSymbols, cancellationToken);
+        var uninitializedStocks = await _unitOfWork.Stocks.
+            GetUninitializedTickerSymbolsAsync(upperTickerSymbols, cancellationToken);
         if (uninitializedStocks.Count != 0) { throw new StocksNotInitializedException(uninitializedStocks); }
-
-        var result = await _portfolioRepository.CreatePortfolioAsync(portfolio, cmd.TickerSymbols, cancellationToken);
-        if (result <= 0)
-        {
-            throw new PortfolioCreationFailedException("Failed to create portfolio.");
-        }
         
-        if (portfolioCount == 1)
+        var stocksInPortfolio = await _unitOfWork.Stocks
+            .FindTrackedAsync(s => upperTickerSymbols.Contains(s.TickerSymbol), cancellationToken);
+        
+        portfolio.AssignStocks(stocksInPortfolio);
+        
+        await _unitOfWork.Portfolios.AddAsync(portfolio, cancellationToken);
+        
+        if (portfolioCount == 0)
         {
-            var setPortfolioAsDefaultResult = await _userSettingRepository.SetPortfolioAsDefaultAsync(userId, portfolio.Id);
-            
-            if (setPortfolioAsDefaultResult <= 0)
+            var userSetting = await _unitOfWork.UserSettings.GetAsync(userId, cancellationToken);
+
+            if (userSetting == null)
             {
-                throw new PortfolioCreationFailedException("Failed to set portfolio as default.");
+                userSetting = UserSetting.CreateForUser(userId);
+                await _unitOfWork.UserSettings.AddAsync(userSetting, cancellationToken);
             }
+            
+            userSetting.SetDefaultPortfolio(portfolio.Id);
         }
 
-        return new PortfolioStockDto()
+        var result = await _unitOfWork.CommitAsync(cancellationToken);
+        if (result <= 0) { throw new PortfolioCreationFailedException("Failed to create portfolio."); }
+        
+        return new PortfolioDto()
         {
             PortfolioId = portfolio.Id,
             UserId = portfolio.UserId,
