@@ -58,7 +58,7 @@ public class EditPortfolioHandler
         var result = await _unitOfWork.CommitAsync(cancellationToken);
         if (result <= 0) { throw new PortfolioEditFailedException("Failed to edit portfolio."); }
 
-        await _cache.RemoveByKeyAsync(_cache.Keys.TreemapData(existing.Id), cancellationToken);
+        await _cache.RemoveByKeyAsync(_cache.Keys.Portfolio.TreemapData(existing.Id), cancellationToken);
         
         return new PortfolioDto
         {
