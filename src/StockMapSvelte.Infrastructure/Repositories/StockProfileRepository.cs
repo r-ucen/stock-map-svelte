@@ -13,7 +13,7 @@ public class StockProfileRepository : Repository<StockProfile>, IStockProfileRep
 {
     public StockProfileRepository(ApplicationDbContext dbContext) : base(dbContext) { }
     
-    public async Task<int> SaveStockProfilesAsync(IEnumerable<StockProfile> profiles, CancellationToken cancellationToken)
+    public async Task<int> SaveAsync(IEnumerable<StockProfile> profiles, CancellationToken cancellationToken)
     {
         var profileList = profiles
             .GroupBy(p => p.StockId)

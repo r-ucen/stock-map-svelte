@@ -97,7 +97,7 @@ public class StockRepository : Repository<Stock>, IStockRepository
         return stock == null ? null : new StockDto(stockId, stock.TickerSymbol);
     }
 
-    public async Task<IReadOnlyList<Stock>> GetUninitializedStocksAsync(CancellationToken cancellationToken)
+    public async Task<IReadOnlyList<Stock>> GetUninitializedAsync(CancellationToken cancellationToken)
     {
         return await DbSet
             .AsNoTracking()
@@ -105,7 +105,7 @@ public class StockRepository : Repository<Stock>, IStockRepository
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<int> MarkStocksAsInitializedAsync(IEnumerable<Guid> stockIds, CancellationToken cancellationToken)
+    public async Task<int> MarkAsInitializedAsync(IEnumerable<Guid> stockIds, CancellationToken cancellationToken)
     {
         var uninitializedStocks =  DbSet
             .Where(s => stockIds.Contains(s.Id));

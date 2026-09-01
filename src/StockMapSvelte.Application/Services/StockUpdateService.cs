@@ -22,15 +22,15 @@ public class StockUpdateService : IStockUpdateService
     public async Task UpdateAsync(CancellationToken cancellationToken)
     {
         var stockProfiles = await _stockClient.GetStockProfilesAsync(cancellationToken);
-        await _unitOfWork.StockProfiles.SaveStockProfilesAsync(stockProfiles, cancellationToken);
+        await _unitOfWork.StockProfiles.SaveAsync(stockProfiles, cancellationToken);
         
-        var uninitializedStocks = await _unitOfWork.Stocks.GetUninitializedStocksAsync(cancellationToken);
+        var uninitializedStocks = await _unitOfWork.Stocks.GetUninitializedAsync(cancellationToken);
 
         if (uninitializedStocks.Count > 0)
         {
             var uninitializedStocksIds = uninitializedStocks.Select(s => s.Id).ToList();
             var numOfUpdated =
-                await _unitOfWork.Stocks.MarkStocksAsInitializedAsync(uninitializedStocksIds, cancellationToken);
+                await _unitOfWork.Stocks.MarkAsInitializedAsync(uninitializedStocksIds, cancellationToken);
             _logger.LogInformation("Marked {x} stocks as initialized. (first time fetching info for them)", numOfUpdated);
         }
         
