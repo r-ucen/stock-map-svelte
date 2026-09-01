@@ -15,7 +15,6 @@ using StockMapSvelte.Infrastructure.BackgroundServices;
 using StockMapSvelte.Infrastructure.Cache;
 using StockMapSvelte.Infrastructure.Identity;
 using StockMapSvelte.Infrastructure.Repositories;
-using StockMapSvelte.Infrastructure.Repositories.Cached;
 using StockMapSvelte.Infrastructure.Services;
 using StockMapSvelte.Infrastructure.Services.Trading212;
 using StockMapSvelte.Infrastructure.Services.Yahoo;
@@ -71,38 +70,16 @@ public static class DependencyInjection
         
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         
-        services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-        
-        services.AddScoped<StockRepository>();
-        services.AddScoped<IStockRepository>(
-            provider => new CachedStockRepository(
-                provider.GetRequiredService<StockRepository>(),
-                provider.GetRequiredService<HybridCache>()
-            )
-        );
-        
         services.AddHttpClient("YahooSearchClient", client =>
         {
             client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36");
         });
         services.AddScoped<IStockClient, YahooStockClient>();
-        
-        services.AddScoped<PortfolioRepository>();
-        services.AddScoped<IPortfolioRepository>(
-            provider => new CachedPortfolioRepository(
-                provider.GetRequiredService<PortfolioRepository>(),
-                provider.GetRequiredService<HybridCache>()
-            )
-        );
-        
-        services.AddScoped<TreeMapRepository>();
-        services.AddScoped<ITreeMapRepository>(
-            provider => new CachedTreeMapRepository(
-                provider.GetRequiredService<TreeMapRepository>(),
-                provider.GetRequiredService<HybridCache>()
-            )
-        );
-        
+
+        services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+        services.AddScoped<IStockRepository, StockRepository>();
+        services.AddScoped<IPortfolioRepository, PortfolioRepository>();
+        services.AddScoped<ITreeMapRepository, TreeMapRepository>();
         services.AddScoped<IStockProfileRepository, StockProfileRepository>();
         services.AddScoped<IUserSettingRepository, UserSettingRepository>();
         
