@@ -4,10 +4,8 @@ using StockMapSvelte.Domain.Entities;
 
 namespace StockMapSvelte.Application.Abstractions.Repositories;
 
-public interface IStockProfileRepository
+public interface IStockProfileRepository : IRepository<StockProfile>
 {
     Task<int> SaveStockProfilesAsync(IEnumerable<StockProfile> profiles, CancellationToken cancellationToken);
-    
-    // REFACTORED
     Task<PagedResponse<StockStockProfileDto>> GetAllStockProfilesAsync(QueryFilter filter, CancellationToken cancellationToken);
 }

@@ -9,8 +9,10 @@ using StockMapSvelte.Infrastructure.Extensions.StockProfile;
 
 namespace StockMapSvelte.Infrastructure.Repositories;
 
-public class StockProfileRepository(ApplicationDbContext dbContext) : IStockProfileRepository
+public class StockProfileRepository : Repository<StockProfile>, IStockProfileRepository
 {
+    public StockProfileRepository(ApplicationDbContext dbContext) : base(dbContext) { }
+    
     public async Task<int> SaveStockProfilesAsync(IEnumerable<StockProfile> profiles, CancellationToken cancellationToken)
     {
         var profileList = profiles
@@ -26,7 +28,7 @@ public class StockProfileRepository(ApplicationDbContext dbContext) : IStockProf
         var stockIds = profileList.Select(p => p.StockId).Distinct().ToList();
 
         // existing profiles for the profiles being saved
-        var existingProfiles = await dbContext.StockProfiles
+        var existingProfiles = await DbSet
             .Where(sp => stockIds.Contains(sp.StockId))
             .ToListAsync(cancellationToken);
 
@@ -39,7 +41,7 @@ public class StockProfileRepository(ApplicationDbContext dbContext) : IStockProf
                 incoming.Id = existing.Id;
                 incoming.StockId = existing.StockId;
 
-                dbContext.Entry(existing).CurrentValues.SetValues(incoming);
+                DbSet.Entry(existing).CurrentValues.SetValues(incoming);
             }
             else
             {
@@ -48,11 +50,11 @@ public class StockProfileRepository(ApplicationDbContext dbContext) : IStockProf
                     incoming.Id = Guid.NewGuid();
                 }
 
-                dbContext.StockProfiles.Add(incoming);
+                DbSet.Add(incoming);
             }
         }
 
-        return await dbContext.SaveChangesAsync(cancellationToken);
+        return await Context.SaveChangesAsync(cancellationToken);
     }
     
     // REFACTORED
@@ -62,7 +64,7 @@ public class StockProfileRepository(ApplicationDbContext dbContext) : IStockProf
         var pageNumber = Math.Max(1, filter.PageNumber);
         var pageSize = Math.Clamp(filter.PageSize, 1, 50);
 
-        var query = dbContext.Stocks
+        var query = Context.Stocks
             .Include(s => s.StockProfile)
             .AsNoTracking()
             .AsQueryable();
