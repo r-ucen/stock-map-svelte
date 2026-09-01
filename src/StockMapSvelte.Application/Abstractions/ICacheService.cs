@@ -3,6 +3,7 @@ namespace StockMapSvelte.Application.Abstractions;
 public interface ICacheService
 {
     ICacheKeys Keys { get; }
+    ICacheTags Tags { get; }
     
     Task<T> GetOrCreateAsync<T>(
         string key,

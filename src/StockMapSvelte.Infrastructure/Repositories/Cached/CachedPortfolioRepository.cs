@@ -110,4 +110,7 @@ public class CachedPortfolioRepository : IPortfolioRepository
 
     public Task<Portfolio?> GetWithStockProfilesByIdAsync(Guid id, CancellationToken cancellationToken)
         => _decorated.GetWithStockProfilesByIdAsync(id, cancellationToken);
+
+    public Task<Portfolio?> GetOwnershipInfoAsync(Guid portfolioId, CancellationToken cancellationToken)
+        => _decorated.GetOwnershipInfoAsync(portfolioId, cancellationToken);
 }

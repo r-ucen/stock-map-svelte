@@ -208,4 +208,13 @@ public class PortfolioRepository : Repository<Portfolio>, IPortfolioRepository
             .Include(p => p.Stocks.Where(s => s.IsInitialized))
             .ToListAsync(cancellationToken);
     }
+    
+    public async Task<Portfolio?> GetOwnershipInfoAsync(Guid portfolioId, CancellationToken cancellationToken = default)
+    {
+        return await DbSet
+            .AsNoTracking()
+            .Where(p => p.Id == portfolioId)
+            .Select(p => new Portfolio { Id = p.Id, UserId = p.UserId, Name = p.Name })
+            .FirstOrDefaultAsync(cancellationToken);
+    }
 }
