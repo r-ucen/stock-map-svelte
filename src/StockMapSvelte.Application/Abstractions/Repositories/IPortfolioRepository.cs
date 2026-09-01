@@ -6,17 +6,6 @@ namespace StockMapSvelte.Application.Abstractions.Repositories;
 
 public interface IPortfolioRepository : IRepository<Portfolio>
 {
-    Task<int> CreatePortfolioAsync(Portfolio portfolio, IList<string> tickerSymbols, CancellationToken cancellationToken);
-    Task<IReadOnlyList<Portfolio>?> GetPortfoliosByUserIdAsync(string userId, CancellationToken cancellationToken);
-    Task<bool> PortfolioNameExistsAsync(string userId, Guid portfolioId, string portfolioName, CancellationToken cancellationToken);
-    Task<int> EditPortfolioAsync(Guid portfolioId, string portfolioName, IList<string> tickerSymbols, CancellationToken cancellationToken);
-    Task<int> DeletePortfolioAsync(Guid portfolioId, CancellationToken cancellationToken);
-    Task<Portfolio?> GetPortfolioByIdAsync(Guid portfolioId, CancellationToken cancellationToken);
-    Task<PortfolioDto?> GetPortfolioByIdForUserAsync(string userId, Guid portfolioId, CancellationToken cancellationToken);
-    Task<IReadOnlyList<Portfolio>> GetAllPortfoliosAsync();
-    Task<bool> PortfolioNameExistsAsync(string userId, string portfolioName, CancellationToken cancellationToken);
-    Task<int> GetPortfolioCountByUserIdAsync(string userId, CancellationToken cancellationToken);
-
     // REFACTORED
     public Task<Portfolio?> GetByIdAsync(string userId, Guid portfolioId, CancellationToken cancellationToken);
     Task<PagedResponse<PortfolioDto>> GetAllAsync(QueryFilter filter, CancellationToken cancellationToken);
