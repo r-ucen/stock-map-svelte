@@ -57,8 +57,6 @@ public class StockProfileRepository : Repository<StockProfile>, IStockProfileRep
         return await Context.SaveChangesAsync(cancellationToken);
     }
     
-    // REFACTORED
-    
     public async Task<PagedResponse<StockStockProfileDto>> GetAllStockProfilesAsync(QueryFilter filter, CancellationToken cancellationToken)
     {
         var pageNumber = Math.Max(1, filter.PageNumber);

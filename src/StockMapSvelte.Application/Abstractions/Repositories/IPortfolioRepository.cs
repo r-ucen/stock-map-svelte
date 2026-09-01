@@ -6,7 +6,6 @@ namespace StockMapSvelte.Application.Abstractions.Repositories;
 
 public interface IPortfolioRepository : IRepository<Portfolio>
 {
-    // REFACTORED
     public Task<Portfolio?> GetByIdAsync(string userId, Guid portfolioId, CancellationToken cancellationToken);
     Task<PagedResponse<PortfolioDto>> GetAllAsync(QueryFilter filter, CancellationToken cancellationToken);
     public Task<int> GetCountForUserAsync(string userId, CancellationToken cancellationToken);
