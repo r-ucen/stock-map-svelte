@@ -4,5 +4,5 @@ namespace StockMapSvelte.Application.Exceptions.UserSetting;
 
 public class FailedToSetDefaultPortfolioException : AppException
 {
-    public FailedToSetDefaultPortfolioException(string message) : base(message, 500) {}
+    public FailedToSetDefaultPortfolioException(string message) : base(message, 500) { }
 }

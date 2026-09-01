@@ -4,6 +4,5 @@ namespace StockMapSvelte.Application.Exceptions.Account;
 
 public class SetPasswordFailedException : AppException
 {
-    public SetPasswordFailedException() : base("Failed to set password.", 500)
-    { }
+    public SetPasswordFailedException() : base("Failed to set password.", 500) { }
 }

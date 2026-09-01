@@ -33,6 +33,5 @@ public class StockUpdateService : IStockUpdateService
                 await _unitOfWork.Stocks.MarkAsInitializedAsync(uninitializedStocksIds, cancellationToken);
             _logger.LogInformation("Marked {x} stocks as initialized. (first time fetching info for them)", numOfUpdated);
         }
-        
     }
 }

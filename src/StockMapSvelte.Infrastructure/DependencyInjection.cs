@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Configuration;
 using StockMapSvelte.Infrastructure.Database;
 using Microsoft.Extensions.DependencyInjection;
