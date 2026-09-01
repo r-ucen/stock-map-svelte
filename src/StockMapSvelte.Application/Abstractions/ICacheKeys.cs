@@ -2,7 +2,22 @@ namespace StockMapSvelte.Application.Abstractions;
 
 public interface ICacheKeys
 {
-    string TreemapData(Guid portfolioId);
-    string PossibleToAdd(string filter, string portfolioStocks);
-    string Banned(string userId);
+    IPortfolioKeys Portfolio { get; }
+    IStockKeys Stock { get; }
+    IUserKeys User { get; }
+    
+    public interface IPortfolioKeys
+    {
+        string TreemapData(Guid portfolioId);
+    }
+
+    public interface IStockKeys
+    {
+        string PossibleToAdd(string filter, string portfolioStocks);
+    }
+
+    public interface IUserKeys
+    {
+        string Banned(string userId);
+    }
 }
