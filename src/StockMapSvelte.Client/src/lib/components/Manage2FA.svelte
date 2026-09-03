@@ -37,6 +37,7 @@
 	let disableConfirmOpen = $state(false);
 	
 	let showingRecoveryCodes = $state(false);
+	let onlyShowingQrCodes = $state(false);
 	
 	async function disable2FA() {
 		const res = await apiFetch('/manage/2fa', {
@@ -58,6 +59,38 @@
 		twoFaEnabled = false;
 		toast.success('2FA disabled');
 		disableConfirmOpen = false;
+	}
+	
+	async function show2FACode(){
+		const res = await apiFetch('/manage/2fa', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				"enable": null,
+				"twoFactorCode": null,
+				"resetSharedKey": false,
+				"resetRecoveryCodes": false,
+				"forgetMachine": false
+			})
+		});
+
+		if (!res.ok){
+			toast.error('Error getting 2FA code.');
+			return;
+		}
+
+		const info: ITwoFaInfo = await res.json();
+
+		const issuer = "Equmap";
+
+		sharedKey = info.sharedKey;
+		recoveryCodes = info.recoveryCodes;
+		otpUri = `otpauth://totp/StockPortfolioManager:${encodeURIComponent(userEmail)}?secret=${encodeURIComponent(info.sharedKey)}&issuer=${encodeURIComponent(issuer)}`;
+
+		qrCodeScanningInProgress = true;
+		onlyShowingQrCodes = true;
 	}
 
 	async function enable2FA() {
@@ -147,9 +180,15 @@
 
 		<ButtonGroup.Root class="ml-12 shrink-0 sm:ml-0">
 			<AlertDialog.Root bind:open={qrCodeScanningInProgress}>
-				<Button disabled={twoFaEnabled || isPaswordlessAccount} variant="outline" onclick={() => enable2FA()} class={buttonVariants({ variant: "outline" })}>
-					Enable
-				</Button>
+					{#if twoFaEnabled}
+						<Button variant="outline" onclick={() => show2FACode()} class={buttonVariants({ variant: "outline" })}>
+							Show Code
+						</Button>
+					{:else}
+						<Button disabled={twoFaEnabled || isPaswordlessAccount} variant="outline" onclick={() => enable2FA()} class={buttonVariants({ variant: "outline" })}>
+							Enable
+						</Button>
+					{/if}
 				<AlertDialog.Content>
 					<AlertDialog.Header>
 						<AlertDialog.Title>Scan the following QR Code using your authentication app of choice.</AlertDialog.Title>
@@ -161,10 +200,12 @@
 						<QRCode data={otpUri} />
 					</div>
 					<AlertDialog.Footer>
-						<AlertDialog.Cancel>Close</AlertDialog.Cancel>
-						<AlertDialog.Cancel onclick={() => {qrCodeScanningInProgress = false; confirming2FaInProgress = true}}>
-							Next <ArrowRightIcon />
-						</AlertDialog.Cancel>
+						<AlertDialog.Cancel onclick={() => {onlyShowingQrCodes = false;}}>Close</AlertDialog.Cancel>
+						{#if !onlyShowingQrCodes}
+							<AlertDialog.Cancel onclick={() => {qrCodeScanningInProgress = false; confirming2FaInProgress = true}}>
+								Next <ArrowRightIcon />
+							</AlertDialog.Cancel>
+						{/if}
 					</AlertDialog.Footer>
 				</AlertDialog.Content>
 			</AlertDialog.Root>
