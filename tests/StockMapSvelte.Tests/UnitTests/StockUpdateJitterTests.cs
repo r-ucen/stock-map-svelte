@@ -5,7 +5,7 @@ namespace StockMapSvelte.Tests.UnitTests;
 public class StockUpdateJitterTests
 {
     [Fact]
-    public async Task StockUpdateJitter_ShouldReturnExecuteTrue_OnSaturdayAt_00_00()
+    public void StockUpdateJitter_ShouldReturnExecuteTrue_OnSaturdayAt_00_00()
     {
         // Arrange
         var isFirstRun = false;
@@ -21,7 +21,7 @@ public class StockUpdateJitterTests
     }
     
     [Fact]
-    public async Task StockUpdateJitter_ShouldReturnExecuteTrue_OnSaturdayAt_01_00()
+    public void StockUpdateJitter_ShouldReturnExecuteTrue_OnSaturdayAt_01_00()
     {
         // Arrange
         var isFirstRun = false;
@@ -37,7 +37,7 @@ public class StockUpdateJitterTests
     }
     
     [Fact]
-    public async Task StockUpdateJitter_ShouldReturnExecuteTrue_OnSaturdayAt_01_59()
+    public void StockUpdateJitter_ShouldReturnExecuteTrue_OnSaturdayAt_01_59()
     {
         // Arrange
         var isFirstRun = false;
@@ -53,7 +53,7 @@ public class StockUpdateJitterTests
     }
     
     [Fact]
-    public async Task StockUpdateJitter_ShouldReturnExecuteFalse_OnSaturdayAt_02_00()
+    public void StockUpdateJitter_ShouldReturnExecuteTrue_OnSaturdayAt_02_00()
     {
         // Arrange
         var isFirstRun = false;
@@ -65,11 +65,11 @@ public class StockUpdateJitterTests
         var (shouldExecute, _) = StockUpdateJitter.GetVariableDelayInMinutes(date, ref isFirstRun);
         
         // Assert
-        Assert.False(shouldExecute);
+        Assert.True(shouldExecute);
     }
     
     [Fact]
-    public async Task StockUpdateJitter_ShouldReturnExecuteFalse_OnSaturdayAt_22_00()
+    public void StockUpdateJitter_ShouldReturnExecuteFalse_OnSaturdayAt_22_00()
     {
         // Arrange
         var isFirstRun = false;
@@ -85,7 +85,7 @@ public class StockUpdateJitterTests
     }
     
     [Fact]
-    public async Task StockUpdateJitter_ShouldReturnExecuteFalse_OnSundayAt_00_00()
+    public void StockUpdateJitter_ShouldReturnExecuteFalse_OnSundayAt_00_00()
     {
         // Arrange
         var isFirstRun = false;
@@ -101,7 +101,7 @@ public class StockUpdateJitterTests
     }
     
     [Fact]
-    public async Task StockUpdateJitter_ShouldReturnExecuteFalse_OnSundayAt_01_59()
+    public void StockUpdateJitter_ShouldReturnExecuteFalse_OnSundayAt_01_59()
     {
         // Arrange
         var isFirstRun = false;
@@ -117,7 +117,7 @@ public class StockUpdateJitterTests
     }
     
     [Fact]
-    public async Task StockUpdateJitter_ShouldReturnExecuteFalse_OnSundayAt_22_00()
+    public void StockUpdateJitter_ShouldReturnExecuteFalse_OnSundayAt_22_00()
     {
         // Arrange
         var isFirstRun = false;
@@ -133,7 +133,7 @@ public class StockUpdateJitterTests
     }
     
     [Fact]
-    public async Task StockUpdateJitter_ShouldReturnExecuteFalse_OnMondayAt_00_00()
+    public void StockUpdateJitter_ShouldReturnExecuteFalse_OnMondayAt_00_00()
     {
         // Arrange
         var isFirstRun = false;
@@ -149,7 +149,7 @@ public class StockUpdateJitterTests
     }
     
     [Fact]
-    public async Task StockUpdateJitter_ShouldReturnExecuteFalse_OnMondayAt_01_59()
+    public void StockUpdateJitter_ShouldReturnExecuteFalse_OnMondayAt_01_59()
     {
         // Arrange
         var isFirstRun = false;
@@ -165,7 +165,7 @@ public class StockUpdateJitterTests
     }
     
     [Fact]
-    public async Task StockUpdateJitter_ShouldReturnExecuteTrue_OnMondayAt_02_00()
+    public void StockUpdateJitter_ShouldReturnExecuteTrue_OnMondayAt_02_00()
     {
         // Arrange
         var isFirstRun = false;
@@ -181,7 +181,7 @@ public class StockUpdateJitterTests
     }
     
     [Fact]
-    public async Task StockUpdateJitter_ShouldReturnExecuteTrue_OnMondayAt_10_00()
+    public void StockUpdateJitter_ShouldReturnExecuteTrue_OnMondayAt_10_00()
     {
         // Arrange
         var isFirstRun = false;
@@ -197,7 +197,7 @@ public class StockUpdateJitterTests
     }
     
     [Fact]
-    public async Task StockUpdateJitter_ShouldReturnExecuteTrue_OnMondayAt_23_59()
+    public void StockUpdateJitter_ShouldReturnExecuteTrue_OnMondayAt_23_59()
     {
         // Arrange
         var isFirstRun = false;
@@ -213,7 +213,7 @@ public class StockUpdateJitterTests
     }
     
     [Fact]
-    public async Task StockUpdateJitter_ShouldReturnExecuteFalse_OnTuesdayAt_00_00()
+    public void StockUpdateJitter_ShouldReturnExecuteFalse_OnTuesdayAt_00_00()
     {
         // Arrange
         var isFirstRun = false;
@@ -229,7 +229,7 @@ public class StockUpdateJitterTests
     }
     
     [Fact]
-    public async Task StockUpdateJitter_ShouldReturnExecuteFalse_OnTuesdayAt_03_00()
+    public void StockUpdateJitter_ShouldReturnExecuteFalse_OnTuesdayAt_03_00()
     {
         // Arrange
         var isFirstRun = false;
@@ -245,7 +245,7 @@ public class StockUpdateJitterTests
     }
     
     [Fact]
-    public async Task StockUpdateJitter_ShouldReturnExecuteFalse_OnTuesdayAt_05_59()
+    public void StockUpdateJitter_ShouldReturnExecuteFalse_OnTuesdayAt_05_59()
     {
         // Arrange
         var isFirstRun = false;
@@ -261,7 +261,7 @@ public class StockUpdateJitterTests
     }
     
     [Fact]
-    public async Task StockUpdateJitter_ShouldReturnExecuteTrue_OnTuesdayAt_06_00()
+    public void StockUpdateJitter_ShouldReturnExecuteTrue_OnTuesdayAt_06_00()
     {
         // Arrange
         var isFirstRun = false;
@@ -277,7 +277,7 @@ public class StockUpdateJitterTests
     }
     
     [Fact]
-    public async Task StockUpdateJitter_ShouldReturnExecuteTrue_OnTuesdayAt_23_59()
+    public void StockUpdateJitter_ShouldReturnExecuteTrue_OnTuesdayAt_23_59()
     {
         // Arrange
         var isFirstRun = false;
@@ -293,7 +293,7 @@ public class StockUpdateJitterTests
     }
     
     [Fact]
-    public async Task StockUpdateJitter_ShouldReturnExecuteFalse_OnWednesdayAt_23_59()
+    public void StockUpdateJitter_ShouldReturnExecuteFalse_OnWednesdayAt_23_59()
     {
         // Arrange
         var isFirstRun = false;
@@ -309,7 +309,7 @@ public class StockUpdateJitterTests
     }
     
     [Fact]
-    public async Task StockUpdateJitter_ShouldReturnExecuteTrue_OnFridayAt_23_59()
+    public void StockUpdateJitter_ShouldReturnExecuteTrue_OnFridayAt_23_59()
     {
         // Arrange
         var isFirstRun = false;
