@@ -53,7 +53,7 @@ public class StockUpdateJitterTests
     }
     
     [Fact]
-    public async Task StockUpdateJitter_ShouldReturnExecuteFalse_OnSaturdayAt_02_00()
+    public void StockUpdateJitter_ShouldReturnExecuteTrue_OnSaturdayAt_02_00()
     {
         // Arrange
         var isFirstRun = false;
@@ -65,7 +65,7 @@ public class StockUpdateJitterTests
         var (shouldExecute, _) = StockUpdateJitter.GetVariableDelayInMinutes(date, ref isFirstRun);
         
         // Assert
-        Assert.False(shouldExecute);
+        Assert.True(shouldExecute);
     }
     
     [Fact]

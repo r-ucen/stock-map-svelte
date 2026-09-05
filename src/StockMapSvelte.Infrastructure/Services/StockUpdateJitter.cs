@@ -13,7 +13,7 @@ public static class StockUpdateJitter
 
         var executeWork = (date.DayOfWeek, date.Hour) switch
         {
-            (DayOfWeek.Saturday, < 2) => true,
+            (DayOfWeek.Saturday, < 3) => true,
             (DayOfWeek.Saturday or DayOfWeek.Sunday, _) => false,
             
             (DayOfWeek.Monday, < 2) => false,
