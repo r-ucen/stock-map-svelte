@@ -27,7 +27,7 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
     <PackageReference Include="Resend" Version="0.6.0" />
     <PackageReference Include="System.Linq.Dynamic.Core" Version="1.7.3" />
-    <PackageReference Include="YahooQuotesApi" Version="7.0.6" />
+    <PackageReference Include="YahooQuotesApi" Version="7.1.2" />
   </ItemGroup>
 
   <ItemGroup>
