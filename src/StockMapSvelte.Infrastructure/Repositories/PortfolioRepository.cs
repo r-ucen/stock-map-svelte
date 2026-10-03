@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using StockMapSvelte.Application.Abstractions.Repositories;
 using StockMapSvelte.Application.DTOs;
 using StockMapSvelte.Application.DTOs.Common;
+using StockMapSvelte.Application.Extensions.Portfolio;
 using StockMapSvelte.Domain.Entities;
 using StockMapSvelte.Infrastructure.Database;
 using StockMapSvelte.Infrastructure.Extensions;
@@ -75,14 +76,7 @@ public class PortfolioRepository : Repository<Portfolio>, IPortfolioRepository
         
         var portfolios = await query
             .ApplyPagination(pageNumber, pageSize)
-            .Select(p => new PortfolioDto
-            {
-                PortfolioId = p.Id,
-                UserId = p.UserId,
-                PortfolioName = p.Name,
-                TickerSymbols = p.Stocks.Select(s => s.TickerSymbol).ToList()
-                
-            })
+            .Select(p => p.ToPortfolioDto())
             .ToListAsync(cancellationToken);
         
         return new PagedResponse<PortfolioDto>
