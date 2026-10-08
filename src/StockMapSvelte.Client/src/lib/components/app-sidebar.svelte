@@ -59,6 +59,7 @@
 	import type { IState } from '$lib/Abstractions/IState';
 	import { page } from '$app/state';
 	import Legend from '$lib/components/Legend.svelte';
+	import LastUpdated from '$lib/components/LastUpdated.svelte';
 
 	let {
 		ref = $bindable(null),
@@ -87,6 +88,7 @@
 		{#if sidebar.state !== "collapsed" && currentPathName === '/map'}
 			<MapSettings />
 			<Legend selectedMetric={s.selectedMetric} />
+			<LastUpdated />
 		{/if}
 		
 	</Sidebar.Content>
