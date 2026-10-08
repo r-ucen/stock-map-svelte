@@ -8,15 +8,18 @@ public class StockUpdateService : IStockUpdateService
     private readonly IStockClient _stockClient;
     private readonly ILogger<StockUpdateService> _logger;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IStockProfileUpdateTracker _stockProfileUpdateTracker;
 
     public StockUpdateService(
         IStockClient stockClient,
         ILogger<StockUpdateService> logger,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        IStockProfileUpdateTracker stockProfileUpdateTracker)
     {
         _stockClient = stockClient;
         _logger = logger;
         _unitOfWork = unitOfWork;
+        _stockProfileUpdateTracker = stockProfileUpdateTracker;
     }
 
     public async Task UpdateAsync(CancellationToken cancellationToken)
@@ -33,5 +36,7 @@ public class StockUpdateService : IStockUpdateService
                 await _unitOfWork.Stocks.MarkAsInitializedAsync(uninitializedStocksIds, cancellationToken);
             _logger.LogInformation("Marked {x} stocks as initialized. (first time fetching info for them)", numOfUpdated);
         }
+        
+        _stockProfileUpdateTracker.LastUpdated = DateTimeOffset.UtcNow;
     }
 }
