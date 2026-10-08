@@ -84,6 +84,7 @@ public static class DependencyInjection
         services.AddHostedService<StockDataUpdateTimedService>();
         services.AddSingleton<YahooQuotes>(new YahooQuotesBuilder().Build());
         services.AddSingleton<ITreeMapUpdateNotifier, TreeMapUpdateNotifier>();
+        services.AddSingleton<IStockProfileUpdateTracker, StockProfileUpdateTracker>();
         
         services.AddHttpClient<ITrading212Client, Trading212Client>();
         

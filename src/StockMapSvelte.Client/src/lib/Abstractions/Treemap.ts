@@ -56,4 +56,5 @@ export interface TreemapSectorDto {
 export interface TreemapDataDto {
 	sectors: TreemapSectorDto[];
 	totalMarketCap: number;
+	lastUpdated: string;
 }

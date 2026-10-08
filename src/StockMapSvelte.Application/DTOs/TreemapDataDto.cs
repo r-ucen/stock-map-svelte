@@ -59,6 +59,7 @@ public record TreemapDataDto
 {
     public List<TreemapSectorDto> Sectors { get; set; } = [];
     public double TotalMarketCap { get; set; }
+    public DateTimeOffset LastUpdated { get; set; }
 }
 
 public record RectangleDto
