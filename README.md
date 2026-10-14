@@ -1,163 +1,29 @@
 # What is it?
-Equmap is a stock market performance visualization tool built with .NET 10 and SvelteKit. Even though there's a few 
+Equmap is a stock market performance visualization tool built with .NET and SvelteKit. Even though there's a few 
 similar apps, not many of them offer the ability to choose only the stocks you want to track, meaning with Equmap, you can create your custom set of stocks you want to visualize.
-Another reason for me to create this app is the ability to choose which metrics you want to track, since some of the mentioned apps offer a limited number of such metrics.
+Another reason for me to create this app is the ability to choose which metrics you'd like to track, since some of the apps offer a limited number of such metrics.
 
-The application attempts to follow Clean Architecture principles and is split into independent frontend and backend deployments.
+The application is split into multiple layers:
 
-* StockMapSvelte.Api
-* StockMapSvelte.Application
-* StockMapSvelte.Client
-* StockMapSvelte.Domain
-* StockMapSvelte.Infrastructure
+* Api - base project; .NET 10 Web API, controllers, middleware...
+* Application - business logic, use cases...
+* Client - SvelteKit frontend using svelte5 and svelte-shadcn compnent library
+* Domain - entities...
+* Infrastructure - database, external services...
 
-The Client layer is using SvelteKit with Svelte5 and shadcn-svelte component library, other layers are using .NET 10.
-# Folder structure
+---
 
-<pre>
-root/
-├── .github/
-│   └── workflows/
-│       ├── dotnet.yml
-│       └── node.js.yml
-├── src/
-│   ├── StockMapSvelte.Api/
-│   │   ├── Controllers/
-│   │   ├── Middleware/
-│   │   ├── Services/
-│   │   ├── Requests/
-│   │   ├── Properties/
-│   │   ├── Program.cs
-│   │   ├── DependencyInjection.cs
-│   │   ├── StockMapSvelte.Api.csproj
-│   │   ├── StockMapSvelte.Api.http
-│   │   ├── appsettings.json
-│   │   └── appsettings.Development.json
-│   ├── StockMapSvelte.Application/
-│   │   ├── Abstractions/
-│   │   ├── DTOs/
-│   │   ├── Enums/
-│   │   ├── Exceptions/
-│   │   ├── Facade/
-│   │   ├── Services/
-│   │   ├── UseCases/
-│   │   ├── DependencyInjection.cs
-│   │   └── StockMapSvelte.Application.csproj
-│   ├── StockMapSvelte.Client/
-│   │   ├── src/
-│   │   │   ├── lib/
-│   │   │   │   ├── Abstractions/
-│   │   │   │   ├── assets/
-│   │   │   │   ├── components/
-│   │   │   │   ├── hooks/
-│   │   │   │   ├── services/
-│   │   │   │   ├── apiFetch.ts
-│   │   │   │   ├── auth.svelte.ts
-│   │   │   │   ├── portfolioFetch.ts
-│   │   │   │   ├── utils.ts
-│   │   │   │   └── index.ts
-│   │   │   ├── routes/
-│   │   │   │   ├── (index)/
-│   │   │   │   ├── (protected)/
-│   │   │   │   ├── confirm-email/
-│   │   │   │   ├── forgot-password/
-│   │   │   │   ├── link-account/
-│   │   │   │   ├── login/
-│   │   │   │   ├── privacy-policy/
-│   │   │   │   ├── register/
-│   │   │   │   ├── resend-email-confirmation/
-│   │   │   │   ├── reset-password/
-│   │   │   │   ├── +layout.server.ts
-│   │   │   │   ├── +layout.svelte
-│   │   │   │   └── layout.css
-│   │   │   ├── app.d.ts
-│   │   │   ├── app.html
-│   │   │   └── hooks.server.ts
-│   │   ├── static/
-│   │   ├── .vscode/
-│   │   ├── package.json
-│   │   ├── package-lock.json
-│   │   ├── vite.config.ts
-│   │   ├── svelte.config.js
-│   │   ├── tsconfig.json
-│   │   ├── eslint.config.js
-│   │   ├── components.json
-│   │   ├── .prettierrc
-│   │   ├── .prettierignore
-│   │   ├── .npmrc
-│   │   ├── .gitignore
-│   │   └── README.md
-│   ├── StockMapSvelte.Domain/
-│   │   ├── Entities/
-│   │   └── StockMapSvelte.Domain.csproj
-│   └── StockMapSvelte.Infrastructure/
-│       ├── BackgroundServices/
-│       ├── Database/
-│       ├── Extensions/
-│       ├── Identity/
-│       ├── Migrations/
-│       ├── Repositories/
-│       ├── Services/
-│       ├── DependencyInjection.cs
-│       └── StockMapSvelte.Infrastructure.csproj
-├── tests/
-│   └── StockMapSvelte.Tests/
-│       ├── IntegrationTests/
-│       ├── UnitTests/
-│       └── StockMapSvelte.Tests.csproj
-├── .gitignore
-├── Dockerfile
-├── StockMapSvelte.slnx
-</pre>
+## Configuration of the environment variables for use in local development
 
-# Environment variables required to run the app (locally)
-Since the app is recommended to be hosted separately, meaning the frontend and backend are hosted on different domains/servers, here are the required env. variables for each of those two layers:
+For local development, the only secrets you need to set are the following:
 
-#### Frontend:
-- PUBLIC_API_BASE_URL - the base URL of the API
-
-#### Backend
-- ConnectionStrings__DefaultConnection - connection string for the database
-- Resend__ApiToken - token for the resend email service used to send confirmation and password reset emails
-- Resend__FromEmail - the email address used as the sender for the emails sent through the resend service
-- FrontendUrl - the URL of the frontend app, used in the emails sent to users to link back to the frontend
-- Authentication__Google__ClientSecret - client secret for Google OAuth authentication
-- Authentication__Google__ClientId - client id for Google OAuth authentication
-- Seeding__AdminPasswordHash - password hash for the default admin user created when seeding the database
-- Seeding__ManagerPasswordHash - password hash for the default manager user created when seeding the database
-- AllowedOrigins__0 - allowed origin for CORS policy, should be set to the URL of the frontend app
-- AllowedOrigins__1 - allowed origin for CORS policy, should be set to the www. version of the frontend URL
-
-#### Configuration of the environment variables for use in local development:
-
-AllowedOrigins can be configured for development in the appsettings.Development.json file:
-
-```
-{
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft.AspNetCore": "Warning"
-    }
-  },
-  "AllowedOrigins": [
-    "http://localhost:5173",
-    "https://localhost:5173"
-  ]
-}
-```
-
-The PUBLIC_API_BASE_URL variable can be configured for development in the .env file in the root of the StockMapSvelte.Client project:
+PUBLIC_API_BASE_URL -  configured in a .env file in the root of the StockMapSvelte.Client project:
 
 ```
 PUBLIC_API_BASE_URL=https://localhost:7086
-
-#https://localhost:7086
-
-#http://localhost:5289
 ```
 
-rest of the environment variables should be stored in .NET user secrets configured in the StockMapSvelte.Api layer:
+Rest of the environment variables should be stored in .NET user secrets configured in the StockMapSvelte.Api layer:
 
 ```
 {
@@ -181,33 +47,33 @@ rest of the environment variables should be stored in .NET user secrets configur
   }
 }
 ```
-# Deployment
 
-### Environement variables required for deployment
-Frontend
-```
-PUBLIC_API_BASE_URL
-```
-API
-```
-AllowedOrigins__0
-AllowedOrigins__1
-Authentication__Google__ClientId
-Authentication__Google__ClientSecret
-CookieDomain
-DATABASE_URL (or ConnectionStrings__DefaultConnection)
-DataProtectionCert (base64 encoded certificate)
-DataProtectionPassword (password used to encrypt the certificate)
-ERROR_PAGE_URL (link to a json file with status and message fields)
-FrontendUrl
-MAINTENANCE_PAGE_URL (link to a json file with status and message fields)
-Resend__ApiToken
-Resend__FromEmail
-Seeding__AdminPasswordHash
-Seeding__ManagerPasswordHash
-```
+---
 
-### Heroku deployment (only api + db)
+# Environment variables required to host the app
+
+#### Frontend
+- PUBLIC_API_BASE_URL - the base URL of the API, for example https://api.yourdomain.com
+
+#### Backend
+- Resend__ApiToken - token for the resend email service used to send confirmation and password reset emails
+- Resend__FromEmail - the email address used as the sender for the emails sent through the resend service
+- FrontendUrl - the URL of the frontend app, used in the emails sent to users to link back to the frontend
+- Authentication__Google__ClientSecret - client secret for Google OAuth authentication
+- Authentication__Google__ClientId - client id for Google OAuth authentication
+- Seeding__AdminPasswordHash - password hash for the default admin user created when seeding the database
+- Seeding__ManagerPasswordHash - password hash for the default manager user created when seeding the database
+- AllowedOrigins__0 - allowed origin for CORS policy, should be set to the URL of the frontend app
+- AllowedOrigins__1 - allowed origin for CORS policy, should be set to the www. version of the frontend URL
+- MAINTENANCE_PAGE_URL - the URL of a JSON file containing the "status": 503 and "message": "The app is under maintenance." fields
+- ERROR_PAGE_URL - the URL of a JSON file containing the "status": 500 and "message": "An unexpected error occurred." fields
+- DataProtectionCert - base64 encoded certificate used for encrypting the master data protection keys which are used to encrypt/decrypt cookies 
+- DataProtectionPassword - password used to decrypt the DataProtectionCert certificate
+- DATABASE_URL - the url of the database (might be a connection string depending on the provider)
+- CookieDomain - the domain for which the cookies are valid (can be set to .yourdomain.com)
+
+
+### Heroku deployment (only API + db)
 1) Create a new app on Heroku, name it stock-map-svelte
 2) Add a PostgreSQL database to the app
 3) Add the required environment variables to the app's settings on Heroku
@@ -218,42 +84,8 @@ Migration:
 ```
 pg_dump -F c -v -d "DATABASE_URL or CONNECTION STRING" -f backup.dump
 ```
-(IF NOT IN PATH, use "/c/Program Files/PostgreSQL/16/bin/pg_dump" instead of pg_dump)
 ```
 pg_restore --no-owner --no-privileges --clean -d "DATABASE_URL or CONNECTION STRING" -v backup.dump
-```
-
-6) Use this Dockerfile
-```
-FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
-WORKDIR /src
-
-COPY ["src/StockMapSvelte.Api/StockMapSvelte.Api.csproj", "StockMapSvelte.Api/"]
-COPY ["src/StockMapSvelte.Application/StockMapSvelte.Application.csproj", "StockMapSvelte.Application/"]
-COPY ["src/StockMapSvelte.Domain/StockMapSvelte.Domain.csproj", "StockMapSvelte.Domain/"]
-COPY ["src/StockMapSvelte.Infrastructure/StockMapSvelte.Infrastructure.csproj", "StockMapSvelte.Infrastructure/"]
-
-RUN dotnet restore "StockMapSvelte.Api/StockMapSvelte.Api.csproj"
-
-COPY src/ .
-
-WORKDIR "/src/StockMapSvelte.Api"
-RUN dotnet build "StockMapSvelte.Api.csproj" -c Release -o /app/build
-
-FROM build AS publish
-RUN dotnet publish "StockMapSvelte.Api.csproj" -c Release -o /app/publish /p:UseAppHost=false
-
-FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
-WORKDIR /app
-
-# EXPOSE 8080 
-# ENV ASPNETCORE_URLS=http://+:8080
-
-COPY --from=publish /app/publish .
-
-CMD ASPNETCORE_URLS=http://*:$PORT dotnet StockMapSvelte.Api.dll
-
-# ENTRYPOINT ["dotnet", "StockMapSvelte.Api.dll"]
 ```
 
 7) Install the Heroku CLI
@@ -274,19 +106,23 @@ heroku git:remote -a stock-map-svelte
 ```
 heroku container:push web
 ```
-13) deploy the changes:
+13) deploy the changes
 ```
 heroku container:release web
 ```
-14) enable automated SSL certificate management by running:
+14) enable automated SSL certificate management by running
 ```
 heroku certs:auto:enable
 ```
+
+---
+
 # API layer
 
 ## Endpoints
 
-### StockMapSvelte.Api - auto generated identity endpoints and other mapped endpoints
+### StockMapSvelte.Api
+Auto generated identity endpoints and other mapped endpoints
 
 ```
 get /treemap-data/{portfolioId}/stream
@@ -332,187 +168,121 @@ get /manage/info
 post /manage/info
 ```
 - Updates the current authenticated user's account info
-### Account
-```
-get /account/info
-```
-- Returns info about the current authenticated user's account - HasPasswordConfigured, HasExternalLoginConfigured, ExternalLogins, IsAdmin, IsManager, IsCustomer, Email, IsEmailConfirmed
-```
-delete /account/me
-```
-- Deletes the whole account for the authenticated user
-```
-post /account/set-password
-```
-- Used for adding a password to passwordless account
-```
-delete /account/remove-google-external-login
-```
-- Removes google external login if the account has password set
 
-### OAuth
-```
-get /oauth/google-login
-```
-- Initiates the Google OAuth2 authentication flow by redirecting to Google's consent screen
-```
-get /oauth/google-response
-```
-- Callback endpoint that handles the response from Google after the user authenticates
-```
-post /oauth/link-oauth-confirm
-```
-- Links a Google OAuth account to an existing local user account
+Further information about all of the API endpoints can be found at https://localhost:7086/scalar/v1 when running the app in development mode.
 
-### Portfolio
-```
-get /portfolios
-```
-- ...
-```
-post /portfolios
-```
-- ...
-```
-get /portfolios/me
-```
-- Get all portfolios for the current user
-```
-delete /portfolios/{portfolioId}
-```
-- ...
-```
-put /portfolios/{portfolioId}
-```
-- ... 
-```
-get /portfolios/{portfolioId}
-```
-- ...
-
-### Stock
-```
-get /stocks/{stockId}
-```
-- ...
-```
-put /stocks/{stockId}
-```
-- ...
-```
-delete /stocks/{stockId}
-```
-- ...
-```
-get /stocks/possible-to-add
-```
-- Get stocks that are possible to be added to a given portfolio based on searching them against a filter
-```
-get /stocks
-```
-- ...
-```
-post /stocks
-```
-- ...
-
-### StockProfiles
-```
-get /stock-profiles
-```
-- ...
-### TreemapData
-```
-get /treemap-data/{portfolioId}
-```
-- DEPRECATED - use the stream version
-### UserAction
-```
-post /logout
-```
-- ...
-### User
-```
-get /users
-```
-- ...
-```
-get /users/{userId}
-```
-- ...
-```
-delete /users/{userId}
-```
-- ...
-### UserSettings
-```
-get /user-settings/default-portfolio
-```
-- ...
-```
-put /user-settings/default-portfolio
-```
-- ...
-
-More detailed information about the API endpoints can be found at https://localhost:7086/scalar/v1 when running the app in development mode.
-
----
-- Controllers providing endpoints for the client to interact with the application
-- Middleware for intercepting thrown exceptions across the app and returning appropriate responses to the client
+The API layer then contains also the following:
+- Middleware for intercepting thrown exceptions across the app and returning appropriate status codes and messages
 - Properties containing the app's configuration settings - launchSettings.json lets you configure the app's launch settings, such as the URL and port it runs on
-- Requests containing the request models for the API endpoints - this could be moved into a dedicated layer in the future containing also the DTO's declared in Application layer
+- Requests containing the request models for the API endpoints
 - DependencyInjection.cs featuring AddPresentation method called in Program.cs to register API related services - CORS policy, cookie configuration, rate limiting
 
+---
+
 # Application layer
-- Abstractions containing interfaces for the application layer
-- DTO's containing the data transfer objects
-- Enums
-- Exceptions containing custom exceptions inheriting from AppException class
-- Facades wrapping the use cases since the app doesn't utilize the Mediator pattern (yet)
-- UseCases containing the use cases for the app, which are called from the API layer through the facades
-- DependencyInjection.cs featuring AddApplication method called in Program.cs to register application related services
+
+### Abstractions 
+Containing interfaces for the application layer
+### DTOs
+The data transfer objects
+### Enums
+### Exceptions
+Containing custom exceptions inheriting from AppException class
+### Extensions
+Containing methods that extend the domain entities with convert to DTO methods
+### Facades
+Wrapping the use cases since the app doesn't utilize the Mediator pattern (yet)
+### UseCases
+Containing the use cases for the app, which are called from the API layer through the facades
+### DependencyInjection.cs 
+Featuring AddApplication method called in Program.cs to register application related services
+
 ---
+
 # Client layer
-### src/
-#### lib/
-- Abstractions containing types shared across the app
-- assets containing the app's assets, such as icons and images
-- components containing the app's custom or imported components
-- services containing only logic related to rendering the treemap data at this moment
-- apiFetch.ts helper wrapper file to make API calls easier to manage
-- auth.svelte.ts containing AuthManager class featuring methods related to user authentication and authorization, such as login, logout, register
-- dedicated portfolioFetch.ts file to fetch treemap data for the current portfolio
+
+# src/lib/
+### Abstractions
+Containing types shared across the app
+### assets
+App's assets, such as icons and images
+### components
+App's custom or imported components
+### services 
+Containing only logic related to rendering the treemap data at this moment
+
+### apiFetch.ts 
+Helper wrapper file to make API calls easier to manage
+### auth.svelte.ts 
+Containing AuthManager class featuring methods related to user authentication and authorization, such as login, logout, register
+### portfolioFetch.ts 
+Dedicated file to fetch treemap data for the current portfolio
+
+## src/routes/
+Various routes for the app, such as login, register, portfolio, etc. Each route contains a +layout.svelte file which is the main component for that route and a +layout.server.ts file which is used to load data for that route on the server side before rendering the page & to run auth hooks to prevent leaking the html structure
+
+## src/
+Hooks.server.ts containing hooks to run on the server side before rendering the page, such as checking if the user is authenticated and authorized to access the page, and redirecting them if not
+
 ---
-#### routes/
-- various routes for the app, such as login, register, portfolio, etc. Each route contains a +layout.svelte file which is the main component for that route and a +layout.server.ts file which is used to load data for that route on the server side before rendering the page & to run auth hooks to prevent leaking the html structure
----
-- hooks.server.ts containing hooks to run on the server side before rendering the page, such as checking if the user is authenticated and authorized to access the page, and redirecting them if not
 
 # Domain layer
-- Entities containing the app's entities, such as User, Portfolio, Stock, etc.
-- Domain specific exception
+### Entities
+Containing the app's entities, such as User, Portfolio, Stock, etc.
+### Exceptions
+Domain specific exceptions
+
+---
 
 # Infrastructure layer
 This layer contains implementation of various external services used in the app such as the database, client for fetching stock data, email sender
 
-### User roles
+### StockDataUpdateTimedService
+A background service that runs periodically, 
+first when the app starts and then every x minutes, 
+where x is given by the StockUpdateJitter service. 
+The StockUpdateJitter also decides whether to run the background service 
+and when not to run it (for example weekends). 
+The service fetches new stock information using 
+the implemented IStockClient and saves the new data to the 
+database (wrapped in the IStockUpdateService's UpdateAsync method). 
+Then it publishes a message to the TreeMapUpdateNotifier service 
+which notifies all subscribers to the treemap data stream endpoint 
+that new data is available.
 
-Admin - explicit role
-Manager - explicit role
-Customer - explicit role (DEPRECATED - IsCustomer policy is used instead for now - every authenticated user is a customer) 
+### Cache
+Contains the implementation of the ICacheService called HybridCacheService which is just a wrapped around the .NET's HybridCache. Also contains classes for constructing cache keys and tags by calling their methods.
+
+### Database
+Contains seeding logic and ApplicationDbContext.cs where seeding and mapping of relationships between entities is done. The project is set up to use the PostgreSQL database
+
+### Extensions
+Various extensions either for pagination, search, filtering on database queries or for simplifying the calling of non-modifiable methods of the .NET framework.
+
+### Identity
+Defines the roles, ApplicationUser entity, Role entity and service that uses Identity API (SignInManager, UserManager), also provides classes for interacting with user authentication and authorization
+
+#### User roles
+
+- Admin - explicit role
+- Manager - explicit role
+- Customer - explicit role (DEPRECATED - IsCustomer policy is used instead for now - every authenticated user is a customer)
+
+### Migrations 
+Folder containing generated database migrations
+
+### Repositories
+Containing classes for interacting with the database through EF.
+
+### Services
+Implementations of various services used in the app, such as IEmailSender, IStockClient...
+
+### DependencyInjection.cs
+Configuring the database, Identity, ResendClient, GoogleOpenId, HybridCache, Authorization policies - every authenticated user in the app is a Customer
 
 ---
-- BackgroundServices - StockDataUpdateTimedService implementing the BackgroundService class used to orchestrate running periodic fetching of the stock data from an external provider
-It makes use of StockUpdateJitter which tells the service whether to run the current round of fetching and the delay until next attempt. If an update is made, the service publishes a message alerting all subscribers to TreeMapUpdateNotifier (treemap data stream endpoint)
-- Database contains seeding logic and ApplicationDbContext.cs where seeding and mapping of relationships between entities is done. The project is set up to use the PostgreSQL database
-- Extentions folder contains logic for pagination, sorting, search designed to be translated into EntityFramework/database queries
-- Identity defines the roles, application user entity, role entity and service that uses Identity API (SignInManager, UserManager), also provides classes for interacting with user authentication and authorization
-- Migrations folder containing generated database migrations
-- Repositories containing classes which work directly with EntityFramework to get data from and to the database as well as getting data from external providers (this could be better to move into a dedicated folder), the folder uses the decorator pattern that extends those classes through their cached versions, the app makes use of the HybridCache
-- Services such as the implementation of the IEmailSender
-- DependencyInjection.cs configuring the database, Identity, ResendClient, GoogleOpenId, HybridCache, Authorization policies - every authenticated user in the app is a Customer - this is subject to change in the future
 
-# Tests folder
+# Tests layer
 This folder contains integration and unit tests for the backend (and possibly frontend in the future)
-- The integration tests folder offers an IntegrationTestWebApplicationFactory that makes use of Testcontainers (PostgreSqlContainer) as well as a TestAuthHandler that makes it possible to configure authentication/authorization for clients created by the factory.
-- The unit tests make use of the Moq library to mock the apps repositories etc. and configure their behavior
+- The integration tests folder offers an IntegrationTestWebApplicationFactory that makes use of Testcontainers (PostgreSqlContainer) as well as a TestAuthHandler that makes it possible to configure authentication/authorization for clients created by the factory. The integration tests cover some of the apps use cases.
+- The unit tests cover just the StockUpdateJitter methods so far.
