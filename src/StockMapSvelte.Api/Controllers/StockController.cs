@@ -32,6 +32,12 @@ public class StockController : Controller
         return Ok(stock);
     }
     
+    /// <description>
+    /// Get stocks that are possible to be added to a given portfolio based on searching them against a filter
+    /// </description>
+    /// <param name="filter">The search filter for stocks</param>
+    /// <param name="stocksInPortfolio">List of stock tickers already in the portfolio</param>
+    /// <returns>The list of stocks that can be added to the portfolio</returns>
     [HttpGet]
     [Route("possible-to-add")]
     public async Task<IActionResult> GetPossibleToAddStocks([FromQuery] string filter, [FromQuery] IList<string> stocksInPortfolio, CancellationToken cancellationToken = default)

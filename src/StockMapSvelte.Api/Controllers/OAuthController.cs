@@ -27,6 +27,11 @@ public class OAuthController : Controller
         _frontendBaseUrl= configuration["FrontendUrl"] ?? "https://localhost:5173";
     }
 
+    /// <description>
+    /// Initiates the Google OAuth login process by redirecting the user to Google's authentication page.
+    /// </description>
+    /// <param name="returnUrl"></param>
+    /// <returns></returns>
     [HttpGet("google-login")]
     public IActionResult GoogleLogin(string? returnUrl = null)
     {
@@ -40,6 +45,11 @@ public class OAuthController : Controller
         return Challenge(properties, scheme);
     }
 
+    /// <description>
+    /// Callback endpoint that handles the response from Google after the user authenticates.
+    /// </description>
+    /// <param name="returnUrl"></param>
+    /// <returns></returns>
     [HttpGet("google-response")]
     public async Task<IActionResult> GoogleResponse(string? returnUrl = null)
     {
@@ -53,6 +63,11 @@ public class OAuthController : Controller
         };
     }
     
+    /// <description>
+    /// Links a Google OAuth account to an existing local user account.
+    /// </description>
+    /// <param name="request"></param>
+    /// <returns></returns>
     [HttpPost("link-oauth-confirm")]
     public async Task<IActionResult> LinkConfirm([FromBody] LinkRequest request)
     {
