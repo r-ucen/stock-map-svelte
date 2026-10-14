@@ -12,19 +12,16 @@ public class StockDataUpdateTimedService : BackgroundService
     private readonly IServiceScopeFactory _scopeFactory;
     private int _executionCount;
     private readonly ITreeMapUpdateNotifier _treeMapUpdateNotifier;
-    private readonly ICacheService _cache;
     private bool _isFirstRun = true;
 
     public StockDataUpdateTimedService(
         ILogger<StockDataUpdateTimedService> logger,
         IServiceScopeFactory scopeFactory,
-        ITreeMapUpdateNotifier treeMapUpdateNotifier,
-        ICacheService cache)
+        ITreeMapUpdateNotifier treeMapUpdateNotifier)
     {
         _logger = logger;
         _scopeFactory = scopeFactory;
         _treeMapUpdateNotifier = treeMapUpdateNotifier;
-        _cache = cache;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
