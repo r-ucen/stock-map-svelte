@@ -24,6 +24,10 @@ public class AccountController : Controller
         _userContext = userContext;
     }
     
+    /// <description>
+    /// Returns info about the current authenticated user's account - HasPasswordConfigured, HasExternalLoginConfigured, ExternalLogins, IsAdmin, IsManager, IsCustomer, Email, IsEmailConfirmed.
+    /// </description>
+    /// <returns></returns>
     [HttpGet("info")]
     public async Task<IActionResult> GetAccountInfo()
     {
@@ -34,6 +38,10 @@ public class AccountController : Controller
         return Ok(accountInfo);
     }
     
+    /// <description>
+    /// Deletes the whole account for the authenticated user.
+    /// </description>
+    /// <returns></returns>
     [HttpDelete("me")]
     public async Task<IActionResult> DeleteMyAccount()
     {
@@ -44,6 +52,11 @@ public class AccountController : Controller
         return NoContent();
     }
 
+    /// <description>
+    /// Used for adding a password to passwordless account.
+    /// </description>
+    /// <param name="request"></param>
+    /// <returns></returns>
     [HttpPost("set-password")]
     public async Task<IActionResult> SetPassword([FromBody] SetPasswordRequest request)
     {
@@ -54,6 +67,10 @@ public class AccountController : Controller
         return Ok();
     }
     
+    /// <description>
+    /// Removes google external login if the account has password set.
+    /// </description>
+    /// <returns></returns>
     [HttpDelete("remove-google-external-login")]
     public async Task<IActionResult> RemoveGoogleExternalLogin()
     {

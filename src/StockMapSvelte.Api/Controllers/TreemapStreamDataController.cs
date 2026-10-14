@@ -11,18 +11,20 @@ public static class TreemapStreamDataController
     public static IEndpointRouteBuilder MapPortfolioStreamEndpoints(this IEndpointRouteBuilder app)
     {
         app.MapGet("treemap-data/{portfolioId:guid}/stream", (
-                Guid portfolioId,
-                ITreeMapFacade treeMapFacade,
-                ITreeMapUpdateNotifier treeMapNotifier,
-                CancellationToken cancellationToken) =>
-            {
-                var query = new GetTreemapDataQuery(portfolioId);
-                var updates = GetUpdatesAsync(query, treeMapFacade, treeMapNotifier, cancellationToken);
-                return Results.ServerSentEvents(updates, eventType: "treemap-update");
-            }
-        )
-        .RequireAuthorization()
-        .RequireRateLimiting("TreeMapDataPolicy");
+                    Guid portfolioId,
+                    ITreeMapFacade treeMapFacade,
+                    ITreeMapUpdateNotifier treeMapNotifier,
+                    CancellationToken cancellationToken) =>
+                {
+                    var query = new GetTreemapDataQuery(portfolioId);
+                    var updates = GetUpdatesAsync(query, treeMapFacade, treeMapNotifier, cancellationToken);
+                    return Results.ServerSentEvents(updates, eventType: "treemap-update");
+                }
+            )
+            .RequireAuthorization()
+            .RequireRateLimiting("TreeMapDataPolicy")
+            .WithDescription(
+                "SSE stream which automatically sends new data when a stock update occurs (StockDataUpdateTimedService). The stream sends data ready to build the treemap for the given portfolio.");
         
         return app;
     }

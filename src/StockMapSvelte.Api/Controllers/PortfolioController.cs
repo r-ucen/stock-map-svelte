@@ -34,6 +34,11 @@ public class PortfolioController : Controller
         return Ok(portfolios);
     }
 
+    /// <description>
+    /// Get all portfolios for the current user.
+    /// </description>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     [HttpGet]
     [Route("me")]
     public async Task<IActionResult> GetCurrentUserPortfolios(CancellationToken cancellationToken = default)
